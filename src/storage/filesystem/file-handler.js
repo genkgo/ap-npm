@@ -20,7 +20,7 @@ export default class {
 
   findTarball(request, response) {
     let packageName = request.get('packageName');
-    let requestedVersion = request.get('packageVersion');
+    let requestedVersion = request.get('packageVersioner');
     let packageLocation = storageLocation + '/' + request.get('packageName');
 
     let doesVersionExist = (version, location) => {
@@ -38,7 +38,7 @@ export default class {
 
   saveTarball(request, response) {
     let packageName = request.get('packageName');
-    let packageVersion = request.get('packageVersion');
+    let packageVersion = request.get('packageVersioner');
     let packageData = request.get('packageData');
     let packageLocation = storageLocation + '/' + request.get('packageName');
 
@@ -64,10 +64,10 @@ export default class {
       let availableVersions = oldPackageJSON['versions'];
       let latestVersion = getLatestVersion(availableVersions);
 
-      if (semver(latestVersion + '=>' + packageVersion)) {
+      if (semver(latestVersion + '=>' + packageVersioner)) {
         // Package is valid
         try {
-          writeTarball(packageVersion, packageLocation, packageData);
+          writeTarball(packageVersioner, packageLocation, packageData);
           let newPackageJSON = oldPackageJSON;
 
           packageJSON['dist-tags']['latest'] = latestVersion;
@@ -84,15 +84,15 @@ export default class {
     // Package does not exist, create directory
     else {
       fileSystem.mkdirSync(packageLocation, '0775');
-      if (semver.valid(packageVersion)) {
+      if (semver.valid(packageVersioner)) {
         try {
-          writeTarball(packageVersion, packageLocation, packageData);
+          writeTarball(packageVersioner, packageLocation, packageData);
         } catch (err) {
           throw new Error("Error writing package " + packageName);
         }
 
         let packageJSON = packageTemplate(packageName);
-        packageJSON['dist-tags']['latest'] = packageVersion;
+        packageJSON['dist-tags']['latest'] = packageVersioner;
         this.writePackageDetails(packageLocation, packageJSON);
 
       } else {

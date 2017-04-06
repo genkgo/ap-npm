@@ -6,10 +6,11 @@ export default class {
 
   handle (request, response) {
     let packageName = request.get('name');
+    let packageData = request.get('packageData');
     try {
       let packageExists = this.localStorage.findPackage(packageName, response);
       if (packageExists) {
-        this.localStorage.removePackage(packageName, response);
+        this.localStorage.addPackage(packageName, packageData , response);
       }
     } catch (e) {
       throw new Error('Cannot find package ' + packageName);

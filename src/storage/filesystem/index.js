@@ -13,4 +13,7 @@ export default class {
     return packageHandler.removePackage(request, response);
   }
 
+  packageExists(request, response) {
+    return packageHandler.findPackage(request, response);
+  }
 }
