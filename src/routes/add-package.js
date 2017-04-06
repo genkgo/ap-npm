@@ -12,7 +12,7 @@ export default class {
         this.localStorage.removePackage(packageName, response);
       }
     } catch (e) {
-      throw new Error('Cannot find package ' + name);
+      throw new Error('Cannot find package ' + packageName);
     }
   }
 }
