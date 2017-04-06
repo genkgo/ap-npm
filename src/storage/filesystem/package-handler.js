@@ -18,7 +18,7 @@ export default class {
 
   removePackage(request, response) {
     try {
-      fileHandler.deleteTarball(request, response);
+      fileHandler.deletePackage(request, response);
     } catch(e) {
       throw new Error('Cannot find package ' + name);
     }
