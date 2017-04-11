@@ -11,8 +11,32 @@ export default class {
     this.storageLocation = config.storage.directory;
   }
 
-  writePackage() {
-
+  writePackage(packageName, packageVersion ,fileName, fileData, npmVersion, nodeVersion, npmUser) {
+  //   let fileLocation = this.storageLocation + '/' + packageName + '/' + fileName;
+  //   fs.writeFileSync(fileLocation, fileData);
+  //
+  //   let packageInfoLocation = this.storageLocation + '/' + packageName + '/package.json';
+  //   let packageJSON = readJSON(packageInfoLocation);
+  //
+  //   let currentVersionInfo = packageJSON["versions"][packageJSON["dist-tags"]["latest"]];
+  //
+  //
+  //   let newVersionObject = {
+  //     packageVersion: {
+  //       "name": currentVersionInfo['name'],
+  //       "description": currentVersionInfo['description'],
+  //       "main": currentVersionInfo['main'],
+  //       "scripts": currentVersionInfo['scripts'],
+  //     },
+  //     "author": currentVersionInfo['author'],
+  //     "license": currentVersionInfo['license'],
+  //     "_id": currentVersionInfo['id'],
+  //     "_shasum": "TODO", // TODO
+  //     "_from": ".",
+  //     "_npmVersion": npmVersion,
+  //     "_nodeVersion": nodeVersion,
+  //     "_npmUser": {}
+  // }
   }
 
   getPackage(packageName, fileName) {

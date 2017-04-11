@@ -6,7 +6,7 @@ export default class {
   }
 
   process(httpRequest, httpResponse) {
-    console.log(httpRequest);
+    // console.log(httpRequest);
 
     let packageName = httpRequest.params.package;
 

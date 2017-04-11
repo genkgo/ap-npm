@@ -43,6 +43,23 @@ container.set('route-package-remove', function() {
   return new Route(container.get('storage'));
 });
 
+// AUTH
+container.set('route-auth-user-add', function() {
+  let Route = require('./routes/auth-user-add').default;
+  return new Route(container.get('auth'));
+});
+
+container.set('route-auth-user-login', function() {
+  let Route = require('./routes/auth-user-login').default;
+  return new Route(container.get('auth'));
+});
+
+container.set('route-auth-user-logout', function() {
+  let Route = require('./routes/auth-user-logout').default;
+  return new Route(container.get('auth'));
+});
+
+
 //    *** COMMANDS ***
 container.set('command-serve', function () {
   let Command = require('./commands/serve').default;
@@ -52,7 +69,7 @@ container.set('command-serve', function () {
 
 //    *** UTILS ***
 container.set('remote-registry', function () {
-  let Route = require('./routes/add-user').default;
+  let Route = require('./routes/auth-user-add').default;
   return new Route();
 });
 
@@ -68,6 +85,11 @@ container.set('express', function () {
 container.set('package-validator', function() {
   let packageValidator = require('./package/validator').default;
   return new packageValidator(container.get('storage'));
+});
+
+container.set('auth', function() {
+  let auth = require('./auth/index').default;
+  return new auth();
 });
 
 export default container;
