@@ -6,12 +6,14 @@ export default class {
   }
 
   process(httpRequest, httpResponse) {
-    // let packageName = httpRequest['params']['package'];
-    // let fileName = httpRequest['params']['filename'];
-    // console.log(packageName, fileName);
-    // let fileData = this.storage.getPackage(packageName, fileName);
-    //
-    // httpResponse.send(fileData);
+    let packageJson = this.storage.getPackageData({
+      name: httpRequest.params.package,
+      version: httpRequest.params.version,
+    });
+
+    let distTags = packageJson['dist-tags'];
+
+    httpResponse.send(JSON.stringify(distTags));
   }
 }
 
