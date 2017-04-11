@@ -1,11 +1,12 @@
 export default class {
 
-  constructor(server) {
+  constructor(server, port) {
     this.server = server;
+    this.port = port;
   }
 
   run() {
-    this.server.listen();
+    this.server.listen(this.port);
   }
 
 }

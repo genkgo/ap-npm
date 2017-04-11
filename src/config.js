@@ -2,7 +2,10 @@ export default {
 
   "storage": {
     "name": "filesystem",
-    "directory": "/var/www"
-  }
+    "directory": "/workspace/testStorage"
+  },
+
+  "hostname": "http://localhost",
+  "port": 4321
 
 }

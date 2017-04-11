@@ -1,25 +1,32 @@
-import Cookies       from 'cookies';
-import bodyParser    from 'body-parser';
-import Error         from 'http-errors';
-import Path          from 'path';
+import Cookies from 'cookies';
+import bodyParser from 'body-parser';
+import Error from 'http-errors';
+import Path from 'path';
 
 export default function (app, container) {
+  let logger = function(req, res, next) {
+    console.log("REQUEST, URL:", req.originalUrl, '\n');
+    next(); // Passing the request to the next handler in the stack.
+  };
+
+  app.use(logger);
+
   // validate all of these params as a package name
   // this might be too harsh, so ask if it causes trouble
-  // app.param('package',  validate_pkg);
-  // app.param('filename', validate_name);
-  // app.param('tag',      validate_name);
-  // app.param('version',  validate_name);
-  // app.param('revision', validate_name);
-  // app.param('token',    validate_name);
+  // app.param('package',  validateName);
+  // app.param('filename', validateName);
+  // app.param('tag',      validateName);
+  // app.param('version',  validateName);
+  // app.param('revision', validateName);
+  // app.param('token',    validateName);
 
   // these can't be safely put into express url for some reason
-  // app.param('_rev',             match(/^-rev$/))
-  // app.param('org_couchdb_user', match(/^org\.couchdb\.user:/))
-  // app.param('anything',         match(/.*/))
+  // app.param('_rev',             match(/^-rev$/));
+  // app.param('org_couchdb_user', match(/^org\.couchdb\.user:/));
+  // app.param('anything',         match(/.*/));
 
 
-  app.use(bodyParser.json({ strict: false, limit: '10mb' }))
+  app.use(bodyParser.json({ strict: false, limit: '10mb' }));
 
   // encode / in a scoped package name to be matched as a single parameter in routes
   app.use(function(req, res, next) {
@@ -30,36 +37,62 @@ export default function (app, container) {
     next()
   });
 
-  // for "npm whoami"
-  app.get('/whoami', function(req, res, next) {
-    if (req.headers.referer === 'whoami') {
-      next({ username: req.remote_user.name })
-    } else {
-      next('route')
-    }
-  });
+  // // for "npm whoami"
+  // app.get('/whoami', function(req, res, next) {
+  //   if (req.headers.referer === 'whoami') {
+  //     next({ username: req.remote_user.name })
+  //   } else {
+  //     next('route')
+  //   }
+  // });
+  //
+  // app.get('/-/whoami', function(req, res, next) {
+  //   next({ username: req.remote_user.name })
+  // });
 
-  app.get('/-/whoami', function(req, res, next) {
-    next({ username: req.remote_user.name })
-  });
-
+  // Get version of package
   app.get('/:package/:version?', function(req, res, next) {
-    let route = container.get('route-package-version');
+    let route = container.get('route-package-request');
     route.process(req, res);
     next();
   });
 
-  // app.get('/:package/-/:filename', can('access'), function(req, res, next) {
-  //   var stream = storage.get_tarball(req.params.package, req.params.filename)
-  //   stream.on('content-length', function(v) {
-  //     res.header('Content-Length', v)
-  //   })
-  //   stream.on('error', function(err) {
-  //     return res.report_error(err)
-  //   })
-  //   res.header('Content-Type', 'application/octet-stream')
-  //   stream.pipe(res)
-  // })
+
+  // Publish package
+  // app.put('/:package/:_rev?/:revision?', function(req, res, next) {
+  //   let route = container.get('route-package-publish');
+  //   route.process(req, res);
+  //   next();
+  // });
+  //
+  // app.get('/-/package/:package/dist-tags', function(req, res, next) {
+  //   // storage.get_package(req.params.package, { req: req }, function(err, info) {
+  //   //   if (err) return next(err)
+  //   //
+  //   //   next(info['dist-tags'])
+  //   // })
+  //   console.log('/-/package/:package/dist-tages', req.originalUrl);
+  // });
+
+
+
+  app.get('/:package/-/:filename', function(req, res, next) {
+    let route = container.get('route-package-get');
+    route.process(req, res);
+    next();
+
+
+
+    // var stream = storage.get_tarball(req.params.package, req.params.filename)
+    // stream.on('content-length', function(v) {
+    //   res.header('Content-Length', v)
+    // })
+    // stream.on('error', function(err) {
+    //   return res.report_error(err)
+    // })
+    // res.header('Content-Type', 'application/octet-stream')
+    // stream.pipe(res)
+  });
   //
   // // searching packages
   // app.get('/-/all/:anything?', function(req, res, next) {
