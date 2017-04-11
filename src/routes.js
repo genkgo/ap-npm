@@ -39,7 +39,10 @@ export default function (app, container) {
 
   // ? TODO
   app.get('/-/whoami', function(req, res, next) {
-    next({ username: req.remote_user.name })
+    // next({ username: req.remote_user.name })
+    let route = container.get('route-auth-whoami');
+    route.process(req, res);
+    next();
   });
 
   // Get version of package --- WORKING

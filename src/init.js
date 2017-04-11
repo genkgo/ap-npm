@@ -59,6 +59,11 @@ container.set('route-auth-user-logout', function() {
   return new Route(container.get('auth'));
 });
 
+container.set('route-whoami', function() {
+  let Route = require('./routes/auth-whoami').default;
+  return new Route(container.get('auth'));
+});
+
 
 //    *** COMMANDS ***
 container.set('command-serve', function () {
