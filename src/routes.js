@@ -30,26 +30,20 @@ export default function (app, container) {
 
   // for "npm whoami"
   app.get('/whoami', function(req, res, next) {
-    if (req.headers.referer === 'whoami') {
-      next({ username: req.remote_user.name })
-    } else {
-      next('route')
-    }
+    // Just let '/-/whoami' handle this
+    next()
   });
 
-  // ? TODO
+  // for "npm whoami"
   app.get('/-/whoami', function(req, res, next) {
-    // next({ username: req.remote_user.name })
     let route = container.get('route-auth-whoami');
     route.process(req, res);
-    next();
   });
 
   // Get version of package --- WORKING
   app.get('/:package/:version?', function(req, res, next) {
     let route = container.get('route-package-request');
     route.process(req, res);
-    next();
   });
 
   // // Publish package --- TODO: This is also getting used when logging in
@@ -64,32 +58,29 @@ export default function (app, container) {
   app.get('/-/package/:package/dist-tags', function(req, res, next) {
     let route = container.get('route-package-get-dist-tags');
     route.process(req, res);
-    next()
   });
 
   // Request for package file data --- WORKING
   app.get('/:package/-/:filename', function(req, res, next) {
     let route = container.get('route-package-get');
     route.process(req, res);
-    next();
   });
 
   app.get('/-/user/:org_couchdb_user', function(req, res, next) {
     console.log("get AUTH");
     res.status(200);
-    next({
+    res.send({
       ok: 'you are authenticated as "' + req.remote_user.name + '"',
     })
   });
 
 
   // *** AUTH ***
-  // Add user
+  // Add user OR login user
   app.put('/-/user/org.couchdb.user:_rev?/:revision?', function(req, res, next) {
     console.log("put AUTH");
-    let route = container.get('route-auth-user-add')
+    let route = container.get('route-auth-user-login');
     route.process(req, res);
-    next();
   });
 
   // app.put('/-/user/:org_couchdb_user/:_rev?/:revision?', function(req, res, next) {

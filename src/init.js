@@ -44,11 +44,6 @@ container.set('route-package-remove', function() {
 });
 
 // AUTH
-container.set('route-auth-user-add', function() {
-  let Route = require('./routes/auth-user-add').default;
-  return new Route(container.get('auth'));
-});
-
 container.set('route-auth-user-login', function() {
   let Route = require('./routes/auth-user-login').default;
   return new Route(container.get('auth'));
@@ -59,7 +54,7 @@ container.set('route-auth-user-logout', function() {
   return new Route(container.get('auth'));
 });
 
-container.set('route-whoami', function() {
+container.set('route-auth-whoami', function() {
   let Route = require('./routes/auth-whoami').default;
   return new Route(container.get('auth'));
 });

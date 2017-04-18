@@ -10,8 +10,12 @@ export default class {
     }
   }
 
+  userExists(username) {
+    return !!this.users[username];
+  }
+
   userLogin(username, password) {
-    if (!this.users[username]) {
+    if (!!this.users[username]) {
       if (this.users[username]['password'] === password) {
         this.users[username]['isloggedin'] = true;
         // User valid
