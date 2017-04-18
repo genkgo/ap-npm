@@ -84,13 +84,13 @@ container.set('express', function () {
 });
 
 container.set('package-validator', function() {
-  let packageValidator = require('./package/validator').default;
-  return new packageValidator(container.get('storage'));
+  let PackageValidator = require('./package/validator').default;
+  return new PackageValidator(container.get('storage'));
 });
 
 container.set('auth', function() {
-  let auth = require('./auth/index').default;
-  return new auth();
+  let Auth = require('./auth/index').default;
+  return new Auth();
 });
 
 export default container;

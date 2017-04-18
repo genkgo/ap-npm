@@ -73,6 +73,10 @@ export default class {
     }
   }
 
+  shouldBeAbleTo(accessType, packageName, accessToken) {
+    return Promise.reject();
+  }
+
   verifyToken(token) {
     for (let key in this.users) {
       let generatedToken = js_sha(key) + this.users[key]['password'];

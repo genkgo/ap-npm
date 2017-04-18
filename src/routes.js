@@ -2,15 +2,17 @@ import Cookies from 'cookies';
 import bodyParser from 'body-parser';
 import Error from 'http-errors';
 import Path from 'path';
+import Access from './auth/access';
 
 export default function (app, container) {
   let logger = function(req, res, next) {
     console.log("METHOD:", req.method, ", URL:", req.originalUrl, '\n');
     next(); // Passing the request to the next handler in the stack.
   };
+
+  let access = new Access(container.get('auth'));
+
   app.use(logger);
-
-
   app.use(bodyParser.json({ strict: false, limit: '10mb' }));
 
   // encode / in a scoped package name to be matched as a single parameter in routes
@@ -21,8 +23,6 @@ export default function (app, container) {
     }
     next()
   });
-
-
 
   // *** AUTH ***
   app.put('/-/user/org.couchdb.user:_rev?/:revision?', function(req, res, next) {
@@ -51,7 +51,7 @@ export default function (app, container) {
 
   // *** INSTALL ***
   // Get version of package --- WORKING
-  app.get('/:package/:version?', function(req, res, next) {
+  app.get('/:package/:version?', access.can('access'), function(req, res, next) {
     let route = container.get('route-package-request');
     route.process(req, res);
   });
@@ -61,7 +61,7 @@ export default function (app, container) {
     route.process(req, res);
   });
   // Request for package file data --- WORKING
-  app.get('/:package/-/:filename', function(req, res, next) {
+  app.get('/:package/-/:filename', access.can('access'), function(req, res, next) {
     let route = container.get('route-package-get');
     route.process(req, res);
   });
@@ -70,6 +70,7 @@ export default function (app, container) {
 
   // *** PUBLISH ***
   app.put('/:package/:_rev?/:revision?', function(req, res, next) {
+    console.log(req);
     let route = container.get('route-package-publish');
     route.process(req, res);
   });

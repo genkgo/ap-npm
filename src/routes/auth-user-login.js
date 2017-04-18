@@ -19,10 +19,8 @@ export default class {
       type: httpRequest.body.type
     };
 
-    // Check if user exists
-    let token = js_sha.sha256(userInfo.username) + js_sha.sha256(userInfo.password);
-
     if (this.auth.userExists(userInfo.username)) {
+      let token = crypto.randomBytes(64).toString('hex');
       let result = this.auth.userLogin(userInfo.username, userInfo.password, userInfo.email);
 
       if (result === true) {
