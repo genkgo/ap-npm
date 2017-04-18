@@ -26,15 +26,16 @@ export default class {
     let exists = this.storage.isPackageAvailable(packageName);
   }
 
-  isVersionHigher(packageName, packageVersion) {
+  isVersionHigher(packageName, packageVersion, distTag) {
     // Check if version that we got is higher than what is available
-    let currentVersion = this.storage.getLatestVersion(packageName);
+    let packageData = this.storage.getPackageJson(packageName);
+    let currentVersion = packageData['dist-tags'][distTag];
     return semver.satisfies(packageVersion, '>' + currentVersion);
   }
 
   hasDistTag(packageName, distTag) {
     let packageData = this.storage.getPackageJson(packageName);
-    if (packageData['dist-tags'].hasOwnProperty(distTag)) {
+    if (packageData['dist-tags'][distTag]) {
       return true;
     } else {
       return false;

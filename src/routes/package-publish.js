@@ -37,8 +37,8 @@ export default class {
         distTag = key;
       }
 
-      if (this.packageValidator.hasDistTag(packageData.name)) {
-        if (!this.packageValidator.isVersionHigher(packageData.name, packageData['dist-tags'][distTag])) {
+      if (this.packageValidator.hasDistTag(packageData.name, distTag)) {
+        if (!this.packageValidator.isVersionHigher(packageData.name, packageData['dist-tags'][distTag], distTag)) {
           httpResponse.status(423);
           httpResponse.send({
             Error: "cannot publish, given version is invalid"
