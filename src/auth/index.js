@@ -1,61 +1,97 @@
-// FOR TESTING PURPOSES ONLY
+import fs from 'fs';
+import path from 'path';
+import js_sha from 'js-sha256';
+import config from '../config';
+
+
+/*
+* This file serves as a way to implement an authentication server.
+* The current implementation serves as a simple example of local authentication.
+* ap-npm was created to be easily extensible (which alternatives weren't).
+* We promote implementing a proper authentication method.
+*/
 export default class {
   constructor() {
-    this.users = {
-      "test": {
-        "password": "test",
-        "email": "test@test.nl",
-        "token": null
-      }
-    }
+    let user_db_path = path.join(__dirname, '..', 'auth', 'user_db.json');
+    let user_db_json = fs.readFileSync(user_db_path, 'utf8');
+    this.users = JSON.parse(user_db_json);
+    this.settings = config.auth;
   }
 
   userExists(username) {
-    return !!this.users[username];
+    return typeof(this.users[username]) === "object";
   }
 
-  userLogin(username, password) {
-    if (!!this.users[username]) {
-      if (this.users[username]['password'] === password) {
-        this.users[username]['token'] = "valid";
+  userLogin(username, password, email) {
+    try {
+      if (this.users[username]['password'] === js_sha.sha256(password) && this.users[username]['email'] === email) {
         // User valid
         return true;
       }
+    } catch (err) {
+      return false;
     }
-
-    // User invalid
-    return false;
   }
 
   userLogout(username) {
-    this.users[username]['isloggedin'] = false;
+    // Not used right now
   }
 
   userAdd(username, password, email) {
-    if (this.users[username]) {
-      return false;
-    } else {
-      this.users[username] = {
-        password: password,
-        email: email,
-        isloggedin: true
-      };
+    if (this.settings.register) {
+      if (typeof(this.users[username]) !== "object") {
+        // User already exists
+        return false;
+      } else {
+        this.users[username] = {
+          username: username,
+          password: js_sha.sha256(password),
+          email: email,
+        };
+        this.updateDB();
 
-      return true;
+        // Success
+        return true;
+      }
+    } else {
+      return false;
     }
   }
 
   userRemove(username, password) {
+    if (this.settings.remove) {
+      if (!!this.users[username] && !!this.users[username][password] === js_sha.sha256(password)) {
+        this.users.remove(username);
+        this.updateDB();
 
+        // Success
+        return true;
+      }
+
+    } else {
+      return false;
+    }
   }
 
   verifyToken(token) {
-    // Verify the token and return its user *** TODO
-    return "username";
+    for (let key in this.users) {
+      let generatedToken = js_sha(key) + this.users[key]['password'];
+
+      if (token === generatedToken) {
+        return this.users[key]['username'];
+      }
+    }
+
+    return false;
   }
 
   readJson(jsonLocation) {
     return JSON.parse(fs.readFileSync(jsonLocation));
+  }
+
+  updateDB() {
+    let user_db_path = path.join(__dirname, '..', 'auth', 'user_db.json');
+    fs.writeFileSync(user_db_path, JSON.stringify(this.users, null, 2));
   }
 
 }

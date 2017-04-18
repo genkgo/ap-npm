@@ -1,3 +1,6 @@
+import js_sha from 'js-sha256';
+
+
 export default class {
 
   constructor(auth) {
@@ -15,27 +18,23 @@ export default class {
       email: httpRequest.body.email,
       type: httpRequest.body.type
     };
-    console.log(userInfo);
 
     // Check if user exists
-    let userExists = this.auth.userExists(userInfo.username);
-    let userLogin = this.auth.userLogin(userInfo.username, userInfo.password, userInfo.email);
+    let token = js_sha.sha256(userInfo.username) + js_sha.sha256(userInfo.password);
 
-    // TODO: We have to give npm some kind of token to make it easy for us to check if user is logged in
-    let token = "token";
+    if (this.auth.userExists(userInfo.username)) {
+      let result = this.auth.userLogin(userInfo.username, userInfo.password, userInfo.email);
 
-    console.log({
-      "UserExists": userExists,
-      "UserLogin": userLogin
-    });
-
-    if (userExists) {
-      if (this.auth.userLogin(userInfo.username, userInfo.password, userInfo.email)) {
+      if (result === true) {
+        console.log("User logged in: " + userInfo.username + ', ' + userInfo.email);
         httpResponse.status(201);
         httpResponse.send({
           token: token
         });
-        return;
+      } else {
+        httpResponse.status(404).send({
+          Error: "authentication failed"
+        });
       }
     }
 

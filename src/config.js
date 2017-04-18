@@ -6,6 +6,16 @@ export default {
   },
 
   "hostname": "http://localhost",
-  "port": 4321
+  "port": 4321,
+
+  /*
+  * 'register': set availability of user-registration
+  * 'public': make packages publicly available
+  */
+  "auth": {
+    "register": false,
+    "public": false,
+    "remove": false
+  }
 
 }
