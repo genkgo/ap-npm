@@ -5,13 +5,12 @@ export default class {
     this.packageValidator = validator;
   }
 
+  /*
+  * First validates if package is valid
+  * Adds a version to the package in filesystem or creates a new package
+  * Sends a 201 to let npm know package was published
+  */
   process(httpRequest, httpResponse) {
-    // What we need:
-    //  validate metadata
-    //  add to packagejson
-    //  add packagedata
-    //  send a 201 to let npm know package was published
-
     let packageData = httpRequest.body;
 
     // Error checking

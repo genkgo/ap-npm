@@ -5,6 +5,9 @@ export default class {
     this.packageValidator = validator;
   }
 
+  /*
+  * Reads package data from fileystem and sends it to npm-client
+  */
   process(httpRequest, httpResponse) {
     let packageName = httpRequest['params']['package'];
     let fileName = httpRequest['params']['filename'];

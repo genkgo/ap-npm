@@ -4,7 +4,11 @@ export default class {
     this.localStorage = localStorage;
   }
 
-  handle (request, response) {
+  /*
+  * Not implemented or tested yet
+  * TODO: Make an option to remove a package outside of npm
+  */
+  process (request, response) {
     let packageName = request.get('name');
     try {
       let packageExists = this.localStorage.findPackage(packageName, response);

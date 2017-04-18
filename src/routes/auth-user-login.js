@@ -4,7 +4,10 @@ export default class {
     this.auth = auth;
   }
 
-  // First try to login the user, then try to create if login
+  /*
+  * First checks if user exists, if so -> login
+  * If user doesn't exist -> try to create user
+  */
   process(httpRequest, httpResponse) {
     let userInfo = {
       username: httpRequest.body.name,
@@ -35,7 +38,6 @@ export default class {
         return;
       }
     }
-
 
     // User doesn't exist, try to create user
     else {

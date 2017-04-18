@@ -17,6 +17,8 @@ container.set('storage', function () {
   return container.get('storage-' + config.storage.name);
 });
 
+
+
 //    *** ROUTE ***
 container.set('route-package-request', function () {
   let Route = require('./routes/package-request').default;
@@ -49,15 +51,12 @@ container.set('route-auth-user-login', function() {
   return new Route(container.get('auth'));
 });
 
-container.set('route-auth-user-logout', function() {
-  let Route = require('./routes/auth-user-logout').default;
-  return new Route(container.get('auth'));
-});
-
 container.set('route-auth-whoami', function() {
   let Route = require('./routes/auth-whoami').default;
   return new Route(container.get('auth'));
 });
+
+
 
 
 //    *** COMMANDS ***
@@ -65,6 +64,8 @@ container.set('command-serve', function () {
   let Command = require('./commands/serve').default;
   return new Command(container.get('express'), config.port);
 });
+
+
 
 
 //    *** UTILS ***

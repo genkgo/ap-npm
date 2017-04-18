@@ -4,7 +4,7 @@ ap-npm is in a somewhat usable state, but expect quite some bugs and some functi
 ###### what works:
  - `npm install 'package'` serves the file requested
  - `npm adduser/login` is processed, but doesn't actually do much yet
- - `npm publish` stores the package in storage, package is immediately available through `npm install` 
+ - `npm publish` stores the package in storage, package is immediately available through `npm install` (note: advanced features like `publish --tag` or `npm dist-tag add` are not implemented yet)  
 
 ###### work in progress:
  - Fully implement authentication

@@ -4,6 +4,9 @@ export default class {
     this.storage = storage;
   }
 
+  /*
+  * Reads the package.json data from filesystem and sends it to the npm-client
+  * */
   process(httpRequest, httpResponse) {
     let packageJson = this.storage.getPackageData({
       name: httpRequest.params.package,
