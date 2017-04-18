@@ -5,7 +5,7 @@ export default class {
       "test": {
         "password": "test",
         "email": "test@test.nl",
-        "isloggedin": false
+        "token": null
       }
     }
   }
@@ -17,7 +17,7 @@ export default class {
   userLogin(username, password) {
     if (!!this.users[username]) {
       if (this.users[username]['password'] === password) {
-        this.users[username]['isloggedin'] = true;
+        this.users[username]['token'] = "valid";
         // User valid
         return true;
       }
@@ -47,6 +47,11 @@ export default class {
 
   userRemove(username, password) {
 
+  }
+
+  verifyToken(token) {
+    // Verify the token and return its user *** TODO
+    return "username";
   }
 
   readJson(jsonLocation) {

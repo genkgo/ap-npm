@@ -5,16 +5,10 @@ import Path from 'path';
 
 export default function (app, container) {
   let logger = function(req, res, next) {
-    console.log("REQUEST, METHOD:", req.method, ", URL:", req.originalUrl, '\n');
+    console.log("METHOD:", req.method, ", URL:", req.originalUrl, '\n');
     next(); // Passing the request to the next handler in the stack.
   };
   app.use(logger);
-
-  // TODO: are these necessary for something?
-  // these can't be safely put into express url for some reason
-  // app.param('_rev',             match(/^-rev$/));
-  // app.param('org_couchdb_user', match(/^org\.couchdb\.user:/));
-  // app.param('anything',         match(/.*/));
 
 
   app.use(bodyParser.json({ strict: false, limit: '10mb' }));
@@ -28,60 +22,93 @@ export default function (app, container) {
     next()
   });
 
+
+
+  // *** AUTH ***
+  app.put('/-/user/org.couchdb.user:_rev?/:revision?', function(req, res, next) {
+    let route = container.get('route-auth-user-login');
+    route.process(req, res);
+  });
+  // Logout
+  app.delete('/-/user/token/*', function(req, res, next) {
+    res.status(200);
+    res.send({
+      ok: 'Logged out'
+    });
+  });
   // for "npm whoami"
   app.get('/whoami', function(req, res, next) {
-    // Just let '/-/whoami' handle this
-    next()
+    let route = container.get('route-auth-whoami');
+    route.process(req, res);
   });
-
   // for "npm whoami"
   app.get('/-/whoami', function(req, res, next) {
     let route = container.get('route-auth-whoami');
     route.process(req, res);
   });
 
+
+
+  // *** INSTALL ***
   // Get version of package --- WORKING
   app.get('/:package/:version?', function(req, res, next) {
     let route = container.get('route-package-request');
     route.process(req, res);
   });
-
-  // // Publish package --- TODO: This is also getting used when logging in
-  // app.put('/:package/:_rev?/:revision?', function(req, res, next) {
-  //   console.log("publish used");
-  //   let route = container.get('route-package-publish');
-  //   route.process(req, res);
-  //   next();
-  // });
-
   // Get dist-tags of package --- Working?
   app.get('/-/package/:package/dist-tags', function(req, res, next) {
     let route = container.get('route-package-get-dist-tags');
     route.process(req, res);
   });
-
   // Request for package file data --- WORKING
   app.get('/:package/-/:filename', function(req, res, next) {
     let route = container.get('route-package-get');
     route.process(req, res);
   });
 
-  app.get('/-/user/:org_couchdb_user', function(req, res, next) {
-    console.log("get AUTH");
-    res.status(200);
-    res.send({
-      ok: 'you are authenticated as "' + req.remote_user.name + '"',
-    })
+
+
+  // *** PUBLISH ***
+  app.put('/:package/:_rev?/:revision?', function(req, res, next) {
+    let route = container.get('route-package-publish');
+    route.process(req, res);
   });
 
+  // Not implemented yuet
+  // app.put('/-/package/:package/dist-tags', function(req, res, next) {
+
+  // console.log('/-/package/:package/dist-tags', req.headers);
+
+  // can('publish'), media('application/json'), expect_json,
+  // function(req, res, next) {
+
+  // storage.replace_tags(req.params.package, req.body, function(err) {
+  //   if (err) return next(err)
+  //   res.status(201)
+  //   return next({ ok: 'tags updated' })
+  // })
+  // });
+
+  // app.put('/:package/:tag',
+  //   can('publish'), media('application/json'), tag_package_version)
+  //
+  // app.post('/-/package/:package/dist-tags/:tag',
+  //   can('publish'), media('application/json'), tag_package_version)
+  //
+  // app.put('/-/package/:package/dist-tags/:tag',
+  //   can('publish'), media('application/json'), tag_package_version)
+
+
+  // app.get('/-/user/:org_couchdb_user', function(req, res, next) {
+  //   console.log("get AUTH");
+  //   res.status(200);
+  //   res.send({
+  //     ok: 'you are authenticated as "' + req.remote_user.name + '"',
+  //   })
+  // });
 
   // *** AUTH ***
   // Add user OR login user
-  app.put('/-/user/org.couchdb.user:_rev?/:revision?', function(req, res, next) {
-    console.log("put AUTH");
-    let route = container.get('route-auth-user-login');
-    route.process(req, res);
-  });
 
   // app.put('/-/user/:org_couchdb_user/:_rev?/:revision?', function(req, res, next) {
   //   var token = (req.body.name && req.body.password)
@@ -123,16 +150,6 @@ export default function (app, container) {
   //     })
   //   }
   // })
-
-
-  // Logout
-  // app.delete('/-/user/token/*', function(req, res, next) {
-  //
-  //   res.status(200);
-  //   next({
-  //     ok: 'Logged out',
-  //   })
-  // });
 
   return app
 }

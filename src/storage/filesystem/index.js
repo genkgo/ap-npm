@@ -11,38 +11,62 @@ export default class {
     this.storageLocation = config.storage.directory;
   }
 
-  writePackage(packageName, packageVersion ,fileName, fileData, npmVersion, nodeVersion, npmUser) {
-  //   let fileLocation = this.storageLocation + '/' + packageName + '/' + fileName;
-  //   fs.writeFileSync(fileLocation, fileData);
-  //
-  //   let packageInfoLocation = this.storageLocation + '/' + packageName + '/package.json';
-  //   let packageJSON = readJSON(packageInfoLocation);
-  //
-  //   let currentVersionInfo = packageJSON["versions"][packageJSON["dist-tags"]["latest"]];
-  //
-  //
-  //   let newVersionObject = {
-  //     packageVersion: {
-  //       "name": currentVersionInfo['name'],
-  //       "description": currentVersionInfo['description'],
-  //       "main": currentVersionInfo['main'],
-  //       "scripts": currentVersionInfo['scripts'],
-  //     },
-  //     "author": currentVersionInfo['author'],
-  //     "license": currentVersionInfo['license'],
-  //     "_id": currentVersionInfo['id'],
-  //     "_shasum": "TODO", // TODO
-  //     "_from": ".",
-  //     "_npmVersion": npmVersion,
-  //     "_nodeVersion": nodeVersion,
-  //     "_npmUser": {}
-  // }
+  // This is used for packages that don't exist in the storage yet
+  writeNewPackage(packageData) {
+    let fileName;
+    let versionInfo = packageData.versions[packageData['dist-tags']['latest']];
+    for (let key in packageData._attachments) {
+      fileName = key;
+    }
+
+    let folderPath = this.storageLocation + '/' + packageData.name;
+    let filePath = folderPath + '/' + fileName;
+    let packageJSONPath = folderPath + '/package.json';
+
+    fs.mkdirSync(folderPath);
+    fs.writeFileSync(filePath, Buffer.from(packageData._attachments[fileName]['data'], 'base64'));
+
+    let packageJSON = packageData;
+    delete packageJSON['_attachments'];
+    writeJSON(packageJSONPath, packageJSON);
+
+    console.log("Wrote new package to filesystem:", {
+      "filePath": filePath,
+      "packageJSON": packageJSONPath
+    });
+  }
+
+  // This is used for packages that have been published before -> adding a new version
+  writePackage(packageData) {
+    let fileName;
+    let packageInfoLocation = this.storageLocation + '/' + packageData.name + '/package.json';
+    let versionInfo = packageData.versions[packageData['dist-tags']['latest']];
+    for (let key in packageData._attachments) {
+      fileName = key;
+    }
+
+    let newVersion;
+    for (let key in packageData.versions) {
+      newVersion = key;
+    }
+
+    let packageJSON = readJSON(packageInfoLocation);
+    packageJSON.versions[newVersion] = packageData.versions[newVersion];
+    packageJSON['dist-tags'] = packageData['dist-tags'];
+    let filePath = folderPath + '/' + fileName;
+
+    fs.mkdirSync(folderPath);
+    fs.writeFileSync(filePath, Buffer.from(packageData._attachments[fileName]['data'], 'base64'));
+
+    console.log("Wrote package to filesystem:", {
+      "filePath": filePath,
+      "packageJSON": packageJSONPath
+    });
   }
 
   getPackage(packageName, fileName) {
     let fileLocation = this.storageLocation + '/' + packageName + '/' + fileName;
-    let fileData = fs.readFileSync(fileLocation);
-    return fileData;
+    return fs.readFileSync(fileLocation);
   }
 
   getPackageData(request) {
@@ -52,13 +76,6 @@ export default class {
     if (this.isPackageAvailable(packageName, this.storageLocation)) {
       let packageInfoLocation = this.storageLocation + '/' + packageName + '/package.json';
       let packageJSON = readJSON(packageInfoLocation);
-
-      let whitelist = [ '_rev', 'name', 'versions', 'dist-tags', 'readme' ];
-      for (let entry in packageJSON) {
-        if (whitelist.indexOf(entry) === -1) {
-          delete packageJSON[entry];
-        }
-      }
 
       this.success = true;
       return packageJSON;
@@ -75,7 +92,6 @@ export default class {
 
 
   // *** STORAGE VALIDATION ***
-
   doesFileExist(packageName, fileName) {
     return fs.existsSync(this.storageLocation + '/' + packageName + '/' + fileName);
   }
@@ -90,11 +106,31 @@ export default class {
     let packageInfoLocation = this.storageLocation + '/' + packageName + '/package.json';
     let packageJSON = readJSON(packageInfoLocation);
 
-    let versionExists = packageJSON.hasAttribute(packageVersion);
+    let versionExists = false;
+
+    for (let version in packageJSON['versions']) {
+      if (version === packageVersion){
+        versionExists = true;
+      }
+    }
     let fileExists = fs.existsSync(this.storageLocation, '/' + packageName + '/' + packageName + '-' + packageVersion + '.tgz');
 
     // Both have to be true for the version requested to be available
     return versionExists && fileExists;
+  }
+
+  getAvailableVersions(packageName) {
+    let packageInfoLocation = this.storageLocation + '/' + packageName + '/package.json';
+    let packageJSON = readJSON(packageInfoLocation);
+
+    return packageJSON['versions'];
+  }
+
+  getLatestVersion(packageName) {
+    let packageInfoLocation = this.storageLocation + '/' + packageName + '/package.json';
+    let packageJSON = readJSON(packageInfoLocation);
+
+    return packageJSON['dist-tags']['latest'];
   }
 
 }

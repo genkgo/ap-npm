@@ -13,7 +13,7 @@ export default class {
 
     let distTags = packageJson['dist-tags'];
 
-    httpResponse.send(JSON.stringify(distTags));
+    httpResponse.send(distTags);
   }
 }
 

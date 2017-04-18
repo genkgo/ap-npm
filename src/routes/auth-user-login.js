@@ -19,7 +19,7 @@ export default class {
     let userLogin = this.auth.userLogin(userInfo.username, userInfo.password, userInfo.email);
 
     // TODO: We have to give npm some kind of token to make it easy for us to check if user is logged in
-    let token = "valid";
+    let token = "token";
 
     console.log({
       "UserExists": userExists,
@@ -32,6 +32,7 @@ export default class {
         httpResponse.send({
           token: token
         });
+        return;
       }
     }
 
@@ -44,11 +45,13 @@ export default class {
           ok: "you are authenticated as '" + userInfo.username + "'",
           token: token
         });
+        return;
       } else {
         httpResponse.status(400);
         httpResponse.send({
           Error: "could not login or create user"
         });
+        return;
       }
     }
 

@@ -26,7 +26,9 @@ export default class {
     let exists = this.storage.isPackageAvailable(packageName);
   }
 
-  isVersionValid(packageName, packageVersion) {
-    let exists = this.storage.isVersionAvailable(packageName, packageVersion);
+  isVersionHigher(packageName, packageVersion) {
+    // Check if version that we got is higher than what is available
+    let currentVersion = this.storage.getLatestVersion(packageName);
+    return semver.satisfies(packageVersion, '>' + currentVersion);
   }
 }

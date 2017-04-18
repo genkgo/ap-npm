@@ -1,25 +1,23 @@
+// THIS DOESN'T FUNCTION YET
+
 export default class {
 
   constructor(auth) {
     this.auth = auth;
   }
 
-  // First try to login the user, then try to create if login
   process(httpRequest, httpResponse) {
-    console.log(httpRequest);
+    // TODO: Do something with auth and with the token to verify user
+    let token = httpRequest.headers['authorization'].substr(7);
+    console.log("whoami", {
+      "npm-token": token
+    });
 
-    // let userInfo = {
-    //   username: httpRequest.body.name,
-    //   password: httpRequest.body.password,
-    //   email: httpRequest.body.email,
-    //   type: httpRequest.body.type
-    // };
+    let userInfo = this.auth.verifyToken(token);
 
-    httpResponse.status(201);
     httpResponse.send({
-      username: httpRequest.body.name,
-      ok: "ok"
-    })
+      username: "You are logged in as '" + userInfo + "'"
+    });
   }
 
 }
