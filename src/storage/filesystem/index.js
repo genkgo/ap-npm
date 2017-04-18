@@ -41,9 +41,13 @@ export default class {
     let fileName;
     let packageInfoLocation = this.storageLocation + '/' + packageData.name + '/package.json';
     let versionInfo = packageData.versions[packageData['dist-tags']['latest']];
+    let folderPath = this.storageLocation + '/' + packageData.name;
+    let packageJSONPath = folderPath + '/package.json';
+
     for (let key in packageData._attachments) {
       fileName = key;
     }
+    let filePath = folderPath + '/' + fileName;
 
     let newVersion;
     for (let key in packageData.versions) {
@@ -52,11 +56,19 @@ export default class {
 
     let packageJSON = readJSON(packageInfoLocation);
     packageJSON.versions[newVersion] = packageData.versions[newVersion];
-    packageJSON['dist-tags'] = packageData['dist-tags'];
-    let filePath = folderPath + '/' + fileName;
 
-    fs.mkdirSync(folderPath);
+    let distTags = packageJSON['dist-tags'];
+    let newDistTags = packageData['dist-tags'];
+
+    // Merge dist-tags, we need to preserve old dist-tags
+    for (let key in newDistTags) {
+      distTags[key] = newDistTags[key];
+    }
+
+    packageJSON['dist-tags'] = distTags;
+
     fs.writeFileSync(filePath, Buffer.from(packageData._attachments[fileName]['data'], 'base64'));
+    writeJSON(packageInfoLocation, packageJSON);
 
     console.log("Wrote package to filesystem:", {
       "filePath": filePath,
@@ -133,4 +145,8 @@ export default class {
     return packageJSON['dist-tags']['latest'];
   }
 
+  getPackageJson(packageName) {
+    let packageInfoLocation = this.storageLocation + '/' + packageName + '/package.json';
+    return readJSON(packageInfoLocation);
+  }
 }

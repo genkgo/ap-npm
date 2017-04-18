@@ -32,12 +32,19 @@ export default class {
         return;
       }
 
-      if (!this.packageValidator.isVersionHigher(packageData.name, packageData['dist-tags']['latest'])) {
-        httpResponse.status(423);
-        httpResponse.send({
-          Error: "cannot publish, given version is invalid"
-        });
-        return;
+      let distTag;
+      for (let key in packageData['dist-tags']) {
+        distTag = key;
+      }
+
+      if (this.packageValidator.hasDistTag(packageData.name)) {
+        if (!this.packageValidator.isVersionHigher(packageData.name, packageData['dist-tags'][distTag])) {
+          httpResponse.status(423);
+          httpResponse.send({
+            Error: "cannot publish, given version is invalid"
+          });
+          return;
+        }
       }
 
       try {

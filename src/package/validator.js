@@ -31,4 +31,13 @@ export default class {
     let currentVersion = this.storage.getLatestVersion(packageName);
     return semver.satisfies(packageVersion, '>' + currentVersion);
   }
+
+  hasDistTag(packageName, distTag) {
+    let packageData = this.storage.getPackageJson(packageName);
+    if (packageData['dist-tags'].hasOwnProperty(distTag)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
