@@ -31,10 +31,8 @@ export default function (app, container) {
   });
   // Logout
   app.delete('/-/user/token/*', function(req, res, next) {
-    res.status(200);
-    res.send({
-      ok: 'Logged out'
-    });
+    let route = container.get('route-auth-user-logout');
+    route.process(req, res);
   });
   // for "npm whoami"
   app.get('/whoami', function(req, res, next) {

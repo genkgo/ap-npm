@@ -1,4 +1,6 @@
-import js_sha from 'js-sha256';
+import crypto from 'crypto';
+import path from 'path';
+import fs from 'fs';
 
 
 export default class {
@@ -19,6 +21,22 @@ export default class {
       type: httpRequest.body.type
     };
 
+    let addTokenToDB = (username, token) => {
+      let tokenLocation = path.join(__dirname, '../..', 'db', 'user_tokens.json');
+      let tokens;
+
+      if (fs.existsSync(tokenLocation)) {
+        let jsonString = fs.readFileSync(tokenLocation);
+        tokens = JSON.parse(jsonString);
+      }
+      else {
+        tokens = {};
+      }
+
+      tokens[token] = username;
+      fs.writeFileSync(tokenLocation, JSON.stringify(tokens, null, 2));
+    };
+
     if (this.auth.userExists(userInfo.username)) {
       let token = crypto.randomBytes(64).toString('hex');
       let result = this.auth.userLogin(userInfo.username, userInfo.password, userInfo.email);
@@ -29,6 +47,7 @@ export default class {
         httpResponse.send({
           token: token
         });
+        addTokenToDB(userInfo.username, token);
       } else {
         httpResponse.status(404).send({
           Error: "authentication failed"

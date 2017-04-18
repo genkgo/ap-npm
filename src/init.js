@@ -56,6 +56,11 @@ container.set('route-auth-whoami', function() {
   return new Route(container.get('auth'));
 });
 
+container.set('route-auth-user-logout', function () {
+  let Route = require('./routes/auth-user-logout').default;
+  return new Route(container.get('auth'));
+});
+
 
 
 

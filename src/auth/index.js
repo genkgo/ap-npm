@@ -12,9 +12,13 @@ import config from '../config';
 */
 export default class {
   constructor() {
-    let user_db_path = path.join(__dirname, '..', 'auth', 'user_db.json');
+    let user_db_path = path.join(__dirname, '../..', 'db', 'user_db.json');
+    let user_tokens_path = path.join(__dirname, '../..', 'db', 'user_tokens.json');
     let user_db_json = fs.readFileSync(user_db_path, 'utf8');
+    let user_tokens = fs.readFileSync(user_tokens_path, 'utf8');
+
     this.users = JSON.parse(user_db_json);
+    this.tokens = JSON.parse(user_tokens);
     this.settings = config.auth;
   }
 
@@ -74,19 +78,11 @@ export default class {
   }
 
   shouldBeAbleTo(accessType, packageName, accessToken) {
-    return Promise.reject();
+    return Promise.resolve();
   }
 
   verifyToken(token) {
-    for (let key in this.users) {
-      let generatedToken = js_sha(key) + this.users[key]['password'];
-
-      if (token === generatedToken) {
-        return this.users[key]['username'];
-      }
-    }
-
-    return false;
+    return this.tokens[token] === true;
   }
 
   readJson(jsonLocation) {
