@@ -82,7 +82,7 @@ export default class {
   }
 
   verifyToken(token) {
-    return this.tokens[token] === true;
+    return this.tokens[token];
   }
 
   readJson(jsonLocation) {

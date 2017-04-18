@@ -9,19 +9,19 @@ export default class {
   * This route verifies which user is logged in and sends back its username
   */
   process(httpRequest, httpResponse) {
-    let token = httpRequest.headers['authorization'].substr(7);
+    let token = httpRequest.headers.authorization.substr(7);
 
     let userInfo = this.auth.verifyToken(token);
 
-    if (userInfo === false) {
+    if (userInfo) {
+      httpResponse.send({
+        username: "you are logged in as '" + userInfo + "'"
+      });
+    } else {
       // User not valid
       httpResponse.status(401);
       httpResponse.send({
         err: 'invalid user'
-      });
-    } else {
-      httpResponse.send({
-        username: "you are logged in as '" + userInfo + "'"
       });
     }
   }
