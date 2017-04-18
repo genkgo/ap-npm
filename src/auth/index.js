@@ -14,11 +14,17 @@ export default class {
   constructor() {
     let user_db_path = path.join(__dirname, '../..', 'db', 'user_db.json');
     let user_tokens_path = path.join(__dirname, '../..', 'db', 'user_tokens.json');
-    let user_db_json = fs.readFileSync(user_db_path, 'utf8');
-    let user_tokens = fs.readFileSync(user_tokens_path, 'utf8');
 
-    this.users = JSON.parse(user_db_json);
-    this.tokens = JSON.parse(user_tokens);
+    try {
+      let user_db_json = fs.readFileSync(user_db_path, 'utf8');
+      let user_tokens = fs.readFileSync(user_tokens_path, 'utf8');
+      this.users = JSON.parse(user_db_json);
+      this.tokens = JSON.parse(user_tokens);
+    } catch (e) {
+      this.users = {};
+      this.tokens = {};
+    }
+
     this.settings = config.auth;
   }
 
