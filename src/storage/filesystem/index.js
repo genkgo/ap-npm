@@ -6,8 +6,6 @@ import writeJSON from './utils/write-json';
 export default class {
 
   constructor() {
-    this.response = {};
-    this.success = false;
     this.storageLocation = config.storage.directory;
   }
 
@@ -89,19 +87,9 @@ export default class {
       let packageInfoLocation = this.storageLocation + '/' + packageName + '/package.json';
       let packageJSON = readJSON(packageInfoLocation);
 
-      this.success = true;
       return packageJSON;
     }
   }
-
-  isSuccessFul() {
-    let success = this.success;
-
-    // reset successful
-    this.success = false;
-    return success;
-  }
-
 
   // *** STORAGE VALIDATION ***
   doesFileExist(packageName, fileName) {

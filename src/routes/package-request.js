@@ -13,15 +13,15 @@ export default class {
       version: httpRequest.params.version,
     });
 
-    let result = this.storage.isSuccessFul();
-
-    if (result) {
+    if (packageJson) {
       let response = JSON.stringify(packageJson);
       httpResponse.send(response);
     } else {
-
       // Package not found
-      httpResponse.sendStatus(404);
+      httpResponse.status(404);
+      httpResponse.send({
+        Error: "package not found"
+      })
     }
   }
 
