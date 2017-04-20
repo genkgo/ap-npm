@@ -24,7 +24,7 @@ export default class {
       return;
     }
 
-    httpResponse.send(distTags);
+    httpResponse.send(JSON.stringify(distTags));
   }
 }
 
