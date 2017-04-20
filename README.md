@@ -17,7 +17,7 @@ To start the server: `npm start <options>`
 - `--port` overwrite used port
 
 ###### what works:
- - `npm install 'package'` serves the file requested
+ - `npm install 'package'` serves the file requested (also works with @'scope' or --scope='scope')
  - `npm adduser/login` works with a local authentication method (we recommend implementing your own when using ap-npm)
  - `npm publish` stores the package in storage, package is immediately available through `npm install`
  
