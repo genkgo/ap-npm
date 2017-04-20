@@ -12,6 +12,17 @@ export default class {
   */
   process(httpRequest, httpResponse) {
     let packageData = httpRequest.body;
+    console.log(packageData);
+
+
+    if (!packageData._attachments) {
+      if (this.deprecateUpdater(packageData)) {
+        httpResponse.status(200).send({
+          ok: "packageJson udpated"
+        });
+        return;
+      }
+    }
 
     // Error checking
     if (this.packageValidator.doesPackageExist(packageData.name)) {
@@ -63,5 +74,10 @@ export default class {
       ok: "package published"
     });
   }
+
+  deprecateUpdater(packageData) {
+    return this.storage.updatePackageJson(packageData.name, packageData);
+  }
+
 
 }

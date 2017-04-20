@@ -63,7 +63,6 @@ export default class {
   // This is used for packages that don't exist in the storage yet
   writeNewPackage(packageData) {
     let fileName;
-    let versionInfo = packageData.versions[packageData['dist-tags']['latest']];
     for (let key in packageData._attachments) {
       fileName = key;
     }
@@ -89,7 +88,6 @@ export default class {
   writePackage(packageData) {
     let fileName;
     let packageInfoLocation = this.storageLocation + '/' + packageData.name + '/package.json';
-    let versionInfo = packageData.versions[packageData['dist-tags']['latest']];
     let folderPath = this.storageLocation + '/' + packageData.name;
     let packageJSONPath = folderPath + '/package.json';
 
