@@ -8,10 +8,6 @@ export default class {
 
   // *** GET ***
 
-  doesFileExist(packageName, fileName) {
-    return this.storage.doesFileExist(packageName, fileName);
-  }
-
   doesPackageExist(packageName) {
     return this.storage.isPackageAvailable(packageName);
   }
@@ -35,7 +31,7 @@ export default class {
 
   hasDistTag(packageName, distTag) {
     let packageData = this.storage.getPackageJson(packageName);
-    if (packageData['dist-tags'][distTag]) {
+    if (!!packageData['dist-tags'][distTag]) {
       return true;
     } else {
       return false;

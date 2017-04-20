@@ -152,10 +152,6 @@ export default class {
   }
 
   // *** STORAGE VALIDATION ***
-  doesFileExist(packageName, fileName) {
-    return fs.existsSync(this.storageLocation + '/' + packageName + '/' + fileName);
-  }
-
   // Checks if our storage has an entry for this packageName
   isPackageAvailable(packageName) {
     return fs.existsSync(this.storageLocation + '/' + packageName);
