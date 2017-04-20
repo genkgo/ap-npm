@@ -1,4 +1,6 @@
 import fs from 'fs';
+import rimraf from 'rimraf';
+import semver from 'semver';
 import config from './../../config';
 import readJSON from './utils/read-json';
 import writeJSON from './utils/write-json';
@@ -7,6 +9,55 @@ export default class {
 
   constructor() {
     this.storageLocation = config.storage.directory;
+  }
+
+  removePackage(packageName) {
+    let packageLocation = this.storageLocation + '/' + packageName;
+
+    if (!fs.existsSync(packageLocation + '/package.json')) {
+      throw new Error("Invalid request, aborting");
+      return;
+    }
+
+    // location is valid
+    rimraf.sync(packageLocation);
+    return true;
+  }
+
+  removePackageVersion(packageName, packageVersion) {
+    let packageLocation = this.storageLocation + '/' + packageName;
+    let tarballLocation = packageLocation + '/' + packageName + '-' + packageVersion + '.tgz';
+
+    if (!fs.existsSync(packageLocation + '/package.json')) {
+      throw new Error("Invalid request, aborting");
+      return;
+    }
+
+    // location is valid
+    fs.unlinkSync(tarballLocation);
+    let packageJson = this.getPackageJson(packageName);
+
+    delete(packageJson.versions[packageVersion]);
+
+    // If this was the last version of the package, we can remove it completely
+    if (packageJson.versions.size === 0) {
+      this.removePackage(packageName);
+      return true;
+    }
+
+    if (packageJson['dist-tags']['latest'] === packageVersion) {
+      // need to update dist-tags
+      let highestVersion = '0.0.1';
+      for (let key in packageJson.versions) {
+        if (semver.satisfies(key, '>' + highestVersion)) {
+          highestVersion = key;
+        }
+      }
+      packageJson['dist-tags']['latest'] = highestVersion;
+    }
+
+    this.updatePackageJson(packageName, packageJson);
+    return true;
   }
 
   // This is used for packages that don't exist in the storage yet

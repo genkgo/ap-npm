@@ -85,7 +85,12 @@ export default function (app, container) {
   // *** INSTALL ***
   // Get version of package
   app.get('/:package/:version?', access.can('access'), function(req, res, next) {
-    let route = container.get('route-package-request');
+    let route;
+    if (req.params.write) {
+      route = container.get('route-package-unpublish');
+    } else {
+      route = container.get('route-package-request');
+    }
     route.process(req, res);
   });
   // Request for package file data
@@ -95,7 +100,6 @@ export default function (app, container) {
   });
 
   // *** DIST-TAGS ***
-  // Get dist-tags of package --- Working?
   app.get('/-/package/:package/dist-tags', access.can('access'), function(req, res, next) {
     let route = container.get('route-package-get-dist-tags');
     route.process(req, res);
@@ -114,6 +118,11 @@ export default function (app, container) {
   // TODO: We have to route the ?write=true route seperately for support for `npm deprecate` && `npm unpublish`
   app.put('/:package/:_rev?/:revision?', access.can('publish'), function(req, res, next) {
     let route = container.get('route-package-publish');
+    route.process(req, res);
+  });
+
+  app.delete('/:package/:_rev?/:revision?', access.can('publish'), function(req, res, next) {
+    let route = container.get('route-package-delete');
     route.process(req, res);
   });
 

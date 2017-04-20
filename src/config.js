@@ -19,6 +19,6 @@ export default {
     },
     "register": true,
     "public": false,
-    "remove": false
+    "remove": true
   }
 }
