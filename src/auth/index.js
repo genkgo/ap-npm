@@ -90,7 +90,7 @@ export default class {
   }
 
   shouldBeAbleTo(accessType, packageName, accessToken) {
-    let accessToken = accessToken.substr(7);
+    accessToken = accessToken.substr(7);
 
     if (config.auth.public === true) {
       return Promise.resolve();
