@@ -40,6 +40,16 @@ container.set('route-package-get-dist-tags', function() {
   return new Route(container.get('storage'), container.get('package-validator'));
 });
 
+container.set('route-package-delete-dist-tags', function() {
+  let Route = require('./routes/package-delete-dist-tags').default;
+  return new Route(container.get('storage'), container.get('package-validator'));
+});
+
+container.set('route-package-add-dist-tags', function() {
+  let Route = require('./routes/package-add-dist-tags').default;
+  return new Route(container.get('storage'), container.get('package-validator'));
+});
+
 container.set('route-package-remove', function() {
   let Route = require('./routes/package-remove').default;
   return new Route(container.get('storage'));

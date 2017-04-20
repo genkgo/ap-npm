@@ -3,21 +3,45 @@ import Access from './auth/access';
 
 export default function (app, container) {
   let logger = function(req, res, next) {
-    console.log("METHOD:", req.method, ", URL:", req.originalUrl, '\n');
+    console.log("METHOD:", req.method, ", URL:", decodeURIComponent(req.originalUrl), '\n');
     next(); // Passing the request to the next handler in the stack.
   };
 
   let access = new Access(container.get('auth'));
 
-  app.use(logger);
   app.use(bodyParser.json({ strict: false, limit: '10mb' }));
 
   // Rewrite the requested url when a scoped package is used
   app.use(function(req, res, next) {
-    let url = decodeURIComponent(req.url);
-    if (url[1] === '@') {
+    let url;
+
+    // In case a simple request is send
+    if (req.url[1] === '@') {
+      url = decodeURIComponent(req.url);
       let packageName = url.lastIndexOf('/') + 1;
       req.url = '/' + encodeURIComponent(url.substr(packageName));
+
+    }
+
+    // In case a dist-tags like request is send
+    else {
+      url = req.url;
+      if (url.indexOf('@') > -1) {
+        let urlSlices = url.split('/');
+        let index;
+        for (let i = 0; i < urlSlices.length; i++) {
+          if (urlSlices[i].indexOf('@') > -1) {index = i;}
+        }
+
+        let scopedUrl = decodeURIComponent(urlSlices[index]);
+        urlSlices[index] = scopedUrl.substr(scopedUrl.indexOf('/') + 1);
+        let newUrl = "";
+        for (let i = 1; i < urlSlices.length; i++) {
+          newUrl +=  '/' + urlSlices[i];
+        }
+        req.url = decodeURIComponent(newUrl);
+        console.log(req.url);
+      }
     }
     next();
   });
@@ -34,6 +58,7 @@ export default function (app, container) {
     next();
   });
 
+  app.use(logger);
 
   // *** AUTH ***
   app.put('/-/user/org.couchdb.user:_rev?/:revision?', function(req, res, next) {
@@ -59,19 +84,29 @@ export default function (app, container) {
 
 
   // *** INSTALL ***
-  // Get version of package --- WORKING
+  // Get version of package
   app.get('/:package/:version?', access.can('access'), function(req, res, next) {
     let route = container.get('route-package-request');
     route.process(req, res);
   });
+  // Request for package file data
+  app.get('/:package/-/:filename', access.can('access'), function(req, res, next) {
+    let route = container.get('route-package-get');
+    route.process(req, res);
+  });
+
+  // *** DIST-TAGS ***
   // Get dist-tags of package --- Working?
   app.get('/-/package/:package/dist-tags', access.can('access'), function(req, res, next) {
     let route = container.get('route-package-get-dist-tags');
     route.process(req, res);
   });
-  // Request for package file data --- WORKING
-  app.get('/:package/-/:filename', access.can('access'), function(req, res, next) {
-    let route = container.get('route-package-get');
+  app.delete('/-/package/:package/dist-tags/:tag', access.can('publish'), function(req, res, next) {
+    let route = container.get('route-package-delete-dist-tags');
+    route.process(req, res);
+  });
+  app.put('/-/package/:package/dist-tags/:tag', access.can('publish'), function(req, res, next) {
+    let route = container.get('route-package-add-dist-tags');
     route.process(req, res);
   });
 
@@ -79,8 +114,7 @@ export default function (app, container) {
   // *** PUBLISH ***
   // TODO: We have to route the ?write=true route seperately for support for `npm deprecate` && `npm unpublish`
   app.put('/:package/:_rev?/:revision?', access.can('publish'), function(req, res, next) {
-    console.log(req.headers);
-    let route = container.get('route-package-canPublish');
+    let route = container.get('route-package-publish');
     route.process(req, res);
   });
 

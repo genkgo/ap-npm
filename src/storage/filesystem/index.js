@@ -80,7 +80,6 @@ export default class {
   }
 
   getPackageData(request) {
-
     let packageName = request.name;
 
     if (this.isPackageAvailable(packageName, this.storageLocation)) {
@@ -138,5 +137,13 @@ export default class {
   getPackageJson(packageName) {
     let packageInfoLocation = this.storageLocation + '/' + packageName + '/package.json';
     return readJSON(packageInfoLocation);
+  }
+
+
+  /* Dist-tag functions*/
+  updatePackageJson(packageName, packageJson) {
+    let packageInfoLocation = this.storageLocation + '/' + packageName + '/package.json';
+    writeJSON(packageInfoLocation, packageJson);
+    return true;
   }
 }

@@ -13,16 +13,23 @@ export default class {
 
     let packageName = httpRequest.params.package;
     let distTag = httpRequest.params.tag;
+    let distTagVersion = httpRequest.body;
 
     let packageJson = this.storage.getPackageData({name: httpRequest.params.package});
 
-    delete(packageJson['dist-tags'][distTag]);
+    // Check if version exists
+    if (typeof(packageJson['versions'][distTagVersion]) !== "object") {
+      httpResponse.send("403, version does not exist");
+      return;
+    }
+
+    packageJson['dist-tags'][distTag] = distTagVersion;
 
     try {
       if (this.storage.updatePackageJson(packageName, packageJson)) {
         httpResponse.status(200);
         httpResponse.send({
-          ok: "dist-tags updated"
+          ok: "dist-tags added"
         });
       }
     } catch (error) {
