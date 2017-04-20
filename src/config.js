@@ -5,12 +5,12 @@ export default {
     "directory": "/workspace/testStorage"
   },
 
-  "hostname": "http://localhost",
   "port": 4321,
 
   /*
   * 'register': set availability of user-registration
   * 'public': make everything publicly available
+  * 'remove': make it possible to remove, unpublish or overwrite packages *** not implemented yet
   */
   "auth": {
     "users": {

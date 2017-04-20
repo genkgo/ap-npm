@@ -17,18 +17,12 @@ export default class {
     if (this.packageValidator.doesPackageExist(packageData.name)) {
       try {
         if (this.packageValidator.doesVersionExist(packageData.name, packageData['dist-tags']['latest'])) {
-          httpResponse.status(422);
-          httpResponse.send({
-            Error: "cannot publish, version already exists"
-          });
+          httpResponse.send("422, cannot publish, version already exists");
           return;
         }
       } catch (err) {
         console.log(err);
-        httpResponse.status(422);
-        httpResponse.send({
-          Error: "cannot publish, filesystem error"
-        });
+        httpResponse.send("422, cannot publish, filesystem error");
         return;
       }
 
@@ -39,10 +33,7 @@ export default class {
 
       if (this.packageValidator.hasDistTag(packageData.name, distTag)) {
         if (!this.packageValidator.isVersionHigher(packageData.name, packageData['dist-tags'][distTag], distTag)) {
-          httpResponse.status(423);
-          httpResponse.send({
-            Error: "cannot publish, given version is invalid"
-          });
+          httpResponse.send("423, cannot publish, given version is invalid");
           return;
         }
       }
@@ -51,10 +42,7 @@ export default class {
         this.storage.writePackage(packageData);
       } catch (err) {
         console.log(err);
-        httpResponse.status(421);
-        httpResponse.send({
-          Error: err.toString()
-        });
+        httpResponse.send("421, " + err.toString());
         return;
       }
     }
@@ -65,10 +53,7 @@ export default class {
         this.storage.writeNewPackage(packageData);
       } catch (err) {
         console.log(err);
-        httpResponse.status(421);
-        httpResponse.send({
-          Error: err.toString()
-        });
+        httpResponse.send("421, " + err.toString());
         return;
       }
     }

@@ -13,40 +13,21 @@ import config from '../config';
 export default class {
 
   constructor() {
+    /*
+    * If a new authentication method has been added, comment out the inits.
+    */
     this.initUserDB();
     this.initTokenDB();
     this.settings = config.auth;
   }
 
-  userExists(username) {
-    return typeof(this.users[username]) === "object";
-  }
 
+
+  /*
+  * userLogin, userAdd and userRemove are functions that can be altered to implement an alternative auth method.
+  */
   userLogin(username, password, email) {
-    try {
-      if (this.users[username]['password'] === js_sha.sha256(password) && this.users[username]['email'] === email) {
-        return true;
-      }
-    } catch (err) {
-      return false;
-    }
-  }
-
-  userLogout(token) {
-    let user_tokens_path = path.join(__dirname, '../..', 'db', 'user_tokens.json');
-    let allTokens;
-
-    try {
-      let tokenString = fs.readFileSync(user_tokens_path, 'utf8');
-      allTokens = JSON.parse(tokenString);
-      delete allTokens[token];
-    } catch (e) {
-      // On error: just make the tokens_db an empty db.
-      allTokens = {};
-    }
-
-    fs.writeFileSync(user_tokens_path, JSON.stringify(allTokens, null, 2));
-    this.updateTokenDB();
+    return this.users[username]['password'] === js_sha.sha256(password) && this.users[username]['email'] === email;
   }
 
   userAdd(username, password, email) {
@@ -61,6 +42,7 @@ export default class {
           email: email,
         };
         this.updateUserDB();
+        this.initUserDB();
 
         // Success
         return true;
@@ -88,11 +70,35 @@ export default class {
     }
   }
 
-  shouldBeAbleTo(accessType, packageName, accessToken) {
-    accessToken = accessToken.substr(7);
 
+
+  /*
+  * Don't touch the rest, it relies on the above functions to work properly
+  */
+  userLogout(token) {
+    let user_tokens_path = path.join(__dirname, '../..', 'db', 'user_tokens.json');
+    let allTokens;
+
+    try {
+      let tokenString = fs.readFileSync(user_tokens_path, 'utf8');
+      allTokens = JSON.parse(tokenString);
+      delete allTokens[token];
+    } catch (e) {
+      // On error: just make the tokens_db an empty db.
+      allTokens = {};
+    }
+
+    fs.writeFileSync(user_tokens_path, JSON.stringify(allTokens, null, 2));
+    this.updateTokenDB();
+  }
+
+  shouldBeAbleTo(accessType, packageName, accessToken) {
     if (config.auth.public === true) {
       return Promise.resolve();
+    }
+
+    if (accessToken) {
+      accessToken = accessToken.substr(7);
     }
 
     if (accessType === 'access') {
@@ -134,15 +140,29 @@ export default class {
   }
 
   updateUserDB() {
-    let user_db_path = path.join(__dirname, '..', 'auth', 'user_db.json');
+    let user_db_path = path.join(__dirname, '../..', 'auth', 'user_db.json');
     fs.writeFileSync(user_db_path, JSON.stringify(this.users, null, 2));
     this.initUserDB();
   }
 
   updateTokenDB() {
-    let user_tokens_path = path.join(__dirname, '../..', 'db', 'user_tokens.json');
-    fs.writeFileSync(user_tokens_path, JSON.stringify(this.tokens, null, 2));
-    this.initTokenDB();
+
+  }
+
+  addTokenToDB(username, token) {
+    let tokenLocation = path.join(__dirname, '../..', 'db', 'user_tokens.json');
+    let tokens;
+
+    if (fs.existsSync(tokenLocation)) {
+      let jsonString = fs.readFileSync(tokenLocation);
+      tokens = JSON.parse(jsonString);
+    }
+    else {
+      tokens = {};
+    }
+
+    tokens[token] = username;
+    fs.writeFileSync(tokenLocation, JSON.stringify(tokens, null, 2));
   }
 
   initUserDB() {

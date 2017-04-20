@@ -88,6 +88,8 @@ export default class {
       let packageJSON = readJSON(packageInfoLocation);
 
       return packageJSON;
+    } else {
+      throw new Error("Could not get packageData");
     }
   }
 

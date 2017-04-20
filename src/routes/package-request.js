@@ -18,10 +18,7 @@ export default class {
       httpResponse.send(response);
     } else {
       // Package not found
-      httpResponse.status(404);
-      httpResponse.send({
-        Error: "package not found"
-      })
+      httpResponse.send("404, package not found");
     }
   }
 

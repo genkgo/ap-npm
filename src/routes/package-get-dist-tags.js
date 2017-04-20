@@ -15,7 +15,14 @@ export default class {
       version: httpRequest.params.version,
     });
 
-    let distTags = packageJson['dist-tags'];
+    let distTags;
+
+    try {
+      distTags = packageJson['dist-tags'];
+    } catch (err) {
+      httpResponse.send("404, could not get dist-tags");
+      return;
+    }
 
     httpResponse.send(distTags);
   }

@@ -1,7 +1,5 @@
 import crypto from 'crypto';
-import path from 'path';
-import fs from 'fs';
-
+import config from '../config';
 
 export default class {
 
@@ -21,57 +19,60 @@ export default class {
       type: httpRequest.body.type
     };
 
-    let addTokenToDB = (username, token) => {
-      let tokenLocation = path.join(__dirname, '../..', 'db', 'user_tokens.json');
-      let tokens;
-
-      if (fs.existsSync(tokenLocation)) {
-        let jsonString = fs.readFileSync(tokenLocation);
-        tokens = JSON.parse(jsonString);
-      }
-      else {
-        tokens = {};
-      }
-
-      tokens[token] = username;
-      fs.writeFileSync(tokenLocation, JSON.stringify(tokens, null, 2));
-    };
-
-    if (this.auth.userExists(userInfo.username)) {
-      let token = crypto.randomBytes(64).toString('hex');
-      let result = this.auth.userLogin(userInfo.username, userInfo.password, userInfo.email);
-
-      if (result === true) {
-        console.log("User logged in: " + userInfo.username + ', ' + userInfo.email);
+    try {
+      if (this.loginUser(userInfo)) {
+        let token = this.generateToken(userInfo);
         httpResponse.status(201);
         httpResponse.send({
           token: token
         });
-        addTokenToDB(userInfo.username, token);
-      } else {
-        httpResponse.status(404).send({
-          Error: "Could not login user"
-        });
+        return;
       }
-    }
+    } catch (err) {}
 
-    // User doesn't exist, try to create user
-    else {
-      if (this.auth.userAdd(userInfo.username, userInfo.password, userInfo.email)) {
-        let token = crypto.randomBytes(64).toString('hex');
-        addTokenToDB(userInfo.username, token);
-        httpResponse.status(201);
-        httpResponse.send({
-          ok: "you are authenticated as '" + userInfo.username + "'",
-          token: token
-        });
-      } else {
-        httpResponse.status(400).send({
-          Error: "Could not create user"
-        });
+    if (config.auth.register === false) {
+      httpResponse.send("404, Could not login user");
+    } else {
+      try {
+        if (this.createUser(userInfo)) {
+          let token = this.generateToken(userInfo);
+          httpResponse.status(201);
+          httpResponse.send({
+            token: token
+          });
+          return;
+        }
+      } catch (err) {
+        // Cannot create user
+        httpResponse.send("400, Could not create user");
+        return;
       }
-    }
 
+      httpResponse.send("404, Could not login or register user");
+    }
+  }
+
+  createUser(userInfo) {
+    let userCreated = this.auth.userAdd(userInfo.username, userInfo.password, userInfo.email);
+    if (userCreated) {
+      return true;
+    } else {
+      throw new Error("Could not create user");
+    }
+  }
+
+  loginUser(userInfo) {
+    try {
+      return this.auth.userLogin(userInfo.username, userInfo.password, userInfo.email);
+    } catch (err) {
+      throw new Error("Could not login user");
+    }
+  }
+
+  generateToken(userInfo) {
+    let token = crypto.randomBytes(64).toString('hex');
+    this.auth.addTokenToDB(userInfo.username, token);
+    return token;
   }
 
 }

@@ -10,20 +10,20 @@ export default class {
   */
   process(httpRequest, httpResponse) {
     let token = httpRequest.headers.authorization.substr(7);
-
-    let userInfo = this.auth.verifyToken(token);
-
-    if (userInfo) {
-      httpResponse.send({
-        username: "you are logged in as '" + userInfo + "'"
-      });
-    } else {
+    let user;
+    try {
+      user = this.auth.verifyToken(token);
+    } catch (err) {
       // User not valid
       httpResponse.status(401);
-      httpResponse.send({
-        Error: 'invalid user'
-      });
+      httpResponse.send('401, invalid user');
+      return;
     }
+
+    // User valid
+    httpResponse.send({
+      username: "you are logged in as '" + userInfo + "'"
+    });
   }
 
 }
