@@ -21,7 +21,7 @@ export default class {
       // User not valid
       httpResponse.status(401);
       httpResponse.send({
-        err: 'invalid user'
+        Error: 'invalid user'
       });
     }
   }
