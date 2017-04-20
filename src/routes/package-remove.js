@@ -6,7 +6,7 @@ export default class {
 
   /*
   * Not implemented or tested yet
-  * TODO: Make an option to remove a package outside of npm
+  * TODO: Make an option to remove a package outside of npm (npm deprecate, npm unpublish)
   */
   process (request, response) {
     let packageName = request.get('name');
