@@ -24,7 +24,6 @@ export default class {
 
   userLogin(username, password, email) {
     try {
-      console.log("working");
       if (this.users[username]['password'] === js_sha.sha256(password) && this.users[username]['email'] === email) {
         return true;
       }
@@ -121,6 +120,9 @@ export default class {
         return Promise.reject("Users are not allowed to publish");
       }
     }
+
+    // If anything fails
+    return Promise.reject();
   }
 
   verifyToken(token) {
@@ -156,7 +158,7 @@ export default class {
   initTokenDB() {
     let user_token_path = path.join(__dirname, '../..', 'db', 'user_tokens.json');
     try {
-      let user_tokens_json = fs.readFileSync(user_tokens_path, 'utf8');
+      let user_tokens_json = fs.readFileSync(user_token_path, 'utf8');
       this.tokens = JSON.parse(user_tokens_json);
     } catch (e) {
       this.tokens = {};
