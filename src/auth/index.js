@@ -163,6 +163,7 @@ export default class {
 
     tokens[token] = username;
     fs.writeFileSync(tokenLocation, JSON.stringify(tokens, null, 2));
+    this.initTokenDB();
   }
 
   initUserDB() {
