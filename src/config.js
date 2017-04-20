@@ -1,8 +1,10 @@
+import path from 'path';
+
 export default {
 
   "storage": {
     "name": "filesystem",
-    "directory": "/workspace/testStorage"
+    "directory": path.join(__dirname, '../', 'storage', 'user_db.json')
   },
 
   "port": 4321,

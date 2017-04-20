@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import js_sha from 'js-sha256';
 import config from '../config';
+import mkdirp from 'mkdirp';
 
 
 /*
@@ -16,6 +17,7 @@ export default class {
     /*
     * If a new authentication method has been added, comment out the inits.
     */
+    this.dbLocation = path.join(__dirname, '../..', 'db');
     this.initUserDB();
     this.initTokenDB();
     this.settings = config.auth;
@@ -169,6 +171,14 @@ export default class {
 
   initUserDB() {
     let user_db_path = path.join(__dirname, '../..', 'db', 'user_db.json');
+
+    if (!fs.existsSync(this.dbLocation)) {
+      try {
+          mkdirp(this.dbLocation);
+      } catch (err) {
+        console.log("Error making userDB folder, ap-npm might malfunction");
+      }
+    }
     try {
       let user_db_json = fs.readFileSync(user_db_path, 'utf8');
       this.users = JSON.parse(user_db_json);

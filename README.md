@@ -11,6 +11,10 @@ To start the server: `npm start <options>`
 - `--serve` start listening
 - `--port` overwrite used port
 
+##### To publish package:
+`npm publish --registry=http://hostname:port`
+Note: `npm publish @myco/myPackage` won't work as 
+it will try to publish the package to https://registry.npmjs.org/
 ##### To install package:
 `npm install @myco/myPackage`
 ##### To login:
@@ -33,9 +37,14 @@ ap-npm has been tested with:
 
 ## Authentication
 
-ap-npm has a simple local authentication method implemented, but we recommend anyone who uses this project to implement their own. There are 3 functions in `src/auth/index.js`: userLogin, userAdd and userRemove. userRemove doesn't do anything yet as it is not implemented in npm.
- 
- userAdd and userLogin can be changed to anything you want. As long as the functions return true or false (so external authentication is also possible, which was one of the main reasons behind ap-npm).
+ap-npm has a simple local authentication method implemented, 
+but we recommend anyone who uses this project to implement their own. 
+There are 3 functions in `src/auth/index.js`: userLogin, userAdd and userRemove. 
+userRemove doesn't do anything yet as it is not implemented in npm.
+
+userAdd and userLogin can be changed to anything you want. 
+As long as the functions return true or false (so external authentication is also possible, 
+which was one of the main reasons behind ap-npm).
 
 ## Progress
 Everything should be working. If there is functionality in npm that isn't supported by ap-npm, please create an issue on Github.

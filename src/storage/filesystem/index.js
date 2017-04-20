@@ -4,11 +4,21 @@ import semver from 'semver';
 import config from './../../config';
 import readJSON from './utils/read-json';
 import writeJSON from './utils/write-json';
+import mkdirp from 'mkdirp';
 
 export default class {
 
   constructor() {
     this.storageLocation = config.storage.directory;
+
+    try {
+        if (!fs.existsSync(config.storage.directory)) {
+            mkdirp(config.storage.directory);
+        }
+    } catch (err) {
+      console.log("Could not create storage directory, ap-npm might malfunction\n", err.toString());
+    }
+
   }
 
   removePackage(packageName) {
