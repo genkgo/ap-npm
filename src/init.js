@@ -25,7 +25,7 @@ container.set('route-package-request', function () {
   return new Route(container.get('storage'));
 });
 
-container.set('route-package-publish', function () {
+container.set('route-package-canPublish', function () {
   let Route = require('./routes/package-publish').default;
   return new Route(container.get('storage'), container.get('package-validator'));
 });

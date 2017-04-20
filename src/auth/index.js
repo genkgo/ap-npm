@@ -90,7 +90,37 @@ export default class {
   }
 
   shouldBeAbleTo(accessType, packageName, accessToken) {
-    return Promise.resolve();
+    let accessToken = accessToken.substr(7);
+
+    if (config.auth.public === true) {
+      return Promise.resolve();
+    }
+
+    if (accessType === 'access') {
+      if (config.auth.users.canAccess) {
+        let user = this.verifyToken(accessToken);
+        if (user) {
+          return Promise.resolve();
+        } else {
+          return Promise.reject("Invalid user");
+        }
+      } else {
+        return Promise.reject("Users are not allowed access");
+      }
+    }
+
+    else if (accessType === 'publish') {
+      if (config.auth.users.canPublish) {
+        let user = this.verifyToken(accessToken);
+        if (user) {
+          return Promise.resolve();
+        } else {
+          return Promise.reject("Invalid user");
+        }
+      } else {
+        return Promise.reject("Users are not allowed to publish");
+      }
+    }
   }
 
   verifyToken(token) {

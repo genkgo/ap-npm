@@ -10,9 +10,13 @@ export default {
 
   /*
   * 'register': set availability of user-registration
-  * 'public': make packages publicly available
+  * 'public': make everything publicly available
   */
   "auth": {
+    "users": {
+      "canPublish": true,
+      "canAccess": true
+    },
     "register": true,
     "public": false,
     "remove": false

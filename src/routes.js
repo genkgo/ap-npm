@@ -46,17 +46,17 @@ export default function (app, container) {
 
   // *** INSTALL ***
   // Get version of package --- WORKING
-  app.get('/:package/:version?', access.can('access'), function(req, res, next) {
+  app.get('/:package/:version?', access.can('canAccess'), function(req, res, next) {
     let route = container.get('route-package-request');
     route.process(req, res);
   });
   // Get dist-tags of package --- Working?
-  app.get('/-/package/:package/dist-tags', function(req, res, next) {
+  app.get('/-/package/:package/dist-tags', access.can('canAccess'), function(req, res, next) {
     let route = container.get('route-package-get-dist-tags');
     route.process(req, res);
   });
   // Request for package file data --- WORKING
-  app.get('/:package/-/:filename', access.can('access'), function(req, res, next) {
+  app.get('/:package/-/:filename', access.can('canAccess'), function(req, res, next) {
     let route = container.get('route-package-get');
     route.process(req, res);
   });
@@ -64,8 +64,8 @@ export default function (app, container) {
 
   // *** PUBLISH ***
   // TODO: We have to route the ?write=true route seperately for support for `npm deprecate` && `npm unpublish`
-  app.put('/:package/:_rev?/:revision?', function(req, res, next) {
-    let route = container.get('route-package-publish');
+  app.put('/:package/:_rev?/:revision?', access.can('canPublish'), function(req, res, next) {
+    let route = container.get('route-package-canPublish');
     route.process(req, res);
   });
 
