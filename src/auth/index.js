@@ -11,20 +11,10 @@ import config from '../config';
 * We promote implementing a proper authentication method.
 */
 export default class {
+
   constructor() {
-    let user_db_path = path.join(__dirname, '../..', 'db', 'user_db.json');
-    let user_tokens_path = path.join(__dirname, '../..', 'db', 'user_tokens.json');
-
-    try {
-      let user_db_json = fs.readFileSync(user_db_path, 'utf8');
-      let user_tokens = fs.readFileSync(user_tokens_path, 'utf8');
-      this.users = JSON.parse(user_db_json);
-      this.tokens = JSON.parse(user_tokens);
-    } catch (e) {
-      this.users = {};
-      this.tokens = {};
-    }
-
+    this.initUserDB();
+    this.initTokenDB();
     this.settings = config.auth;
   }
 
@@ -34,8 +24,8 @@ export default class {
 
   userLogin(username, password, email) {
     try {
+      console.log("working");
       if (this.users[username]['password'] === js_sha.sha256(password) && this.users[username]['email'] === email) {
-        // User valid
         return true;
       }
     } catch (err) {
@@ -43,8 +33,21 @@ export default class {
     }
   }
 
-  userLogout(username) {
-    // Not used right now
+  userLogout(token) {
+    let user_tokens_path = path.join(__dirname, '../..', 'db', 'user_tokens.json');
+    let allTokens;
+
+    try {
+      let tokenString = fs.readFileSync(user_tokens_path, 'utf8');
+      allTokens = JSON.parse(tokenString);
+      delete allTokens[token];
+    } catch (e) {
+      // On error: just make the tokens_db an empty db.
+      allTokens = {};
+    }
+
+    fs.writeFileSync(user_tokens_path, JSON.stringify(allTokens, null, 2));
+    this.updateTokenDB();
   }
 
   userAdd(username, password, email) {
@@ -58,7 +61,7 @@ export default class {
           password: js_sha.sha256(password),
           email: email,
         };
-        this.updateDB();
+        this.updateUserDB();
 
         // Success
         return true;
@@ -70,14 +73,17 @@ export default class {
 
   userRemove(username, password) {
     if (this.settings.remove) {
-      if (!!this.users[username] && !!this.users[username][password] === js_sha.sha256(password)) {
-        this.users.remove(username);
-        this.updateDB();
+      try {
+        if (this.users[username] && this.users[username][password] === js_sha.sha256(password)) {
+          this.users.remove(username);
+          this.updateUserDB();
 
-        // Success
-        return true;
+          // Success
+          return true;
+        }
+      } catch (err) {
+        return false;
       }
-
     } else {
       return false;
     }
@@ -95,9 +101,36 @@ export default class {
     return JSON.parse(fs.readFileSync(jsonLocation));
   }
 
-  updateDB() {
+  updateUserDB() {
     let user_db_path = path.join(__dirname, '..', 'auth', 'user_db.json');
     fs.writeFileSync(user_db_path, JSON.stringify(this.users, null, 2));
+    this.initUserDB();
+  }
+
+  updateTokenDB() {
+    let user_tokens_path = path.join(__dirname, '../..', 'db', 'user_tokens.json');
+    fs.writeFileSync(user_tokens_path, JSON.stringify(this.tokens, null, 2));
+    this.initTokenDB();
+  }
+
+  initUserDB() {
+    let user_db_path = path.join(__dirname, '../..', 'db', 'user_db.json');
+    try {
+      let user_db_json = fs.readFileSync(user_db_path, 'utf8');
+      this.users = JSON.parse(user_db_json);
+    } catch (err) {
+      this.users = {};
+    }
+  }
+
+  initTokenDB() {
+    let user_token_path = path.join(__dirname, '../..', 'db', 'user_tokens.json');
+    try {
+      let user_tokens_json = fs.readFileSync(user_tokens_path, 'utf8');
+      this.tokens = JSON.parse(user_tokens_json);
+    } catch (e) {
+      this.tokens = {};
+    }
   }
 
 }
