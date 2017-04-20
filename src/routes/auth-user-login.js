@@ -50,7 +50,7 @@ export default class {
         addTokenToDB(userInfo.username, token);
       } else {
         httpResponse.status(404).send({
-          Error: "authentication failed"
+          Error: "Could not login user"
         });
       }
     }
@@ -58,18 +58,17 @@ export default class {
     // User doesn't exist, try to create user
     else {
       if (this.auth.userAdd(userInfo.username, userInfo.password, userInfo.email)) {
+        let token = crypto.randomBytes(64).toString('hex');
+        addTokenToDB(userInfo.username, token);
         httpResponse.status(201);
         httpResponse.send({
           ok: "you are authenticated as '" + userInfo.username + "'",
           token: token
         });
-        return;
       } else {
-        httpResponse.status(400);
-        httpResponse.send({
-          Error: "could not login or create user"
+        httpResponse.status(400).send({
+          Error: "Could not create user"
         });
-        return;
       }
     }
 
