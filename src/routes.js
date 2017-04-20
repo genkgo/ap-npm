@@ -12,13 +12,14 @@ export default function (app, container) {
   app.use(logger);
   app.use(bodyParser.json({ strict: false, limit: '10mb' }));
 
-  // encode / in a scoped package name to be matched as a single parameter in routes
+
+  // Rewrite the requested url when a scoped package is used
   app.use(function(req, res, next) {
-    if (req.url.indexOf('@') !== -1) {
-      // e.g.: /@org/pkg/1.2.3 -> /@org%2Fpkg/1.2.3, /@org%2Fpkg/1.2.3 -> /@org%2Fpkg/1.2.3
-      req.url = req.url.replace(/^(\/@[^\/%]+)\/(?!$)/, '$1%2F')
+    if (req.url[1] === '@') {
+      let packageName = req.url.indexOf('%2f') + 3;
+      req.url = '/' + req.url.substr(packageName);
     }
-    next()
+    next();
   });
 
   // *** AUTH ***
@@ -46,17 +47,17 @@ export default function (app, container) {
 
   // *** INSTALL ***
   // Get version of package --- WORKING
-  app.get('/:package/:version?', access.can('canAccess'), function(req, res, next) {
+  app.get('/:package/:version?', access.can('access'), function(req, res, next) {
     let route = container.get('route-package-request');
     route.process(req, res);
   });
   // Get dist-tags of package --- Working?
-  app.get('/-/package/:package/dist-tags', access.can('canAccess'), function(req, res, next) {
+  app.get('/-/package/:package/dist-tags', access.can('access'), function(req, res, next) {
     let route = container.get('route-package-get-dist-tags');
     route.process(req, res);
   });
   // Request for package file data --- WORKING
-  app.get('/:package/-/:filename', access.can('canAccess'), function(req, res, next) {
+  app.get('/:package/-/:filename', access.can('access'), function(req, res, next) {
     let route = container.get('route-package-get');
     route.process(req, res);
   });
@@ -64,7 +65,7 @@ export default function (app, container) {
 
   // *** PUBLISH ***
   // TODO: We have to route the ?write=true route seperately for support for `npm deprecate` && `npm unpublish`
-  app.put('/:package/:_rev?/:revision?', access.can('canPublish'), function(req, res, next) {
+  app.put('/:package/:_rev?/:revision?', access.can('publish'), function(req, res, next) {
     let route = container.get('route-package-canPublish');
     route.process(req, res);
   });
