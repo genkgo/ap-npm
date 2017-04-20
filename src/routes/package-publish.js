@@ -12,8 +12,6 @@ export default class {
   */
   process(httpRequest, httpResponse) {
     let packageData = httpRequest.body;
-    console.log(packageData);
-
 
     if (!packageData._attachments) {
       if (this.deprecateUpdater(packageData)) {
@@ -32,7 +30,6 @@ export default class {
           return;
         }
       } catch (err) {
-        console.log(err);
         httpResponse.send("422, cannot publish, filesystem error");
         return;
       }
@@ -52,7 +49,6 @@ export default class {
       try {
         this.storage.writePackage(packageData);
       } catch (err) {
-        console.log(err);
         httpResponse.send("421, " + err.toString());
         return;
       }
@@ -63,7 +59,6 @@ export default class {
       try {
         this.storage.writeNewPackage(packageData);
       } catch (err) {
-        console.log(err);
         httpResponse.send("421, " + err.toString());
         return;
       }

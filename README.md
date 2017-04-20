@@ -16,13 +16,5 @@ To start the server: `npm start <options>`
 - `--serve` start listening
 - `--port` overwrite used port
 
-###### what works:
- - `npm install 'package'` serves the file requested (also works with @'scope' or --scope='scope')
- - `npm adduser/login` works with a local authentication method (we recommend implementing your own when using ap-npm)
- - `npm publish` stores the package in storage, package is immediately available through `npm install`
- - `npm dist-tag` functionality all works
- - `npm unpublish` works both with versions and --force
- 
- ###### work in progress:
-  - Implement methods like unpublish, deprecate
-  - Implement route requests that are uncommon, but could be used
+###### Progress of ap-npm
+Everything should be working. If there is functionality in npm that isn't supported by ap-npm, please create an issue on Github.
