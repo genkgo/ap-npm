@@ -22,7 +22,7 @@ export default class {
 
     // User valid
     httpResponse.send({
-      username: "you are logged in as '" + userInfo + "'"
+      username: "you are logged in as '" + user + "'"
     });
   }
 
