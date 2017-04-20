@@ -115,7 +115,6 @@ export default function (app, container) {
 
 
   // *** PUBLISH ***
-  // TODO: We have to route the ?write=true route seperately for support for `npm deprecate` && `npm unpublish`
   app.put('/:package/:_rev?/:revision?', access.can('publish'), function(req, res, next) {
     let route = container.get('route-package-publish');
     route.process(req, res);
