@@ -32,7 +32,7 @@ export default class {
 
   userAdd(username, password, email) {
     if (this.settings.register) {
-      if (typeof(this.users[username]) !== "object") {
+      if (typeof(this.users[username]) === "object") {
         // User already exists
         return false;
       } else {
@@ -140,13 +140,14 @@ export default class {
   }
 
   updateUserDB() {
-    let user_db_path = path.join(__dirname, '../..', 'auth', 'user_db.json');
+    let user_db_path = path.join(__dirname, '../..', 'db', 'user_db.json');
     fs.writeFileSync(user_db_path, JSON.stringify(this.users, null, 2));
     this.initUserDB();
   }
 
   updateTokenDB() {
-
+    let tokenLocation = path.join(__dirname, '../..', 'db', 'user_tokens.json');
+    fs.writeFileSync(tokenLocation, JSON.stringify(this.tokens, null, 2));
   }
 
   addTokenToDB(username, token) {
