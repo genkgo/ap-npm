@@ -175,20 +175,6 @@ export default class {
     return versionExists && fileExists;
   }
 
-  getAvailableVersions(packageName) {
-    let packageInfoLocation = this.storageLocation + '/' + packageName + '/package.json';
-    let packageJSON = readJSON(packageInfoLocation);
-
-    return packageJSON['versions'];
-  }
-
-  getLatestVersion(packageName) {
-    let packageInfoLocation = this.storageLocation + '/' + packageName + '/package.json';
-    let packageJSON = readJSON(packageInfoLocation);
-
-    return packageJSON['dist-tags']['latest'];
-  }
-
   getPackageJson(packageName) {
     let packageInfoLocation = this.storageLocation + '/' + packageName + '/package.json';
     return readJSON(packageInfoLocation);
