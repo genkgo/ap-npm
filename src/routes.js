@@ -15,9 +15,10 @@ export default function (app, container) {
 
   // Rewrite the requested url when a scoped package is used
   app.use(function(req, res, next) {
-    if (req.url[1] === '@') {
-      let packageName = req.url.indexOf('%2f') + 3;
-      req.url = '/' + req.url.substr(packageName);
+    let url = decodeURIComponent(req.url);
+    if (url[1] === '@') {
+      let packageName = url.lastIndexOf('/') + 1;
+      req.url = '/' + encodeURIComponent(url.substr(packageName));
     }
     next();
   });
