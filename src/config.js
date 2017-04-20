@@ -13,9 +13,8 @@ export default {
   * 'public': make packages publicly available
   */
   "auth": {
-    "register": false,
+    "register": true,
     "public": false,
     "remove": false
   }
-
 }
