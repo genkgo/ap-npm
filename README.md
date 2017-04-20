@@ -21,6 +21,7 @@ To start the server: `npm start <options>`
  - `npm adduser/login` works with a local authentication method (we recommend implementing your own when using ap-npm)
  - `npm publish` stores the package in storage, package is immediately available through `npm install`
  - `npm dist-tag` functionality all works
+ - `npm unpublish` works both with versions and --force
  
  ###### work in progress:
   - Implement methods like unpublish, deprecate
