@@ -20,5 +20,11 @@ export default {
     "register": true,
     "public": false,
     "remove": true
+  },
+
+  "ssl": {
+    "enabled": false,
+    "key": "",
+    "cert": ""
   }
 }

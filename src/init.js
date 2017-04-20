@@ -1,5 +1,7 @@
 import Container from './util/container';
 import config from './config';
+import http from 'http';
+import https from 'https';
 
 let container = new Container();
 
@@ -16,7 +18,6 @@ container.set('storage-couch', function () {
 container.set('storage', function () {
   return container.get('storage-' + config.storage.name);
 });
-
 
 
 //    *** ROUTE ***
@@ -77,15 +78,11 @@ container.set('route-auth-user-logout', function () {
 });
 
 
-
-
 //    *** COMMANDS ***
 container.set('command-serve', function () {
   let Command = require('./commands/serve').default;
-  return new Command(container.get('express'), config.port);
+  return new Command(container.get('express'), config.port, config.ssl);
 });
-
-
 
 
 //    *** UTILS ***
