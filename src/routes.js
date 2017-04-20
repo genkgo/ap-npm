@@ -9,6 +9,7 @@ export default function (app, container) {
 
   let access = new Access(container.get('auth'));
 
+  app.use(logger);
   app.use(bodyParser.json({ strict: false, limit: '10mb' }));
 
   // Rewrite the requested url when a scoped package is used
@@ -40,7 +41,6 @@ export default function (app, container) {
           newUrl +=  '/' + urlSlices[i];
         }
         req.url = decodeURIComponent(newUrl);
-        console.log(req.url);
       }
     }
     next();
@@ -58,7 +58,6 @@ export default function (app, container) {
     next();
   });
 
-  app.use(logger);
 
   // *** AUTH ***
   app.put('/-/user/org.couchdb.user:_rev?/:revision?', function(req, res, next) {
