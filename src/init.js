@@ -1,7 +1,5 @@
 import Container from './util/container';
 import config from './config';
-import http from 'http';
-import https from 'https';
 
 let container = new Container();
 
