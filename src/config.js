@@ -10,7 +10,7 @@ export default {
   /*
   * 'register': set availability of user-registration
   * 'public': make everything publicly available
-  * 'remove': make it possible to remove, unpublish or overwrite packages *** not implemented yet
+  * 'remove': make it possible to remove, unpublish or overwrite packages
   */
   "auth": {
     "users": {
