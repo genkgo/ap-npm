@@ -125,6 +125,13 @@ export default function (app, container) {
     route.process(req, res);
   });
 
+  // To test if ap-npm is running
+  app.get('/', function(req, res, next) {
+    if (req.url === '/' || req.url === '') {
+      res.send("ap-npm is running\n");
+    }
+  });
+
 
   return app
 }

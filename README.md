@@ -46,6 +46,23 @@ is used ap-npm will only be accessible through https.
 If ap-npm fails to use read or use the ssl files, it 
 will default back to http.
 
+## Using Docker:
+Setup the config in `src/config/js` any way you like, run the following command to build the image:
+
+`docker build -t ap-npm .`
+
+Run the following command to start your image:
+
+`docker run -p <port>:4444 -d ap-npm`
+
+To test if ap-npm is running:
+
+`curl http://localhost:<port>` 
+
+should return: 
+
+`ap-npm is running`
+
 ## Authentication
 ap-npm has a simple local authentication method implemented, 
 but we recommend anyone who uses this project to implement their own. 

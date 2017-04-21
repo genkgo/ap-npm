@@ -7,7 +7,7 @@ export default {
     "directory": path.join(__dirname, '../', 'storage', 'user_db.json')
   },
 
-  "port": 4321,
+  "port": 4444,
 
   /*
   * 'register': set availability of user-registration
