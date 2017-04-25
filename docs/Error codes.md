@@ -1,4 +1,6 @@
 ## ap-npm error-status codes
+###### 401:
+Unauthorized
 ###### 421:
 Something went wrong while creating package.
 ###### 422: 
