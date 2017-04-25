@@ -9,25 +9,34 @@ as ap-npm doesn't function as a caching/proxy server like Sinopia/Verdaccio.
 `npm start -- <command> <options>`
 
 #### Commands
-- `serve | s` start listening
-     - `--port` overwrite used port
-     - `--storage` overwrite storage location
-     - `--ssl` enable ssl
-        - `--sslkey` overwrite ssl key location
-        - `--sslcert` overwrite ssl cert location
-
+```
+serve|s       start listening
+     --port         overwrite used port
+     --storage      overwrite storage location
+     --ssl          enable ssl
+     --sslkey       overwrite ssl key location
+     --sslcert      overwrite ssl cert location
+```
 (Note: above options can also be set in /src/config.js)
 
 ##### To publish a package:
 ```
 npm publish --registry=http://hostname:port`
 ```
-Note: `npm publish @myco/myPackage` won't work as 
+Note: 
+```
+npm publish @myco/myPackage
+``` 
+won't work as 
 it will try to publish the package to https://registry.npmjs.org/
 ##### To install a package:
-`npm install @myco/myPackage`
+```
+npm install @myco/myPackage
+```
 ##### To login:
-`npm login --registry=http://hostname:port --scope=@myco`
+```
+npm login --registry=http://hostname:port --scope=@myco
+```
 
 Note: `npm login` is an alias for `npm adduser`
 ##### To logout:
