@@ -6,12 +6,17 @@ It should be used together with [npm-scope](https://docs.npmjs.com/misc/scope),
 as ap-npm doesn't function as a caching/proxy server like Sinopia/Verdaccio. 
 
 ## Usage:
-### Commands:
-To start the server: `npm start <options>`
+`npm start <command> <options>`
 
-#### Options:
-- `--serve` start listening
-- `--port` overwrite used port
+#### Commands
+- `serve | s` start listening
+     - `--port` overwrite used port
+     - `--storage` overwrite storage location
+     - `--ssl` enable ssl
+        - `--sslkey` overwrite ssl key location
+        - `--sslcert` overwrite ssl cert location
+
+(Note: above options can also be set in /src/config.js)
 
 ##### To publish a package:
 `npm publish --registry=http://hostname:port`
