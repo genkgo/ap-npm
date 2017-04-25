@@ -11,6 +11,7 @@ commander
   .option('--ssl', 'use ssl')
   .option('--sslkey ["/location/to/ssl/key]', 'ssl key to use')
   .option('--sslcert ["/location/to/ssl/cert"]', 'ssl cert to use')
+  .option('--register', 'make registration available')
   .action(function(options) {
 
     if (options.storage) {
@@ -18,6 +19,9 @@ commander
     }
     if (options.port) {
       config.port = options.port;
+    }
+    if (options.register) {
+      config.auth.register = true;
     }
     if (options.ssl) {
       if (options.sslkey && options.sslcert) {
