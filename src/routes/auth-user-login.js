@@ -31,7 +31,7 @@ export default class {
     } catch (err) {}
 
     if (config.auth.register === false) {
-      httpResponse.send("404, Could not login user");
+      httpResponse.send("401, Could not create user");
     } else {
       try {
         if (this.createUser(userInfo)) {
