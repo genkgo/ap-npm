@@ -1,10 +1,8 @@
-import path from 'path';
-
 export default {
 
   "storage": {
     "name": "filesystem",
-    "directory": path.join(__dirname, '../', 'storage', 'user_db.json')
+    "directory": "/ap-npm/storage"
   },
 
   "port": 4444,
@@ -19,14 +17,14 @@ export default {
       "canPublish": true,
       "canAccess": true
     },
-    "register": true,
+    "register": false,
     "public": false,
     "remove": true
   },
 
   "ssl": {
-    "enabled": false,
-    "key": "",
-    "cert": ""
+    "enabled": true,
+    "key": "/ap-npm/ssl/sslkey.key",
+    "cert": "/ap-npm/ssl/sslcert.crt"
   }
 }

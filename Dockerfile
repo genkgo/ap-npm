@@ -1,13 +1,18 @@
 FROM node:6.10.2
 
-RUN mkdir -p /usr/src/ap-npm
-WORKDIR /usr/src/ap-npm
+RUN mkdir -p /srv/ap-npm
+RUN mkdir -p /ap-npm/storage
+RUN mkdir -p /ap-npm/ssl
 
-COPY package.json /usr/src/ap-npm
+WORKDIR /srv/ap-npm
+
+VOLUME /ap-npm:/ap-npm
+
+COPY package.json /srv/ap-npm
 RUN npm install
 
-COPY . /usr/src/ap-npm
+COPY . /srv/ap-npm
 
 EXPOSE 4444
 
-CMD [ "npm", "start", "--port=4444"]
+CMD [ "npm", "start", "--", "serve"]

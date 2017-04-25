@@ -19,8 +19,9 @@ as ap-npm doesn't function as a caching/proxy server like Sinopia/Verdaccio.
 (Note: above options can also be set in /src/config.js)
 
 ##### To publish a package:
-`npm publish --registry=http://hostname:port`
-
+```
+npm publish --registry=http://hostname:port`
+```
 Note: `npm publish @myco/myPackage` won't work as 
 it will try to publish the package to https://registry.npmjs.org/
 ##### To install a package:
@@ -30,16 +31,23 @@ it will try to publish the package to https://registry.npmjs.org/
 
 Note: `npm login` is an alias for `npm adduser`
 ##### To logout:
-`npm logout --scope=@myco`
+```
+npm logout --scope=@myco
+```
 ##### Set registry:
-`npm config set @myco:registry http://reg.example.com`
+```
+npm config set @myco:registry http://reg.example.com
+```
 ##### Set dependencies:
-`"dependencies": {
+```
+"dependencies": {
    "@myorg/mypackage": "^1.3.0"
- }`
-##### Requiring scoped packages:
-`require('@myorg/mypackage')`
-
+ }
+```
+##### Importing scoped packages:
+```
+require('@myorg/mypackage')
+```
 ## Requirements:
 ap-npm has been tested with:
 - npm: 3.10 or higher
@@ -52,21 +60,37 @@ If ap-npm fails to use read or use the ssl files, it
 will default back to http.
 
 ## Using Docker:
-Setup the config in `src/config/js` any way you like, run the following command to build the image:
+Setup the config in `src/config.js`, run the following command to build the image:
 
-`docker build -t ap-npm .`
+```
+docker build -t ap-npm .
+```
 
+##### Running the docker image
 Run the following command to start your image:
 
-`docker run -p <port>:4444 -d ap-npm`
+```
+docker run -p <port>:4444 -d ap-npm
+```
 
-To test if ap-npm is running:
-
-`curl http://localhost:<port>` 
-
+This will start the ap-npm server on the given port, to test if ap-npm is running:
+```
+curl http://localhost:<port> 
+```
 should return: 
 
-`ap-npm is running`
+```
+ap-npm is running
+```
+
+##### Using mounted storage
+We recommend to run the ap-npm server using a mounted volume:
+
+```
+docker run -p <port>:4444 -d ap-npm -v <host-storage-dir>:/ap-npm
+```
+
+If you ever want to update ap-npm, this will make it easier to migrate data used by ap-npm as it is stored on the host system.
 
 ## Authentication
 ap-npm has a simple local authentication method implemented, 
@@ -75,9 +99,13 @@ There are 3 functions in `src/auth/index.js`: userLogin, userAdd and userRemove.
 userRemove doesn't do anything yet as it is not implemented in npm.
 
 userAdd and userLogin can be changed to anything you want. 
-As long as the functions return true or false (so external 
+As long as the functions return true or false according to loginstatus. (so external 
 authentication is also possible, 
 which was one of the main reasons behind ap-npm).
+
+Notes:
+- npm uses tokens to authorize users, it is currently not possible to let external authentication manage these tokens.
+- if you want to disable registration, just let userAdd return false.
 
 ## Progress
 Everything should be working. If there is functionality in npm that isn't 

@@ -81,7 +81,7 @@ export default class {
     let filePath = folderPath + '/' + fileName;
     let packageJSONPath = folderPath + '/package.json';
 
-    fs.mkdirSync(folderPath);
+    mkdirp.sync(folderPath);
     fs.writeFileSync(filePath, Buffer.from(packageData._attachments[fileName]['data'], 'base64'));
 
     let packageJSON = packageData;
