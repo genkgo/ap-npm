@@ -10,7 +10,7 @@ commander
   .option('--storage ["/location/to/storage"]', "storage location to use")
   .option('--ssl', 'use ssl')
   .option('--sslkey ["/location/to/ssl/key]', 'ssl key to use')
-  .option('--sslcert ["/location/to/ssl/cert"]')
+  .option('--sslcert ["/location/to/ssl/cert"]', 'ssl cert to use')
   .action(function(options) {
 
     if (options.storage) {
