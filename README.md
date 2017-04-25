@@ -6,7 +6,7 @@ It should be used together with [npm-scope](https://docs.npmjs.com/misc/scope),
 as ap-npm doesn't function as a caching/proxy server like Sinopia/Verdaccio. 
 
 ## Usage:
-`npm start <command> <options>`
+`npm start -- <command> <options>`
 
 #### Commands
 - `serve | s` start listening
