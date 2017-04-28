@@ -14,10 +14,12 @@ commander
       console.log("using config: " + config + '\n');
       container = containerInit(config);
     }
-    else if (fs.existsSync(path.join(__dirname, '../', config))) {
-      let configLocation = path.join(__dirname, '../', config);
-      console.log("using config: " + configLocation + '\n');
-      container = containerInit(configLocation);
+    else if (typeof config === 'string') {
+      if (fs.existsSync(path.join(__dirname, '../', config))) {
+        let configLocation = path.join(__dirname, '../', config);
+        console.log("using config: " + configLocation + '\n');
+        container = containerInit(configLocation);
+      }
     }
     else {
       console.log("using default config\n");
