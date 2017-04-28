@@ -17,13 +17,13 @@ export default class {
 
       if (user !== false) {
         httpResponse.send({
-          username: "you are logged in as '" + user + "'"
+          username: user
         });
         resolve();
       } else {
         reject();
       }
-    }).catch((err) => {
+    }).catch(() => {
       httpResponse.status(401);
       httpResponse.send('401, invalid user');
     });
