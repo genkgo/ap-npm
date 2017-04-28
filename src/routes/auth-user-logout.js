@@ -7,12 +7,15 @@ export default class {
   }
 
   process(httpRequest, httpResponse) {
-    let token = httpRequest.headers.authorization.substr(7);
-    this.auth.userLogout(token);
+    return new Promise((resolve, reject) => {
+      let token = httpRequest.headers.authorization.substr(7);
+      this.auth.userLogout(token);
 
-    httpResponse.status(200);
-    httpResponse.send({
-      ok: 'Logged out'
+      httpResponse.status(200);
+      httpResponse.send({
+        ok: 'Logged out'
+      });
+      resolve();
     });
   }
 }
