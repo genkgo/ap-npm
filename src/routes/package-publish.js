@@ -11,67 +11,90 @@ export default class {
   * Sends a 201 to let npm know package was published
   */
   process(httpRequest, httpResponse) {
+    return new Promise((resolve, reject) => {
     let packageData = httpRequest.body;
 
     if (!packageData._attachments) {
-      if (this.deprecateUpdater(packageData)) {
-        httpResponse.status(200).send({
-          ok: "packageJson udpated"
-        });
-        return;
-      }
-    }
-
-    // Error checking
-    if (this.packageValidator.doesPackageExist(packageData.name)) {
-      try {
-        if (this.packageValidator.doesVersionExist(packageData.name, packageData['dist-tags']['latest'])) {
-          httpResponse.send("422, cannot publish, version already exists");
-          return;
+      this.deprecateUpdater(packageData).then((result) => {
+        if (result) {
+          httpResponse.status(200).send({
+            ok: "packageJson updated"
+          });
+          resolve();
+        } else {
+          reject("420, error: cannot update");
         }
-      } catch (err) {
-        httpResponse.send("422, cannot publish, filesystem error");
-        return;
-      }
+      });
+    }
 
-      let distTag;
-      for (let key in packageData['dist-tags']) {
-        distTag = key;
-      }
+    this.packageValidator.doesPackageExist(packageData.name)
+      .then((result) => {
+      if (result === true) {
+        this.packageValidator.doesVersionExist(packageData.name, packageData['dist-tags']['latest'])
+          .then((result) => {
+          if (result === true) {
+            reject("422, cannot publish, version already exists");
+          } else {
 
-      if (this.packageValidator.hasDistTag(packageData.name, distTag)) {
-        if (!this.packageValidator.isVersionHigher(packageData.name, packageData['dist-tags'][distTag], distTag)) {
-          httpResponse.send("423, cannot publish, given version is invalid");
-          return;
+
+            let distTag;
+            for (let key in packageData['dist-tags']) {
+              distTag = key;
+            }
+
+            this.packageValidator.hasDistTag(packageData.name, distTag).then((result) =>  {
+              if (result === true) {
+                this.packageValidator.isVersionHigher(packageData.name, packageData['dist-tags'][distTag], distTag).then((result) => {
+                  if (result === false) {
+                    reject("423, cannot publish, given version is invalid");
+                  }
+                  else {
+                    this.storage.writePackage(packageData)
+                      .then((result) => {
+                        if (result === true) {
+                          httpResponse.status(201);
+                          httpResponse.send({
+                            ok: "package published"
+                          });
+                          resolve()
+                        } else {
+                          reject("421, error while writing package");
+                        }
+                      });
+                  }
+                })
+              } else {
+                reject("423, cannot publish, given version is invalid");
+              }
+            });
+          }});
+
+      } else {
+        this.storage.writeNewPackage(packageData)
+          .then((result) => {
+            if (result === true) {
+              httpResponse.status(201);
+              httpResponse.send({
+                ok: "package published"
+              });
+              resolve();
+            } else {
+              reject("421, error while writing package");
+            }
+          })
         }
-      }
-
-      try {
-        this.storage.writePackage(packageData);
-      } catch (err) {
-        httpResponse.send("421, " + err.toString());
-        return;
-      }
-    }
-
-    // Package doesn't exist yet
-    else {
-      try {
-        this.storage.writeNewPackage(packageData);
-      } catch (err) {
-        httpResponse.send("421, " + err.toString());
-        return;
-      }
-    }
-
-    httpResponse.status(201);
-    httpResponse.send({
-      ok: "package published"
-    });
+      });
+    }).catch((err) => {
+      httpResponse.send(err);
+    })
   }
 
   deprecateUpdater(packageData) {
-    return this.storage.updatePackageJson(packageData.name, packageData);
+    return new Promise((resolve) => {
+      this.storage.updatePackageJson(packageData.name, packageData).then((data) => {
+        resolve(data);
+      })
+    });
   }
 
 
