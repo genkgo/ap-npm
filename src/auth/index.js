@@ -6,7 +6,7 @@ import Method from './method';
 export default class {
 
   constructor() {
-    this.dbLocation = path.join(__dirname, '../..', 'db');
+    this.dbLocation = path.join(config.workDir, 'db');
     this.initTokenDB();
     this.settings = config.auth;
 
@@ -26,7 +26,7 @@ export default class {
   }
 
   userLogout(token) {
-    let user_tokens_path = path.join(__dirname, '../..', 'db', 'user_tokens.json');
+    let user_tokens_path = path.join(this.dbLocation, 'user_tokens.json');
     let allTokens;
 
     return new Promise((resolve, reject) => {
@@ -98,12 +98,12 @@ export default class {
 
 
   updateTokenDB() {
-    let tokenLocation = path.join(__dirname, '../..', 'db', 'user_tokens.json');
+    let tokenLocation = path.join(this.dbLocation, 'user_tokens.json');
     fs.writeFileSync(tokenLocation, JSON.stringify(this.tokens, null, 2));
   }
 
   addTokenToDB(username, token) {
-    let tokenLocation = path.join(__dirname, '../..', 'db', 'user_tokens.json');
+    let tokenLocation = path.join(this.dbLocation, 'user_tokens.json');
     let tokens;
 
     if (fs.existsSync(tokenLocation)) {
@@ -120,7 +120,7 @@ export default class {
   }
 
   initTokenDB() {
-    let user_token_path = path.join(__dirname, '../..', 'db', 'user_tokens.json');
+    let user_token_path = path.join(this.dbLocation, 'user_tokens.json');
     try {
       let user_tokens_json = fs.readFileSync(user_token_path, 'utf8');
       this.tokens = JSON.parse(user_tokens_json);

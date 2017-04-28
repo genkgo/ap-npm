@@ -4,7 +4,6 @@ import semver from 'semver';
 import config from './../../config';
 import readJSON from './utils/read-json';
 import writeJSON from './utils/write-json';
-import mkdirp from 'mkdirp';
 
 export default class {
 
@@ -13,7 +12,7 @@ export default class {
 
     try {
         if (!fs.existsSync(config.storage.directory)) {
-            mkdirp(config.storage.directory);
+            fs.mkdirSync(config.storage.directory, true);
         }
     } catch (err) {
       console.log("Could not create storage directory, ap-npm might malfunction\n", err.toString());
@@ -81,7 +80,7 @@ export default class {
     let filePath = folderPath + '/' + fileName;
     let packageJSONPath = folderPath + '/package.json';
 
-    mkdirp.sync(folderPath);
+    fs.mkdirSync(folderPath, true);
     fs.writeFileSync(filePath, Buffer.from(packageData._attachments[fileName]['data'], 'base64'));
 
     let packageJSON = packageData;

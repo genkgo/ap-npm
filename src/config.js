@@ -1,5 +1,7 @@
 export default {
 
+  "workDir": "/ap-npm",
+
   "storage": {
     "name": "filesystem",
     "directory": "/ap-npm/storage"
@@ -17,7 +19,7 @@ export default {
       "canPublish": true,
       "canAccess": true
     },
-    "register": false,
+    "register": true,
     "public": false,
     "remove": true
   },

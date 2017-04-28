@@ -11,7 +11,7 @@ import fs from 'fs';
  */
 export default class {
   constructor() {
-    this.dbLocation = path.join(__dirname, '../..', 'db');
+    this.dbLocation = path.join(config.workDir, 'db');
     this.initUserDB();
     this.settings = config.auth;
   }
@@ -85,13 +85,13 @@ export default class {
 
   // Just here for local auth
   initUserDB() {
-    let user_db_path = path.join(__dirname, '../..', 'db', 'user_db.json');
+    let user_db_path = path.join(this.dbLocation, 'user_db.json');
 
     if (!fs.existsSync(this.dbLocation)) {
       try {
-        mkdirp(this.dbLocation);
+        fs.mkdirSync(this.dbLocation, true);
       } catch (err) {
-        console.log("Error making userDB folder, ap-npm might malfunction");
+        console.log("Error making userDB folder (" + this.dbLocation + "), ap-npm might malfunction");
       }
     }
     try {
@@ -104,7 +104,7 @@ export default class {
 
   // Just here for local auth
   updateUserDB() {
-    let user_db_path = path.join(__dirname, '../..', 'db', 'user_db.json');
+    let user_db_path = path.join(this.dbLocation, 'user_db.json');
     fs.writeFileSync(user_db_path, JSON.stringify(this.users, null, 2));
     this.initUserDB();
   }
