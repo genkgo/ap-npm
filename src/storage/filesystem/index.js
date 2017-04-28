@@ -1,19 +1,20 @@
 import fs from 'fs';
 import rimraf from 'rimraf';
 import semver from 'semver';
-import config from './../../config';
 import readJSON from './utils/read-json';
 import writeJSON from './utils/write-json';
 
 export default class {
 
-  constructor() {
-    this.storageLocation = config.storage.directory;
+  constructor(config) {
+    this.config = config;
+
+    this.storageLocation = this.config.workDir + this.config.storage.directory;
 
     try {
-        if (!fs.existsSync(config.storage.directory)) {
-            fs.mkdirSync(config.storage.directory, '0777', true);
-        }
+      if (!fs.existsSync(this.storageLocation)) {
+          fs.mkdirSync(this.storageLocation, '0777', true);
+      }
     } catch (err) {
       console.log("Could not create storage directory, ap-npm might malfunction\n", err.toString());
     }
@@ -25,7 +26,6 @@ export default class {
 
     if (!fs.existsSync(packageLocation + '/package.json')) {
       throw new Error("Invalid request, aborting");
-      return;
     }
 
     // location is valid
@@ -39,7 +39,6 @@ export default class {
 
     if (!fs.existsSync(packageLocation + '/package.json')) {
       throw new Error("Invalid request, aborting");
-      return;
     }
 
     // location is valid
@@ -141,10 +140,7 @@ export default class {
     let packageName = request.name;
 
     if (this.isPackageAvailable(packageName, this.storageLocation)) {
-      let packageInfoLocation = this.storageLocation + '/' + packageName + '/package.json';
-      let packageJSON = readJSON(packageInfoLocation);
-
-      return packageJSON;
+      return readJSON(this.storageLocation + '/' + packageName + '/package.json');
     } else {
       throw new Error("Could not get packageData");
     }

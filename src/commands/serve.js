@@ -4,10 +4,10 @@ import fs from 'fs';
 
 export default class {
 
-  constructor(server, port, ssl) {
+  constructor(server, config) {
     this.app = server;
-    this.port = port;
-    this.ssl = ssl;
+    this.port = config.port;
+    this.ssl = config.ssl;
   }
 
   run() {
@@ -17,6 +17,7 @@ export default class {
         let cert = fs.readFileSync(this.ssl.cert);
 
         console.log("ap-npm is listening on https://localhost:" + this.port + '\n');
+
         https.createServer({
           key: key,
           cert: cert
@@ -24,7 +25,9 @@ export default class {
       } else {
         console.log("ssl verification failed, key/cert files don't exist\n" +
           "ap-npm will run without using ssl\n");
+
         console.log("ap-npm is listening on http://localhost:" + this.port + '\n');
+
         this.app.listen(this.port);
 
       }

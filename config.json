@@ -1,0 +1,26 @@
+{
+  "workDir": "/ap-npm",
+
+  "storage": {
+    "directory": "/storage"
+  },
+
+  "port": 4444,
+
+  "auth": {
+    "adapter": "./auth/json-db",
+    "users": {
+      "canPublish": true,
+      "canAccess": true
+    },
+    "register": true,
+    "public": false,
+    "remove": true
+  },
+
+  "ssl": {
+    "enabled": true,
+    "key": "/ssl/sslkey.key",
+    "cert": "/ssl/sslcert.crt"
+  }
+}

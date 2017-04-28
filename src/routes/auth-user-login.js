@@ -1,5 +1,4 @@
 import crypto from 'crypto';
-import config from '../config';
 
 export default class {
 
@@ -26,20 +25,18 @@ export default class {
 
       request.then((result) => {
         if (result === true) {
-
           userLoggedIn = true;
           let token = this.generateToken(userInfo);
           httpResponse.status(201);
           httpResponse.send({
             token: token
           });
-
+          resolve(userLoggedIn);
         }
         else {
           request = this.createUser(userInfo);
           request
             .then((result) => {
-
             if (result === true) {
               userLoggedIn = true;
               let token = this.generateToken(userInfo);
@@ -47,15 +44,15 @@ export default class {
               httpResponse.send({
                 token: token
               });
+              resolve(userLoggedIn);
+            } else {
+              reject('Cannot create user');
             }
-
           });
         }
-      }).then(() => {
-        resolve(userLoggedIn);
       });
     }).catch((error) => {
-      httpResponse.send("404, user not found");
+      httpResponse.send("401, " + error);
     });
   }
 

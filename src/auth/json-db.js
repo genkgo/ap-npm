@@ -1,5 +1,4 @@
 import js_sha from 'js-sha256';
-import config from '../config';
 import path from 'path';
 import fs from 'fs';
 
@@ -10,14 +9,14 @@ import fs from 'fs';
  * We promote implementing a proper authentication method.
  */
 export default class {
-  constructor() {
+  constructor(config) {
     this.dbLocation = path.join(config.workDir, 'db');
     this.initUserDB();
     this.settings = config.auth;
   }
 
   userLogin(username, password, email) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       let userLoggedIn;
       try {
         userLoggedIn = this.users[username]['password'] === js_sha.sha256(password) && this.users[username]['email'] === email;
@@ -35,7 +34,7 @@ export default class {
   }
 
   userAdd(username, password, email) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       if (this.settings.register) {
         if (typeof(this.users[username]) === "object") {
           resolve(false);

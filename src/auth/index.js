@@ -1,10 +1,9 @@
 import fs from 'fs';
 import path from 'path';
-import config from '../config';
 
 export default class {
 
-  constructor(adapter) {
+  constructor(adapter, config) {
     this.dbLocation = path.join(config.workDir, 'db');
     this.initTokenDB();
     this.settings = config.auth;
@@ -43,9 +42,9 @@ export default class {
     });
   }
 
-  shouldBeAbleTo(accessType, packageName, accessToken) {
+  shouldBeAbleTo(accessType, accessToken) {
     return new Promise((resolve, reject) => {
-      if (config.auth.public === true) {
+      if (this.config.auth.public === true) {
         resolve();
       }
 
@@ -54,7 +53,7 @@ export default class {
       }
 
       if (accessType === 'access') {
-        if (config.auth.users.canAccess) {
+        if (this.config.auth.users.canAccess) {
           let user = this.verifyToken(accessToken);
           if (user) {
             resolve();
@@ -67,7 +66,7 @@ export default class {
       }
 
       else if (accessType === 'publish') {
-        if (config.auth.users.canPublish) {
+        if (this.config.auth.users.canPublish) {
           let user = this.verifyToken(accessToken);
           if (user) {
             resolve();
@@ -88,12 +87,6 @@ export default class {
   verifyToken(token) {
     return this.tokens[token];
   }
-
-  readJson(jsonLocation) {
-    return JSON.parse(fs.readFileSync(jsonLocation));
-  }
-
-
 
   updateTokenDB() {
     let tokenLocation = path.join(this.dbLocation, 'user_tokens.json');

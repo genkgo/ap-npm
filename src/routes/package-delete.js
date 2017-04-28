@@ -1,18 +1,18 @@
 import semver from 'semver';
-import config from '../config';
 
 export default class {
 
-  constructor(storage, validator) {
+  constructor(storage, validator, config) {
     this.storage = storage;
     this.packageValidator = validator;
+    this.config = config;
   }
 
   /*
    * Reads package data from fileystem and sends it to npm-client
    */
   process(httpRequest, httpResponse) {
-    if (config.auth.remove === false) {
+    if (this.config.auth.remove === false) {
       httpResponse.send('403, not allowed to delete packages');
       return;
     }
@@ -34,7 +34,6 @@ export default class {
           httpResponse.status(200).send({
             ok: "Package deleted"
           });
-          return;
         }
       } catch(err) {
         httpResponse.send("424, cannot delete package from filesystem");
@@ -46,7 +45,6 @@ export default class {
           httpResponse.status(200).send({
             ok: "Packageversion deleted"
           });
-          return;
         }
       } catch(err) {
         httpResponse.send("424, cannot delete package from filesystem");
