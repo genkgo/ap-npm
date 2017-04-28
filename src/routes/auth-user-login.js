@@ -18,55 +18,53 @@ export default class {
       email: httpRequest.body.email,
       type: httpRequest.body.type
     };
+    let userLoggedIn = false;
+    let request;
 
-    try {
-      if (this.loginUser(userInfo)) {
-        let token = this.generateToken(userInfo);
-        httpResponse.status(201);
-        httpResponse.send({
-          token: token
-        });
-        return;
-      }
-    } catch (err) {}
+    return new Promise((resolve, reject) => {
+      request = this.loginUser(userInfo);
 
-    if (config.auth.register === false) {
-      httpResponse.send("401, Could not create user");
-    } else {
-      try {
-        if (this.createUser(userInfo)) {
+      request.then((result) => {
+        if (result === true) {
+
+          userLoggedIn = true;
           let token = this.generateToken(userInfo);
           httpResponse.status(201);
           httpResponse.send({
             token: token
           });
-          return;
-        }
-      } catch (err) {
-        // Cannot create user
-        httpResponse.send("400, Could not create user");
-        return;
-      }
 
-      httpResponse.send("404, Could not login or register user");
-    }
+        }
+        else {
+          request = this.createUser(userInfo);
+          request
+            .then((result) => {
+
+            if (result === true) {
+              userLoggedIn = true;
+              let token = this.generateToken(userInfo);
+              httpResponse.status(201);
+              httpResponse.send({
+                token: token
+              });
+            }
+
+          });
+        }
+      }).then(() => {
+        resolve(userLoggedIn);
+      });
+    }).catch((error) => {
+      httpResponse.send("404, user not found");
+    });
   }
 
   createUser(userInfo) {
-    let userCreated = this.auth.userAdd(userInfo.username, userInfo.password, userInfo.email);
-    if (userCreated) {
-      return true;
-    } else {
-      throw new Error("Could not create user");
-    }
+    return this.auth.userAdd(userInfo.username, userInfo.password, userInfo.email);
   }
 
   loginUser(userInfo) {
-    try {
-      return this.auth.userLogin(userInfo.username, userInfo.password, userInfo.email);
-    } catch (err) {
-      throw new Error("Could not login user");
-    }
+    return this.auth.userLogin(userInfo.username, userInfo.password, userInfo.email);
   }
 
   generateToken(userInfo) {
