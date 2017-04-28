@@ -11,17 +11,15 @@ export default class {
   * If user doesn't exist -> try to create user
   */
   process(httpRequest, httpResponse) {
-    let userInfo = {
-      username: httpRequest.body.name,
-      password: httpRequest.body.password,
-      email: httpRequest.body.email,
-      type: httpRequest.body.type
-    };
-    let userLoggedIn = false;
-    let request;
-
     return new Promise((resolve, reject) => {
-      request = this.loginUser(userInfo);
+      let userInfo = {
+        username: httpRequest.body.name,
+        password: httpRequest.body.password,
+        email: httpRequest.body.email,
+        type: httpRequest.body.type
+      };
+      let userLoggedIn = false;
+      let request = this.loginUser(userInfo);
 
       request.then((result) => {
         if (result === true) {
