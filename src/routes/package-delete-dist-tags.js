@@ -10,24 +10,28 @@ export default class {
    * *** hasn't been tested yet***
    */
   process(httpRequest, httpResponse) {
+    return new Promise((resolve) => {
+      let packageName = httpRequest.params.package;
+      let distTag = httpRequest.params.tag;
 
-    let packageName = httpRequest.params.package;
-    let distTag = httpRequest.params.tag;
+      this.storage.getPackageData({name: httpRequest.params.package}).then((packageJson) => {
+        delete(packageJson['dist-tags'][distTag]);
 
-    let packageJson = this.storage.getPackageData({name: httpRequest.params.package});
-
-    delete(packageJson['dist-tags'][distTag]);
-
-    try {
-      if (this.storage.updatePackageJson(packageName, packageJson)) {
-        httpResponse.status(200);
-        httpResponse.send({
-          ok: "dist-tags updated"
+        this.storage.updatePackageJson(packageName, packageJson).then((result) => {
+          if (result === true) {
+            httpResponse.status(200);
+            httpResponse.send({
+              ok: "dist-tags updated"
+            });
+            resolve();
+          } else {
+            reject("404, could not get dist-tags")
+          }
         });
-      }
-    } catch (error) {
-      httpResponse.send("404, could not get dist-tags");
-    }
+      });
+    }).catch((err) => {
+      httpResponse.send(err);
+    })
   }
 }
 
