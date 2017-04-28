@@ -86,9 +86,9 @@ export default class {
   initUserDB() {
     let user_db_path = path.join(this.dbLocation, 'user_db.json');
 
-    if (!fs.existsSync(this.dbLocation)) {
+    if (!fs.existsSync(user_db_path)) {
       try {
-        fs.mkdirSync(this.dbLocation, '0777', true);
+        fs.mkdirSync(user_db_path, '0777', true);
       } catch (err) {
         console.log("Error making userDB folder (" + this.dbLocation + "), ap-npm might malfunction");
       }

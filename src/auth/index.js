@@ -85,7 +85,11 @@ export default class {
   }
 
   verifyToken(token) {
-    return typeof this.tokens[token] === 'string';
+    if (typeof this.tokens[token] === 'string') {
+      return this.tokens[token];
+    } else {
+      return false;
+    }
   }
 
   updateTokenDB() {

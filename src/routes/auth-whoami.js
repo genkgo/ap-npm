@@ -15,7 +15,7 @@ export default class {
     return new Promise((resolve, reject) => {
       user = this.auth.verifyToken(token);
 
-      if (user) {
+      if (user !== false) {
         httpResponse.send({
           username: "you are logged in as '" + user + "'"
         });
