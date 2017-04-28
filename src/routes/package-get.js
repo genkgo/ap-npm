@@ -9,11 +9,14 @@ export default class {
   * Reads package data from fileystem and sends it to npm-client
   */
   process(httpRequest, httpResponse) {
-    let packageName = httpRequest['params']['package'];
-    let fileName = httpRequest['params']['filename'];
-    let fileData = this.storage.getPackage(packageName, fileName);
-
-    httpResponse.send(fileData);
+    return new Promise((resolve) => {
+      let packageName = httpRequest['params']['package'];
+      let fileName = httpRequest['params']['filename'];
+      this.storage.getPackage(packageName, fileName).then((data) => {
+        httpResponse.send(data);
+        resolve();
+      });
+    });
   }
 }
 
