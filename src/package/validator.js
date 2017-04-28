@@ -7,34 +7,38 @@ export default class {
   }
 
   // *** GET ***
-
   doesPackageExist(packageName) {
-    return this.storage.isPackageAvailable(packageName);
+    return new Promise((resolve) => {
+      this.storage.isPackageAvailable(packageName).then((result) => {
+        resolve(result);
+      });
+    });
   }
 
   doesVersionExist(packageName, packageVersion) {
-    return this.storage.isVersionAvailable(packageName, packageVersion);
+    return new Promise((resolve) => {
+      this.storage.isVersionAvailable(packageName, packageVersion).then((result) => {
+        resolve(result);
+      });
+    });
   }
 
   // *** PUBLISHING ***
-
-  isNameValid(packageName) {
-    let exists = this.storage.isPackageAvailable(packageName);
-  }
-
   isVersionHigher(packageName, packageVersion, distTag) {
     // Check if version that we got is higher than what is available
-    let packageData = this.storage.getPackageJson(packageName);
-    let currentVersion = packageData['dist-tags'][distTag];
-    return semver.satisfies(packageVersion, '>' + currentVersion);
+    return new Promise((resolve) => {
+      this.storage.getPackageJson(packageName).then((packageData) => {
+        let currentVersion = packageData['dist-tags'][distTag];
+        resolve(semver.satisfies(packageVersion, '>' + currentVersion));
+      })
+    });
   }
 
   hasDistTag(packageName, distTag) {
-    let packageData = this.storage.getPackageJson(packageName);
-    if (!!packageData['dist-tags'][distTag]) {
-      return true;
-    } else {
-      return false;
-    }
+    return new Promise((resolve) => {
+      this.storage.getPackageJson(packageName).then((packageData) => {
+        resolve(!!packageData['dist-tags'][distTag]);
+      });
+    });
   }
 }
