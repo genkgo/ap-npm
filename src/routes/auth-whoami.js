@@ -11,19 +11,21 @@ export default class {
   process(httpRequest, httpResponse) {
     let token = httpRequest.headers.authorization.substr(7);
     let user;
-    try {
+
+    return new Promise((resolve, reject) => {
       user = this.auth.verifyToken(token);
-    } catch (err) {
-      // User not valid
+
+      if (user) {
+        httpResponse.send({
+          username: "you are logged in as '" + user + "'"
+        });
+        resolve();
+      } else {
+        reject();
+      }
+    }).catch((err) => {
       httpResponse.status(401);
       httpResponse.send('401, invalid user');
-      return;
-    }
-
-    // User valid
-    httpResponse.send({
-      username: "you are logged in as '" + user + "'"
     });
   }
-
 }
