@@ -32,6 +32,7 @@ commander
         config.ssl.enabled = true;
         console.log("--sslkey, --sslcert not given, using config provided locations\n");
       } else {
+        config.ssl.enabled = false;
         console.log(
           "please restart and specify a key and cert to use ssl\n" +
           "   --ssl\n" +
@@ -41,11 +42,6 @@ commander
     }
 
     let command = container.get('command-serve');
-    if (config.ssl.enabled === true) {
-      console.log("ap-npm is listening on https://localhost:" + config.port + '\n');
-    } else {
-      console.log("ap-npm is listening on http://localhost:" + config.port + '\n');
-    }
     command.run();
   });
 
