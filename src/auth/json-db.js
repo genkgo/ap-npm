@@ -89,7 +89,7 @@ export default class {
 
     if (!fs.existsSync(this.dbLocation)) {
       try {
-        fs.mkdirSync(this.dbLocation, true);
+        fs.mkdirSync(this.dbLocation, '0777', true);
       } catch (err) {
         console.log("Error making userDB folder (" + this.dbLocation + "), ap-npm might malfunction");
       }
@@ -105,7 +105,7 @@ export default class {
   // Just here for local auth
   updateUserDB() {
     let user_db_path = path.join(this.dbLocation, 'user_db.json');
-    fs.writeFileSync(user_db_path, JSON.stringify(this.users, null, 2));
+    fs.writeFileSync(user_db_path, JSON.stringify(this.users, null, 2), {'mode': '0777'});
     this.initUserDB();
   }
 }

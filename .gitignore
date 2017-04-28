@@ -11,9 +11,3 @@ npm-debug.log
 *.key
 db/
 /storage/
-
-# ignore everything except orinal auth files
-/src/auth/*
-!/src/auth/access.js
-!/src/auth/index.js
-!/src/auth/method.js

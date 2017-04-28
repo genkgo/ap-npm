@@ -105,7 +105,12 @@ container.set('package-validator', function() {
 
 container.set('auth', function() {
   let Auth = require('./auth/index').default;
-  return new Auth();
+  return new Auth(container.get('auth-adapter'));
+});
+
+container.set('auth-adapter', function() {
+  let AuthAdapter = require(config.auth.adapter).default;
+  return new AuthAdapter();
 });
 
 export default container;

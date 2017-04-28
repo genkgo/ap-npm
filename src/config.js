@@ -15,6 +15,7 @@ export default {
   * 'remove': make it possible to remove, unpublish or overwrite packages
   */
   "auth": {
+    "adapter": "./auth/json-db",
     "users": {
       "canPublish": true,
       "canAccess": true

@@ -12,7 +12,7 @@ export default class {
 
     try {
         if (!fs.existsSync(config.storage.directory)) {
-            fs.mkdirSync(config.storage.directory, true);
+            fs.mkdirSync(config.storage.directory, '0777', true);
         }
     } catch (err) {
       console.log("Could not create storage directory, ap-npm might malfunction\n", err.toString());
@@ -80,8 +80,8 @@ export default class {
     let filePath = folderPath + '/' + fileName;
     let packageJSONPath = folderPath + '/package.json';
 
-    fs.mkdirSync(folderPath, true);
-    fs.writeFileSync(filePath, Buffer.from(packageData._attachments[fileName]['data'], 'base64'));
+    fs.mkdirSync(folderPath, '0777', true);
+    fs.writeFileSync(filePath, Buffer.from(packageData._attachments[fileName]['data'], 'base64'), {'mode': '0777'});
 
     let packageJSON = packageData;
     delete packageJSON['_attachments'];
@@ -123,7 +123,7 @@ export default class {
 
     packageJSON['dist-tags'] = distTags;
 
-    fs.writeFileSync(filePath, Buffer.from(packageData._attachments[fileName]['data'], 'base64'));
+    fs.writeFileSync(filePath, Buffer.from(packageData._attachments[fileName]['data'], 'base64'), {'mode': '0777'});
     writeJSON(packageInfoLocation, packageJSON);
 
     console.log("Wrote package to filesystem:", {

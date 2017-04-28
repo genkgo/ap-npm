@@ -1,28 +1,26 @@
 import fs from 'fs';
 import path from 'path';
 import config from '../config';
-import Method from './method';
 
 export default class {
 
-  constructor() {
+  constructor(adapter) {
     this.dbLocation = path.join(config.workDir, 'db');
     this.initTokenDB();
     this.settings = config.auth;
-
-    this.authMethod = new Method();
+    this.adapter = adapter;
   }
 
   userLogin(username, password, email) {
-    return this.authMethod.userLogin(username, password, email);
+    return this.adapter.userLogin(username, password, email);
   }
 
   userAdd(username, password, email) {
-    return this.authMethod.userAdd(username, password, email);
+    return this.adapter.userAdd(username, password, email);
   }
 
   userRemove(username, password) {
-    return this.authMethod.userRemove(username, password);
+    return this.adapter.userRemove(username, password);
   }
 
   userLogout(token) {
@@ -39,7 +37,7 @@ export default class {
         allTokens = {};
       }
 
-      fs.writeFileSync(user_tokens_path, JSON.stringify(allTokens, null, 2));
+      fs.writeFileSync(user_tokens_path, JSON.stringify(allTokens, null, 2), {'mode': '0777'});
       this.updateTokenDB();
       resolve();
     });
@@ -99,7 +97,7 @@ export default class {
 
   updateTokenDB() {
     let tokenLocation = path.join(this.dbLocation, 'user_tokens.json');
-    fs.writeFileSync(tokenLocation, JSON.stringify(this.tokens, null, 2));
+    fs.writeFileSync(tokenLocation, JSON.stringify(this.tokens, null, 2), {'mode': '0777'});
   }
 
   addTokenToDB(username, token) {
@@ -115,7 +113,7 @@ export default class {
     }
 
     tokens[token] = username;
-    fs.writeFileSync(tokenLocation, JSON.stringify(tokens, null, 2));
+    fs.writeFileSync(tokenLocation, JSON.stringify(tokens, null, 2), {'mode': '0777'});
     this.initTokenDB();
   }
 
