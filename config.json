@@ -8,7 +8,7 @@
   "port": 4444,
 
   "auth": {
-    "adapter": "./auth/json-db",
+    "adapter": "/auth/json-db",
     "users": {
       "canPublish": true,
       "canAccess": true
