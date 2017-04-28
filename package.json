@@ -1,6 +1,6 @@
 {
   "name": "ap-npm",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Private Authenticated NPM Repository",
   "main": "cli.js",
   "scripts": {
