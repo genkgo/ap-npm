@@ -1,0 +1,14 @@
+# dependencies
+/node_modules
+/db/*
+/src
+
+# ide
+.idea
+/.idea/*
+npm-debug.log
+
+*.crt
+*.key
+db/
+/storage/
