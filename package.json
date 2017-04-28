@@ -5,7 +5,7 @@
   "main": "cli.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "babel-node src/cli.js"
+    "start": "./bin/ap-npm"
   },
   "babel": {
     "presets": [
