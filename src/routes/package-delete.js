@@ -12,44 +12,50 @@ export default class {
    * Reads package data from fileystem and sends it to npm-client
    */
   process(httpRequest, httpResponse) {
-    if (this.config.auth.remove === false) {
-      httpResponse.send('403, not allowed to delete packages');
-      return;
-    }
-
-    let packageName = httpRequest.params.package;
-    let referer = httpRequest.headers.referer;
-    let packageVersion;
-    if (referer.indexOf('@') > -1) {
-      let spliced = referer.split('@');
-      packageVersion = spliced[spliced.length - 1];
-    } else {
-      let spliced = referer.split(' ');
-      packageVersion = spliced[0];
-    }
-
-    if (packageVersion === 'unpublish') {
-      try {
-        if (this.storage.removePackage(packageName)) {
-          httpResponse.status(200).send({
-            ok: "Package deleted"
-          });
-        }
-      } catch(err) {
-        httpResponse.send("424, cannot delete package from filesystem");
+    return new Promise((resolve) => {
+      if (this.config.auth.remove === false) {
+        reject('403, not allowed to delete packages');
       }
-    }
-    else if (semver.valid(packageVersion)) {
-      try {
-        if (this.storage.removePackageVersion(packageName, packageVersion)) {
-          httpResponse.status(200).send({
-            ok: "Packageversion deleted"
-          });
-        }
-      } catch(err) {
-        httpResponse.send("424, cannot delete package from filesystem");
+
+      let packageName = httpRequest.params.package;
+      let referer = httpRequest.headers.referer;
+      let packageVersion;
+
+      if (referer.indexOf('@') > -1) {
+        let spliced = referer.split('@');
+        packageVersion = spliced[spliced.length - 1];
+      } else {
+        let spliced = referer.split(' ');
+        packageVersion = spliced[0];
       }
-    }
+
+      if (packageVersion === 'unpublish') {
+        this.storage.removePackage(packageName).then((result) => {
+          if (result === true) {
+            httpResponse.status(200).send({
+              ok: "Package deleted"
+            });
+            resolve();
+          } else {
+            reject("424, cannot delete package from filesystem")
+          }
+        });
+      }
+      else if (semver.valid(packageVersion)) {
+        this.storage.removePackageVersion(packageName, packageVersion).then((result) => {
+          if (result === true) {
+            httpResponse.status(200).send({
+              ok: "Packageversion deleted"
+            });
+            resolve();
+          } else {
+            reject("424, cannot delete package from filesystem")
+          }
+        });
+      }
+    }).catch((err) => {
+      httpResponse.send(err);
+    });
   }
 }
 
