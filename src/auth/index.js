@@ -42,9 +42,9 @@ export default class {
     });
   }
 
-  shouldBeAbleTo(accessType, accessToken) {
+  shouldBeAbleTo(accessType, packageName, accessToken) {
     return new Promise((resolve, reject) => {
-      if (this.config.auth.public === true) {
+      if (this.settings.public === true) {
         resolve();
       }
 
@@ -53,7 +53,7 @@ export default class {
       }
 
       if (accessType === 'access') {
-        if (this.config.auth.users.canAccess) {
+        if (this.settings.users.canAccess) {
           let user = this.verifyToken(accessToken);
           if (user) {
             resolve();
@@ -66,7 +66,7 @@ export default class {
       }
 
       else if (accessType === 'publish') {
-        if (this.config.auth.users.canPublish) {
+        if (this.settings.users.canPublish) {
           let user = this.verifyToken(accessToken);
           if (user) {
             resolve();
@@ -85,7 +85,7 @@ export default class {
   }
 
   verifyToken(token) {
-    return this.tokens[token];
+    return typeof this.tokens[token] === 'string';
   }
 
   updateTokenDB() {
