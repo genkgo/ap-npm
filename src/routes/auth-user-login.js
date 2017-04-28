@@ -19,9 +19,8 @@ export default class {
         type: httpRequest.body.type
       };
       let userLoggedIn = false;
-      let request = this.loginUser(userInfo);
-
-      request.then((result) => {
+      this.loginUser(userInfo)
+        .then((result) => {
         if (result === true) {
           userLoggedIn = true;
           this.generateToken(userInfo).then((token) => {
@@ -33,8 +32,7 @@ export default class {
           });
         }
         else {
-          request = this.createUser(userInfo);
-          request
+          this.createUser(userInfo)
             .then((result) => {
             if (result === true) {
               userLoggedIn = true;
