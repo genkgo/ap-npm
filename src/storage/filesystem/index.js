@@ -22,164 +22,212 @@ export default class {
   }
 
   removePackage(packageName) {
-    let packageLocation = this.storageLocation + '/' + packageName;
+    return new Promise((resolve, reject) => {
+      let packageLocation = this.storageLocation + '/' + packageName;
 
-    if (!fs.existsSync(packageLocation + '/package.json')) {
-      throw new Error("Invalid request, aborting");
-    }
+      if (!fs.existsSync(packageLocation + '/package.json')) {
+        reject("Invalid request, aborting");
+      }
 
-    // location is valid
-    rimraf.sync(packageLocation);
-    return true;
+      // location is valid
+      rimraf(packageLocation, () => {
+        resolve(true);
+      });
+    }).catch((err) => {
+      throw new Error(err);
+    });
   }
 
   removePackageVersion(packageName, packageVersion) {
-    let packageLocation = this.storageLocation + '/' + packageName;
-    let tarballLocation = packageLocation + '/' + packageName + '-' + packageVersion + '.tgz';
+    return new Promise((resolve, reject) => {
+      let packageLocation = this.storageLocation + '/' + packageName;
+      let tarballLocation = packageLocation + '/' + packageName + '-' + packageVersion + '.tgz';
 
-    if (!fs.existsSync(packageLocation + '/package.json')) {
-      throw new Error("Invalid request, aborting");
-    }
-
-    // location is valid
-    fs.unlinkSync(tarballLocation);
-    let packageJson = this.getPackageJson(packageName);
-
-    delete(packageJson.versions[packageVersion]);
-
-    // If this was the last version of the package, we can remove it completely
-    if (packageJson.versions.size === 0) {
-      this.removePackage(packageName);
-      return true;
-    }
-
-    if (packageJson['dist-tags']['latest'] === packageVersion) {
-      // need to update dist-tags
-      let highestVersion = '0.0.1';
-      for (let key in packageJson.versions) {
-        if (semver.satisfies(key, '>' + highestVersion)) {
-          highestVersion = key;
+      fs.exists(packageLocation + '/package.json', (exists) => {
+        if (!exists) {
+          reject("Invalid request, aborting");
         }
-      }
-      packageJson['dist-tags']['latest'] = highestVersion;
-    }
 
-    this.updatePackageJson(packageName, packageJson);
-    return true;
+        // location is valid
+        fs.unlink(tarballLocation, () => {
+          let packageJson = this.getPackageJson(packageName);
+
+          delete(packageJson.versions[packageVersion]);
+
+          // If this was the last version of the package, we can remove it completely
+          if (packageJson.versions.size === 0) {
+            this.removePackage(packageName);
+            return true;
+          }
+
+          if (packageJson['dist-tags']['latest'] === packageVersion) {
+            // need to update dist-tags
+            let highestVersion = '0.0.1';
+            for (let key in packageJson.versions) {
+              if (semver.satisfies(key, '>' + highestVersion)) {
+                highestVersion = key;
+              }
+            }
+            packageJson['dist-tags']['latest'] = highestVersion;
+          }
+          this.updatePackageJson(packageName, packageJson);
+          resolve(true);
+        });
+      });
+    }).catch((err) => {
+      throw new Error(err);
+    })
   }
 
   // This is used for packages that don't exist in the storage yet
   writeNewPackage(packageData) {
-    let fileName;
-    for (let key in packageData._attachments) {
-      fileName = key;
-    }
+    return new Promise((resolve) => {
+      let fileName;
+      for (let key in packageData._attachments) {
+        fileName = key;
+      }
 
-    let folderPath = this.storageLocation + '/' + packageData.name;
-    let filePath = folderPath + '/' + fileName;
-    let packageJSONPath = folderPath + '/package.json';
+      let folderPath = this.storageLocation + '/' + packageData.name;
+      let filePath = folderPath + '/' + fileName;
+      let packageJSONPath = folderPath + '/package.json';
 
-    fs.mkdirSync(folderPath, '0777', true);
-    fs.writeFileSync(filePath, Buffer.from(packageData._attachments[fileName]['data'], 'base64'), {'mode': '0777'});
+      fs.mkdirSync(folderPath, '0777', true);
+      fs.writeFileSync(filePath, Buffer.from(packageData._attachments[fileName]['data'], 'base64'), {'mode': '0777'});
+      let packageJSON = packageData;
+      delete packageJSON['_attachments'];
+      writeJSON(packageJSONPath, packageJSON);
 
-    let packageJSON = packageData;
-    delete packageJSON['_attachments'];
-    writeJSON(packageJSONPath, packageJSON);
+      console.log("Wrote new package to filesystem:", {
+        "filePath": filePath,
+        "packageJSON": packageJSONPath
+      });
+      resolve(true);
 
-    console.log("Wrote new package to filesystem:", {
-      "filePath": filePath,
-      "packageJSON": packageJSONPath
-    });
+    }).catch((err) => {
+      throw new Error(err);
+    })
   }
 
   // This is used for packages that have been published before -> adding a new version
   writePackage(packageData) {
-    let fileName;
-    let packageInfoLocation = this.storageLocation + '/' + packageData.name + '/package.json';
-    let folderPath = this.storageLocation + '/' + packageData.name;
-    let packageJSONPath = folderPath + '/package.json';
+    return new Promise((resolve) => {
+      let fileName;
+      let packageInfoLocation = this.storageLocation + '/' + packageData.name + '/package.json';
+      let folderPath = this.storageLocation + '/' + packageData.name;
+      let packageJSONPath = folderPath + '/package.json';
 
-    for (let key in packageData._attachments) {
-      fileName = key;
-    }
-    let filePath = folderPath + '/' + fileName;
+      for (let key in packageData._attachments) {
+        fileName = key;
+      }
 
-    let newVersion;
-    for (let key in packageData.versions) {
-      newVersion = key;
-    }
+      let filePath = folderPath + '/' + fileName;
 
-    let packageJSON = readJSON(packageInfoLocation);
-    packageJSON.versions[newVersion] = packageData.versions[newVersion];
+      let newVersion;
+      for (let key in packageData.versions) {
+        newVersion = key;
+      }
 
-    let distTags = packageJSON['dist-tags'];
-    let newDistTags = packageData['dist-tags'];
+      let packageJSON = readJSON(packageInfoLocation);
+      packageJSON.versions[newVersion] = packageData.versions[newVersion];
 
-    // Merge dist-tags, we need to preserve old dist-tags
-    for (let key in newDistTags) {
-      distTags[key] = newDistTags[key];
-    }
+      let distTags = packageJSON['dist-tags'];
+      let newDistTags = packageData['dist-tags'];
 
-    packageJSON['dist-tags'] = distTags;
+      // Merge dist-tags, we need to preserve old dist-tags
+      for (let key in newDistTags) {
+        distTags[key] = newDistTags[key];
+      }
 
-    fs.writeFileSync(filePath, Buffer.from(packageData._attachments[fileName]['data'], 'base64'), {'mode': '0777'});
-    writeJSON(packageInfoLocation, packageJSON);
+      packageJSON['dist-tags'] = distTags;
 
-    console.log("Wrote package to filesystem:", {
-      "filePath": filePath,
-      "packageJSON": packageJSONPath
-    });
+      fs.writeFileSync(filePath, Buffer.from(packageData._attachments[fileName]['data'], 'base64'), {'mode': '0777'});
+      writeJSON(packageInfoLocation, packageJSON);
+
+      console.log("Wrote package to filesystem:", {
+        "filePath": filePath,
+        "packageJSON": packageJSONPath
+      });
+
+      resolve(true);
+    }).catch((err) => {
+      throw new Error(err);
+    })
   }
 
   getPackage(packageName, fileName) {
-    let fileLocation = this.storageLocation + '/' + packageName + '/' + fileName;
-    return fs.readFileSync(fileLocation);
+    return new Promise((resolve) => {
+      let fileLocation = this.storageLocation + '/' + packageName + '/' + fileName;
+      fs.readFile(fileLocation, (file) => {
+        resolve(file);
+      });
+    }).catch((err) => {
+      throw new Error(err);
+    })
   }
 
   getPackageData(request) {
-    let packageName = request.name;
+    return new Promise((resolve, reject) => {
+      let packageName = request.name;
 
-    if (this.isPackageAvailable(packageName, this.storageLocation)) {
-      return readJSON(this.storageLocation + '/' + packageName + '/package.json');
-    } else {
-      throw new Error("Could not get packageData");
-    }
+      if (this.isPackageAvailable(packageName, this.storageLocation)) {
+        resolve(readJSON(this.storageLocation + '/' + packageName + '/package.json'));
+      }
+      else {
+        reject("Could not get packageData");
+      }
+    }).catch((err) => {
+      throw new Error(err);
+    })
   }
 
   // *** STORAGE VALIDATION ***
   // Checks if our storage has an entry for this packageName
   isPackageAvailable(packageName) {
-    return fs.existsSync(this.storageLocation + '/' + packageName);
+    return new Promise((resolve) => {
+      resolve(fs.existsSync(this.storageLocation + '/' + packageName));
+    }).catch((err) => {
+      throw new Error(err);
+    })
   }
 
   // Checks if a certain version of a package actually exists
   isVersionAvailable(packageName, packageVersion) {
-    let packageInfoLocation = this.storageLocation + '/' + packageName + '/package.json';
-    let packageJSON = readJSON(packageInfoLocation);
+    return new Promise((resolve) => {
+      let packageInfoLocation = this.storageLocation + '/' + packageName + '/package.json';
+      let packageJSON = readJSON(packageInfoLocation);
 
-    let versionExists = false;
+      let versionExists = false;
 
-    for (let version in packageJSON['versions']) {
-      if (version === packageVersion){
-        versionExists = true;
+      for (let version in packageJSON['versions']) {
+        if (version === packageVersion){
+          versionExists = true;
+        }
       }
-    }
-    let fileExists = fs.existsSync(this.storageLocation, '/' + packageName + '/' + packageName + '-' + packageVersion + '.tgz');
+      let fileExists = fs.existsSync(this.storageLocation, '/' + packageName + '/' + packageName + '-' + packageVersion + '.tgz');
 
-    // Both have to be true for the version requested to be available
-    return versionExists && fileExists;
+      // Both have to be true for the version requested to be available
+      resolve(versionExists && fileExists);
+    }).catch((err) => {
+      throw new Error(err);
+    });
   }
 
   getPackageJson(packageName) {
-    let packageInfoLocation = this.storageLocation + '/' + packageName + '/package.json';
-    return readJSON(packageInfoLocation);
+    return new Promise((resolve) => {
+      let packageInfoLocation = this.storageLocation + '/' + packageName + '/package.json';
+      resolve(readJSON(packageInfoLocation));
+    }).catch((err) => {
+      throw new Error(err);
+    })
   }
 
 
   /* Dist-tag functions*/
   updatePackageJson(packageName, packageJson) {
-    let packageInfoLocation = this.storageLocation + '/' + packageName + '/package.json';
-    writeJSON(packageInfoLocation, packageJson);
-    return true;
+    return new Promise((resolve) => {
+      let packageInfoLocation = this.storageLocation + '/' + packageName + '/package.json';
+      writeJSON(packageInfoLocation, packageJson);
+      resolve(true);
+    })
   }
 }
