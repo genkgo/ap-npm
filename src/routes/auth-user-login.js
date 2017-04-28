@@ -26,12 +26,13 @@ export default class {
       request.then((result) => {
         if (result === true) {
           userLoggedIn = true;
-          let token = this.generateToken(userInfo);
-          httpResponse.status(201);
-          httpResponse.send({
-            token: token
+          this.generateToken(userInfo).then((token) => {
+            httpResponse.status(201);
+            httpResponse.send({
+              token: token
+            });
+            resolve(userLoggedIn);
           });
-          resolve(userLoggedIn);
         }
         else {
           request = this.createUser(userInfo);
@@ -39,12 +40,13 @@ export default class {
             .then((result) => {
             if (result === true) {
               userLoggedIn = true;
-              let token = this.generateToken(userInfo);
-              httpResponse.status(201);
-              httpResponse.send({
-                token: token
+              this.generateToken(userInfo).then((token) => {
+                httpResponse.status(201);
+                httpResponse.send({
+                  token: token
+                });
+                resolve(userLoggedIn);
               });
-              resolve(userLoggedIn);
             } else {
               reject('Cannot create user');
             }
@@ -65,9 +67,11 @@ export default class {
   }
 
   generateToken(userInfo) {
-    let token = crypto.randomBytes(64).toString('hex');
-    this.auth.addTokenToDB(userInfo.username, token);
-    return token;
+    return new Promise((resolve) => {
+      let token = crypto.randomBytes(64).toString('hex');
+      this.auth.addTokenToDB(userInfo.username, token);
+      resolve(token);
+    });
   }
 
 }
