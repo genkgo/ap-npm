@@ -31,10 +31,17 @@ export default function (app, container) {
         let urlSlices = url.split('/');
         let index;
         for (let i = 0; i < urlSlices.length; i++) {
-          if (urlSlices[i].indexOf('@') > -1) {index = i;}
+          if (urlSlices[i].indexOf('@') > -1) {
+            index = i;
+          }
         }
 
         let scopedUrl = decodeURIComponent(urlSlices[index]);
+        let packageSlices = scopedUrl.split('@');
+
+        req.params.version = packageSlices[1];
+        scopedUrl = packageSlices[0];
+
         urlSlices[index] = scopedUrl.substr(scopedUrl.indexOf('/') + 1);
         let newUrl = "";
         for (let i = 1; i < urlSlices.length; i++) {
