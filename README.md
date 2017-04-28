@@ -10,7 +10,9 @@ ap-npm has been tested with:
 - npm: 3.10 or higher
 - node: 6.10 or higher
 
-## [Usage](https://github.com/genkgo/ap-npm/wiki/Usage)
-`npm start -- serve`
 
-## [Using Docker](https://github.com/genkgo/ap-npm/wiki/Using-Docker)
+### [Info on using ap-npm](https://github.com/genkgo/ap-npm/wiki)
+- [Usage](https://github.com/genkgo/ap-npm/wiki/Usage)
+- [Setting up Docker](https://github.com/genkgo/ap-npm/wiki/Using-Docker)
+- [Setting up authentication](https://github.com/genkgo/ap-npm/wiki/Authentication)
+- [Setting up ssl](https://github.com/genkgo/ap-npm/wiki/Using-SSL)
