@@ -4,8 +4,8 @@
   "description": "Private Authenticated NPM Repository",
   "main": "cli.js",
   "scripts": {
-    "build": "babel lib -d dist",
-    "prepublish": "npm build",
+    "build": "babel src -d dist",
+    "postinstall": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "babel-node src/cli.js"
   },
