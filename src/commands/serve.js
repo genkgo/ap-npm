@@ -11,7 +11,7 @@ export default class {
 
   run() {
     if (this.ssl.enabled) {
-      if (!fs.existsSync(this.ssl.key) && fs.existsSync(this.ssl.cert)) {
+      if (fs.existsSync(this.ssl.key) && fs.existsSync(this.ssl.cert)) {
         let key = fs.readFileSync(this.ssl.key);
         let cert = fs.readFileSync(this.ssl.cert);
 
@@ -21,7 +21,7 @@ export default class {
         }, this.app).listen(this.port);
       } else {
         console.log("ssl verification failed, key/cert files don't exist\n" +
-          "using http instead");
+          "ap-npm will run without using ssl\n");
         this.app.listen(this.port);
       }
     }
