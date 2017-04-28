@@ -8,18 +8,20 @@ export default class {
   * Reads the package.json data from filesystem and sends it to the npm-client
   * */
   process(httpRequest, httpResponse) {
-    let packageJson;
-    try {
-        packageJson = this.storage.getPackageData({
-            name: httpRequest.params.package,
-            version: httpRequest.params.version,
-        });
-    } catch (err) {
-      httpResponse.send("404, package not found");
-      return;
-    }
-
-    httpResponse.send(JSON.stringify(packageJson));
+    return new Promise((resolve, reject) => {
+      this.storage.getPackageData({
+        name: httpRequest.params.package,
+        version: httpRequest.params.version,
+      }).then((packageJson) => {
+        if (packageJson) {
+          httpResponse.send(JSON.stringify(packageJson));
+          resolve();
+        } else {
+          reject("404, package not found")
+        }
+      });
+    }).catch((err) => {
+      httpResponse.send(err);
+    })
   }
-
 }
