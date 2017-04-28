@@ -10,31 +10,33 @@ export default class {
    * *** hasn't been tested yet***
    */
   process(httpRequest, httpResponse) {
+    return new Promise((resolve, reject) => {
+      let packageName = httpRequest.params.package;
+      let distTag = httpRequest.params.tag;
+      let distTagVersion = httpRequest.body;
 
-    let packageName = httpRequest.params.package;
-    let distTag = httpRequest.params.tag;
-    let distTagVersion = httpRequest.body;
+      this.storage.getPackageData({name: httpRequest.params.package}).then((packageJson) => {
+        if (typeof(packageJson['versions'][distTagVersion]) !== "object") {
+          reject("403, version does not exist");
+        }
 
-    let packageJson = this.storage.getPackageData({name: httpRequest.params.package});
+        packageJson['dist-tags'][distTag] = distTagVersion;
 
-    // Check if version exists
-    if (typeof(packageJson['versions'][distTagVersion]) !== "object") {
-      httpResponse.send("403, version does not exist");
-      return;
-    }
-
-    packageJson['dist-tags'][distTag] = distTagVersion;
-
-    try {
-      if (this.storage.updatePackageJson(packageName, packageJson)) {
-        httpResponse.status(200);
-        httpResponse.send({
-          ok: "dist-tags added"
+        this.storage.updatePackageJson(packageName, packageJson).then((result) => {
+          if (result === true) {
+            httpResponse.status(200);
+            httpResponse.send({
+              ok: "dist-tags added"
+            });
+            resolve();
+          } else {
+            reject("404, could not get dist-tags");
+          }
         });
-      }
-    } catch (error) {
-      httpResponse.send("404, could not get dist-tags");
-    }
+      });
+    }).catch((err) => {
+      httpResponse.send(err);
+    });
   }
 }
 
