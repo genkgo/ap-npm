@@ -9,10 +9,9 @@ export default class {
   * This route verifies which user is logged in and sends back its username
   */
   process(httpRequest, httpResponse) {
-    let token = httpRequest.headers.authorization.substr(7);
-    let user;
-
     return new Promise((resolve, reject) => {
+      let token = httpRequest.headers.authorization.substr(7);
+      let user;
       user = this.auth.verifyToken(token);
 
       if (user !== false) {
