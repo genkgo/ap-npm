@@ -70,8 +70,10 @@ export default class {
             }
             packageJson['dist-tags']['latest'] = highestVersion;
           }
-          this.updatePackageJson(packageName, packageJson);
-          resolve(true);
+          this.updatePackageJson(packageName, packageJson)
+            .then((result) => {
+              resolve(result);
+            });
         });
       });
     }).catch((err) => {
@@ -95,14 +97,13 @@ export default class {
       fs.writeFileSync(filePath, Buffer.from(packageData._attachments[fileName]['data'], 'base64'), {'mode': '0777'});
       let packageJSON = packageData;
       delete packageJSON['_attachments'];
-      writeJSON(packageJSONPath, packageJSON);
-
-      console.log("Wrote new package to filesystem:", {
-        "filePath": filePath,
-        "packageJSON": packageJSONPath
+      writeJSON(packageJSONPath, packageJSON).then((result) => {
+        console.log("Wrote new package to filesystem:", {
+          "filePath": filePath,
+          "packageJSON": packageJSONPath
+        });
+        resolve(result);
       });
-      resolve(true);
-
     }).catch((err) => {
       throw new Error(err);
     })
@@ -127,28 +128,31 @@ export default class {
         newVersion = key;
       }
 
-      let packageJSON = readJSON(packageInfoLocation);
-      packageJSON.versions[newVersion] = packageData.versions[newVersion];
+      readJSON(packageInfoLocation)
+        .then((packageJSON) => {
+        packageJSON.versions[newVersion] = packageData.versions[newVersion];
 
-      let distTags = packageJSON['dist-tags'];
-      let newDistTags = packageData['dist-tags'];
+        let distTags = packageJSON['dist-tags'];
+        let newDistTags = packageData['dist-tags'];
 
-      // Merge dist-tags, we need to preserve old dist-tags
-      for (let key in newDistTags) {
-        distTags[key] = newDistTags[key];
-      }
+        // Merge dist-tags, we need to preserve old dist-tags
+        for (let key in newDistTags) {
+          distTags[key] = newDistTags[key];
+        }
 
-      packageJSON['dist-tags'] = distTags;
+        packageJSON['dist-tags'] = distTags;
 
-      fs.writeFileSync(filePath, Buffer.from(packageData._attachments[fileName]['data'], 'base64'), {'mode': '0777'});
-      writeJSON(packageInfoLocation, packageJSON);
-
-      console.log("Wrote package to filesystem:", {
-        "filePath": filePath,
-        "packageJSON": packageJSONPath
+        fs.writeFile(filePath, Buffer.from(packageData._attachments[fileName]['data'], 'base64'), {'mode': '0777'}, () => {
+          writeJSON(packageInfoLocation, packageJSON)
+            .then((result) => {
+              console.log("Wrote package to filesystem:", {
+                "filePath": filePath,
+                "packageJSON": packageJSONPath
+              });
+              resolve(result);
+            });
+        });
       });
-
-      resolve(true);
     }).catch((err) => {
       throw new Error(err);
     })
@@ -157,7 +161,7 @@ export default class {
   getPackage(packageName, fileName) {
     return new Promise((resolve) => {
       let fileLocation = this.storageLocation + '/' + packageName + '/' + fileName;
-      fs.readFile(fileLocation, (file) => {
+      fs.readFile(fileLocation, (err, file) => {
         resolve(file);
       });
     }).catch((err) => {
@@ -169,12 +173,17 @@ export default class {
     return new Promise((resolve, reject) => {
       let packageName = request.name;
 
-      if (this.isPackageAvailable(packageName, this.storageLocation)) {
-        resolve(readJSON(this.storageLocation + '/' + packageName + '/package.json'));
-      }
-      else {
-        reject("Could not get packageData");
-      }
+      this.isPackageAvailable(packageName, this.storageLocation)
+        .then((result) => {
+          if (result === true) {
+            readJSON(this.storageLocation + '/' + packageName + '/package.json')
+              .then((data) => {
+                resolve(data)
+              });
+          } else {
+            reject("Could not get packageData")
+          }
+        });
     }).catch((err) => {
       throw new Error(err);
     })
@@ -194,19 +203,21 @@ export default class {
   isVersionAvailable(packageName, packageVersion) {
     return new Promise((resolve) => {
       let packageInfoLocation = this.storageLocation + '/' + packageName + '/package.json';
-      let packageJSON = readJSON(packageInfoLocation);
 
-      let versionExists = false;
+      readJSON(packageInfoLocation)
+        .then((packageJSON) => {
+        let versionExists = false;
 
-      for (let version in packageJSON['versions']) {
-        if (version === packageVersion){
-          versionExists = true;
+        for (let version in packageJSON['versions']) {
+          if (version === packageVersion){
+            versionExists = true;
+          }
         }
-      }
-      let fileExists = fs.existsSync(this.storageLocation, '/' + packageName + '/' + packageName + '-' + packageVersion + '.tgz');
+        let fileExists = fs.existsSync(this.storageLocation, '/' + packageName + '/' + packageName + '-' + packageVersion + '.tgz');
 
-      // Both have to be true for the version requested to be available
-      resolve(versionExists && fileExists);
+        // Both have to be true for the version requested to be available
+        resolve(versionExists && fileExists);
+      });
     }).catch((err) => {
       throw new Error(err);
     });
@@ -215,7 +226,8 @@ export default class {
   getPackageJson(packageName) {
     return new Promise((resolve) => {
       let packageInfoLocation = this.storageLocation + '/' + packageName + '/package.json';
-      resolve(readJSON(packageInfoLocation));
+      readJSON(packageInfoLocation)
+        .then((data) => resolve(data));
     }).catch((err) => {
       throw new Error(err);
     })
@@ -226,8 +238,8 @@ export default class {
   updatePackageJson(packageName, packageJson) {
     return new Promise((resolve) => {
       let packageInfoLocation = this.storageLocation + '/' + packageName + '/package.json';
-      writeJSON(packageInfoLocation, packageJson);
-      resolve(true);
+      writeJSON(packageInfoLocation, packageJson)
+        .then((result) => resolve(result));
     })
   }
 }
