@@ -20,7 +20,7 @@ ap-npm has been tested with:
 - node: 6.10 or higher
 
 
-### [ap-npm on Docker Cloud](https://cloud.docker.com/swarm/meirbon/repository/docker/meirbon/ap-npm/general)
+### [ap-npm on Docker Hub](https://hub.docker.com/r/meirbon/ap-npm/)
 ### [Info on using ap-npm](https://github.com/genkgo/ap-npm/wiki)
 - [Usage](https://github.com/genkgo/ap-npm/wiki/Usage)
 - [Setting up Docker](https://github.com/genkgo/ap-npm/wiki/Using-Docker)
