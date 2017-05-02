@@ -6,12 +6,15 @@ export default class {
 
   can(access) {
     return (req, res, next) => {
+      let shouldContinue = true;
       this.auth.shouldBeAbleTo(access, req.params.package, req.headers.authorization)
         .catch(function () {
           res.status(401);
+          res.send("401, unauthorized");
+          shouldContinue = false;
         })
         .then(function() {
-          next();
+          if (shouldContinue) { next(); }
         }
       );
     };
