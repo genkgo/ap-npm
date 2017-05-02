@@ -18,7 +18,14 @@ export default class {
     }
   }
 
-  run(property, value) {
+  listConfig(configLocation) {
+    console.log('Config location: ' + configLocation);
+    fs.readFile(configLocation, (err, configData) => {
+      console.log("Config configuration:\n", JSON.parse(configData));
+    });
+  }
+
+  updateProp(property, value) {
     let configPath = path.join(__dirname, '../..', 'config.json');
     let configString = fs.readFileSync(configPath);
     let config = JSON.parse(configString);
