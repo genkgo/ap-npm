@@ -5,6 +5,15 @@ ap-npm runs a npm-repository.
 It should be used together with [npm-scope](https://docs.npmjs.com/misc/scope), 
 as ap-npm doesn't function as a caching/proxy server like Sinopia/Verdaccio. 
 
+##### Install
+```
+npm install -g ap-npm
+```
+
+##### Start server
+```
+ap-npm serve
+```
 ## Dependencies
 ap-npm has been tested with:
 - npm: 3.10 or higher
