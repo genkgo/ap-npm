@@ -1,12 +1,10 @@
 {
   "workDir": "/ap-npm",
-
   "storage": {
     "directory": "/storage"
   },
-
   "port": 4444,
-
+  "hostname": "localhost",
   "auth": {
     "adapter": "/auth/json-db",
     "users": {
@@ -17,7 +15,6 @@
     "public": false,
     "remove": true
   },
-
   "ssl": {
     "enabled": true,
     "key": "/ssl/sslkey.key",
