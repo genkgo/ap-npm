@@ -8,4 +8,4 @@ RUN npm install -g ap-npm
 
 EXPOSE 4444
 
-CMD [ "ap-npm", "serve", "--config=/apnpm/config.json"]
+CMD [ "ap-npm", "serve", "--config=/ap-npm/config.json"]
