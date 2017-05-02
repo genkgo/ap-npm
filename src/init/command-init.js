@@ -10,8 +10,8 @@ export default function(container) {
     return new Command(config.hostname, config.port, config.ssl.enabled);
   });
 
-  container.set('command-set', function() {
-    let Command = require('../commands/set').default;
+  container.set('command-config', function() {
+    let Command = require('../commands/config').default;
     return new Command();
   })
 }

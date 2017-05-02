@@ -25,17 +25,23 @@ commander
   });
 
 commander
-  .command('set <prop> <value>')
-  .description('sets default config property')
+  .command('config [prop] [value]')
+  .description('list or set config properties')
   .action(function(property, value) {
-    let container = containerInit(path.join(__dirname, '../', 'config.json'));
-    let command = container.get('command-set');
-    command.run(property, value);
+    let configLocation = path.join(__dirname, '../', 'config.json');
+    let container = containerInit(configLocation);
+    let command = container.get('command-config');
+
+    if (!property || !value) {
+      command.listConfig(configLocation);
+    } else {
+      command.updateProp(property, value);
+    }
   });
 
 commander
   .command('init')
-  .description('init a npm project using ap-npm config')
+  .description('init a npm project using ap-npm publishConfig')
   .action(function() {
     let container = containerInit(path.join(__dirname, '../', 'config.json'));
     let command = container.get('command-init');
