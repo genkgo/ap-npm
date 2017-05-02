@@ -10,11 +10,13 @@ export default class {
    * *** hasn't been tested yet***
    */
   process(httpRequest, httpResponse) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       let packageName = httpRequest.params.package;
       let distTag = httpRequest.params.tag;
 
-      this.storage.getPackageData({name: httpRequest.params.package}).then((packageJson) => {
+      this.storage.getPackageData({name: httpRequest.params.package})
+        .catch((err) => reject(err))
+        .then((packageJson) => {
         delete(packageJson['dist-tags'][distTag]);
 
         this.storage.updatePackageJson(packageName, packageJson).then((result) => {
