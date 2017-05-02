@@ -3,4 +3,15 @@ export default function(container) {
     let Command = require('../commands/serve').default;
     return new Command(container.get('express'), container.get('config'));
   });
+
+  container.set('command-init', function () {
+    let Command = require('../commands/init').default;
+    let config = container.get('config');
+    return new Command(config.hostname, config.port, config.ssl.enabled);
+  });
+
+  container.set('command-set', function() {
+    let Command = require('../commands/set').default;
+    return new Command();
+  })
 }
