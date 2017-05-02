@@ -14,7 +14,10 @@ export default class {
       this.storage.getPackageData({
         name: httpRequest.params.package,
         version: httpRequest.params.version,
-      }).then((packageJson) => {
+      }).catch((err) => {
+        reject(err);
+      })
+        .then((packageJson) => {
 
         let distTags = packageJson['dist-tags'];
         if (distTags) {
