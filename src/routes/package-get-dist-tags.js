@@ -18,7 +18,6 @@ export default class {
         reject(err);
       })
         .then((packageJson) => {
-
         let distTags = packageJson['dist-tags'];
         if (distTags) {
           httpResponse.send(JSON.stringify(distTags));
@@ -26,7 +25,6 @@ export default class {
         } else {
           reject("404, could not get dist-tags")
         }
-        
       });
 
     }).catch((err) => {
