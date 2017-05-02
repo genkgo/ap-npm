@@ -15,7 +15,9 @@ export default class {
       let distTag = httpRequest.params.tag;
       let distTagVersion = httpRequest.body;
 
-      this.storage.getPackageData({name: httpRequest.params.package}).then((packageJson) => {
+      this.storage.getPackageData({name: httpRequest.params.package})
+        .catch((err) => reject(err))
+        .then((packageJson) => {
         if (typeof(packageJson['versions'][distTagVersion]) !== "object") {
           reject("403, version does not exist");
         }
@@ -33,7 +35,7 @@ export default class {
             reject("404, could not get dist-tags");
           }
         });
-      });
+      })
     }).catch((err) => {
       httpResponse.send(err);
     });
