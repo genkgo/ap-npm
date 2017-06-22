@@ -1,23 +1,23 @@
 {
-  "workDir": "/ap-npm",
-  "storage": {
-    "directory": "/storage"
-  },
-  "port": 4444,
-  "hostname": "localhost",
-  "auth": {
-    "adapter": "/auth/json-db",
-    "users": {
-      "canPublish": true,
-      "canAccess": true
+    "workDir": "/ap-npm",
+    "storage": {
+        "directory": "/storage"
     },
-    "register": true,
-    "public": false,
-    "remove": true
-  },
-  "ssl": {
-    "enabled": true,
-    "key": "/ssl/sslkey.key",
-    "cert": "/ssl/sslcert.crt"
-  }
+    "port": 4444,
+    "hostname": "localhost",
+    "auth": {
+        "adapter": "/auth/json-db",
+        "users": {
+            "canPublish": true,
+            "canAccess": true
+        },
+        "register": true,
+        "public": false,
+        "remove": true
+    },
+    "ssl": {
+        "enabled": true,
+        "key": "/ssl/sslkey.key",
+        "cert": "/ssl/sslcert.crt"
+    }
 }
