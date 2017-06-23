@@ -12,90 +12,92 @@ export default class {
   */
   process(httpRequest, httpResponse) {
     return new Promise((resolve, reject) => {
-    let packageData = httpRequest.body;
+      let packageData = httpRequest.body;
 
-    if (!packageData._attachments) {
-      this.deprecateUpdater(packageData).then((result) => {
-        if (result) {
-          httpResponse.status(200).send({
-            ok: "packageJson updated"
-          });
-          resolve();
-        } else {
-          reject("420, error: cannot update");
-        }
-      });
-    }
-
-    this.packageValidator.doesPackageExist(packageData.name)
-      .then((result) => {
-      if (result === true) {
-        this.packageValidator.doesVersionExist(packageData.name, packageData['dist-tags']['latest'])
-          .then((result) => {
-          if (result === true) {
-            reject("422, cannot publish, version already exists");
-          } else {
-
-
-            let distTag;
-            for (let key in packageData['dist-tags']) {
-              distTag = key;
-            }
-
-            this.packageValidator.hasDistTag(packageData.name, distTag).then((result) =>  {
-              if (result === true) {
-                this.packageValidator.isVersionHigher(packageData.name, packageData['dist-tags'][distTag], distTag).then((result) => {
-                  if (result === false) {
-                    reject("423, cannot publish, given version is invalid");
-                  }
-                  else {
-                    this.storage.writePackage(packageData)
-                      .then((result) => {
-                        if (result === true) {
-                          httpResponse.status(201);
-                          httpResponse.send({
-                            ok: "package published"
-                          });
-                          resolve()
-                        } else {
-                          reject("421, error while writing package");
-                        }
-                      });
-                  }
-                })
-              } else {
-                reject("423, cannot publish, given version is invalid");
-              }
+      if (!packageData._attachments) {
+        this.deprecateUpdater(packageData).then((result) => {
+          if (result) {
+            httpResponse.status(200).send({
+              ok: "packageJson updated"
             });
-          }});
-
-      } else {
-        this.storage.writeNewPackage(packageData)
-          .then((result) => {
-            if (result === true) {
-              httpResponse.status(201);
-              httpResponse.send({
-                ok: "package published"
-              });
-              resolve();
-            } else {
-              reject("421, error while writing package");
-            }
-          })
-        }
-      });
+            resolve();
+          } else {
+            reject("420, error: cannot update");
+          }
+        });
+      }
+      this.packageValidator.doesPackageExist(packageData.name)
+        .then((result) => {
+          if (result === true) {
+            this.writePackage(packageData, httpRequest, httpResponse);
+          } else {
+            console.log(80);
+            this.writeNewPackage(packageData, httpRequest, httpResponse);
+          }
+        });
     }).catch((err) => {
       httpResponse.send(err);
-    })
+    });
   }
 
   deprecateUpdater(packageData) {
     return new Promise((resolve) => {
       this.storage.updatePackageJson(packageData.name, packageData).then((data) => {
         resolve(data);
-      })
+      });
     });
   }
 
+  writePackage(packageData, httpRequest, httpResponse) {
+    this.packageValidator.doesVersionExist(packageData.name, packageData['dist-tags']['latest'], packageData._scope)
+      .then((result) => {
+        if (result === true) {
+          httpResponse.send("422, cannot publish, version already exists");
+        } else {
 
+          let distTag;
+          for (let key in packageData['dist-tags']) {
+            distTag = key;
+          }
+          this.packageValidator.hasDistTag(packageData.name, distTag).then((result) => {
+            if (result === true) {
+              this.packageValidator.isVersionHigher(packageData.name, packageData['dist-tags'][distTag], distTag).then((result) => {
+                if (result === false) {
+                  httpResponse.send("423, cannot publish, given version is invalid");
+                }
+                else {
+                  this.storage.writePackage(packageData)
+                    .then((result) => {
+                      if (result === true) {
+                        httpResponse.status(201);
+                        httpResponse.send({
+                          ok: "package published"
+                        });
+                      } else {
+                        httpResponse.send("421, error while writing package");
+                      }
+                    });
+                }
+              })
+            } else {
+              httpResponse.send("423, cannot publish, given version is invalid");
+            }
+          });
+        }
+      });
+  }
+
+  writeNewPackage(packageData, httpRequest, httpResponse) {
+    this.storage.writeNewPackage(packageData)
+      .then((result) => {
+        if (result === true) {
+          httpResponse.status(201);
+          httpResponse.send({
+            ok: "package published"
+          });
+        } else {
+          httpResponse.send("421, error while writing package");
+        }
+      });
+  }
 }

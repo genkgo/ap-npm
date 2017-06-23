@@ -15,9 +15,9 @@ export default class {
     });
   }
 
-  doesVersionExist(packageName, packageVersion) {
+  doesVersionExist(packageName, packageVersion, packageScope = null) {
     return new Promise((resolve) => {
-      this.storage.isVersionAvailable(packageName, packageVersion).then((result) => {
+      this.storage.isVersionAvailable(packageName, packageVersion, packageScope).then((result) => {
         resolve(result);
       });
     });
