@@ -24,19 +24,19 @@ export default class {
         if (userLoggedIn) {
           resolve(userLoggedIn);
         }
-      } catch(err) {
+      } catch (err) {
         resolve(false);
       }
     }).catch((err) => {
       console.log(err);
       return false;
-    })
+    });
   }
 
   userAdd(username, password, email) {
     return new Promise((resolve) => {
       if (this.settings.register) {
-        if (typeof(this.users[username]) === "object") {
+        if (typeof (this.users[username]) === "object") {
           resolve(false);
         } else {
           this.users[username] = {
@@ -104,7 +104,7 @@ export default class {
   // Just here for local auth
   updateUserDB() {
     let user_db_path = path.join(this.dbLocation, 'user_db.json');
-    fs.writeFileSync(user_db_path, JSON.stringify(this.users, null, 2), {'mode': '0777'});
+    fs.writeFileSync(user_db_path, JSON.stringify(this.users, null, 2), { 'mode': '0777' });
     this.initUserDB();
   }
 }
