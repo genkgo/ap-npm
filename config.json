@@ -6,6 +6,7 @@
     "port": 4444,
     "hostname": "localhost",
     "proxyEnabled": false,
+    "proxyUrl": "https://registry.npmjs.org",
     "auth": {
         "adapter": "/auth/json-db",
         "users": {

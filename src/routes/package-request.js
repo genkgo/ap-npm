@@ -14,7 +14,14 @@ export default class {
             this.storage.getPackageData({
                 name: httpRequest.params.package,
                 version: httpRequest.params.version,
-            }).catch((err) => reject(err))
+            }).catch((err) => {
+                if (this.proxy) {
+                    this.proxy.process(httpRequest, httpResponse)
+                        .then(resolve());
+                } else {
+                    reject(err);
+                }
+            })
                 .then((packageJson) => {
                     if (typeof packageJson === 'object') {
                         httpResponse.send(packageJson);
@@ -24,12 +31,8 @@ export default class {
                     }
                 });
         }).catch((err) => {
-            if (this.proxyEnabled) {
-                this.proxy.process(httpRequest, httpResponse);
-            } else {
-                httpResponse.status(404);
-                httpResponse.send(err);
-            }
+            httpResponse.status(404);
+            httpResponse.send(err);
         });
     }
 }

@@ -37,6 +37,6 @@ export default function(container) {
 
     container.set('proxy', function() {
         let Util = require('../util/package-proxy').default;
-        return new Util();
-    })
+        return new Util(container.get('config').proxyUrl);
+    });
 }

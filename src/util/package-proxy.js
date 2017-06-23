@@ -2,13 +2,15 @@ import https from 'https';
 
 export default class {
 
-    constructor() {}
+    constructor(proxyUrl) {
+        this.proxyUrl = proxyUrl;
+    }
 
     process(httpRequest, httpResponse) {
         return new Promise((resolve, reject) => {
-            https.get('https://registry.npmjs.org/' +
+            https.get(this.proxyUrl + '/' +
                 httpRequest.params.package,
-                function(response) {
+                function (response) {
                     response.pipe(httpResponse);
                 }
             );

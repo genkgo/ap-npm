@@ -189,7 +189,7 @@ export default class {
     return new Promise((resolve, reject) => {
       let packageName = request.name;
 
-      this.isPackageAvailable(packageName, this.storageLocation)
+      this.isPackageAvailable(packageName)
         .then((result) => {
           if (result === true) {
             readJSON(path.join(this.storageLocation, packageName, 'package.json'))
@@ -200,8 +200,6 @@ export default class {
             reject("Could not get packageData");
           }
         });
-    }).catch((err) => {
-      throw new Error(err);
     });
   }
 
