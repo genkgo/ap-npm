@@ -5,6 +5,7 @@
     },
     "port": 4444,
     "hostname": "localhost",
+    "proxyEnabled": false,
     "auth": {
         "adapter": "/auth/json-db",
         "users": {
