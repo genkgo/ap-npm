@@ -48,5 +48,8 @@
     "repository",
     "registry",
     "server"
-  ]
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  }
 }
