@@ -123,7 +123,6 @@ export default class {
   // This is used for packages that have been published before -> adding a new version
   writePackage(packageData) {
     return new Promise((resolve) => {
-      let fileName;
       let attachmentName;
       let packageName = packageData._packageName;
       let packageScope = packageData._scope;
@@ -132,10 +131,10 @@ export default class {
 
       if (packageScope) {
         packageInfoLocation = path.join(this.storageLocation, packageScope, packageName, 'package.json');
-        folderPath = path.join(this.storageLocation, packageScope, packageData.name);
+        folderPath = path.join(this.storageLocation, packageScope, packageName);
       } else {
         packageInfoLocation = path.join(this.storageLocation, packageName, 'package.json');
-        folderPath = path.join(this.storageLocation, packageData.name);
+        folderPath = path.join(this.storageLocation, packageName);
       }
 
       // console.log(packageData);
@@ -149,7 +148,7 @@ export default class {
         newVersion = key;
       }
 
-      let filePath = folderPath + '/' + fileName + '-' + newVersion + '.tgz';
+      let filePath = folderPath + '/' + packageName + '-' + newVersion + '.tgz';
 
       readJSON(packageInfoLocation)
         .then((packageJSON) => {
