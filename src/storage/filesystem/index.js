@@ -104,7 +104,7 @@ export default class {
 
 
       mkdirp(folderPath);
-      fs.writeFileSync(filePath, Buffer.from(packageData._attachments[attachmentName].data, 'base64'), { 'mode': '0777' });
+      fs.writeFileSync(filePath, Buffer.from(packageData._attachments[attachmentName].data, 'base64'), {'mode': '0777'});
       let packageJSON = packageData;
       delete packageJSON._attachments;
       writeJSON(packageJSONPath, packageJSON).then((result) => {
@@ -158,7 +158,7 @@ export default class {
 
           packageJSON['dist-tags'] = distTags;
 
-          fs.writeFile(filePath, Buffer.from(packageData._attachments[attachmentName].data, 'base64'), { 'mode': '0777' }, () => {
+          fs.writeFile(filePath, Buffer.from(packageData._attachments[attachmentName].data, 'base64'), {'mode': '0777'}, () => {
             writeJSON(packageInfoLocation, packageJSON)
               .then((result) => {
                 console.log("Wrote package to filesystem:", {
@@ -174,40 +174,56 @@ export default class {
     });
   }
 
-  getPackage(packageName, fileName) {
+  getPackage(request) {
+    let packageName = request.name;
+    let packageScope = request.scope;
+    let fileName = request.file;
+
     return new Promise((resolve) => {
-      let fileLocation = this.storageLocation + '/' + packageName + '/' + fileName;
+      let fileLocation;
+
+      if (packageScope) {
+        fileLocation = path.join(this.storageLocation, packageScope, packageName, fileName);
+      } else {
+        fileLocation = path.join(this.storageLocation, packageName, fileName);
+      }
+
       fs.readFile(fileLocation, (err, file) => {
+        console.log("Err: file does not exist " + file);
         resolve(file);
       });
-    }).catch((err) => {
-      throw new Error(err);
-    })
+    });
   }
 
   getPackageData(request) {
     return new Promise((resolve, reject) => {
       let packageName = request.name;
+      let packageScope = request.scope;
 
-      this.isPackageAvailable(packageName)
-        .then((result) => {
-          if (result === true) {
-            readJSON(path.join(this.storageLocation, packageName, 'package.json'))
-              .then((data) => {
-                resolve(data);
-              });
-          } else {
-            reject("Could not get packageData");
-          }
-        });
+      let jsonPath;
+      if (packageScope) {
+        jsonPath = path.join(this.storageLocation, packageScope, packageName, 'package.json');
+      } else {
+        jsonPath = path.join(this.storageLocation, packageName, 'package.json');
+      }
+
+      if (fs.existsSync(jsonPath)) {
+        readJSON(jsonPath)
+          .then((data) => {
+            resolve(data);
+          });
+      } else {
+        reject("Could not get package.json");
+      }
     });
   }
 
   // *** STORAGE VALIDATION ***
   // Checks if our storage has an entry for this packageName
-  isPackageAvailable(packageName) {
+  isPackageAvailable(packageName, packageScope='') {
     return new Promise((resolve) => {
-      if (fs.existsSync(path.join(this.storageLocation, packageName, 'package.json'))) {
+      let packagePath = path.join(this.storageLocation, packageScope, packageName, 'package.json');
+      if (fs.existsSync(packagePath)) {
         resolve(true);
       }
       resolve(false);
@@ -257,7 +273,7 @@ export default class {
         .then((data) => resolve(data));
     }).catch((err) => {
       throw new Error(err);
-    })
+    });
   }
 
 
@@ -267,6 +283,6 @@ export default class {
       let packageInfoLocation = path.join(this.storageLocation, packageName, 'package.json');
       writeJSON(packageInfoLocation, packageJson)
         .then((result) => resolve(result));
-    })
+    });
   }
 }

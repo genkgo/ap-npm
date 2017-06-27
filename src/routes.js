@@ -1,69 +1,17 @@
 import bodyParser from 'body-parser';
 import Access from './auth/access';
+import requestParser from './util/request-parser';
+import paramParser from './util/param-parser';
+import logger from './util/logger';
 
 export default function (app, container) {
-  let logger = function (req, res, next) {
-    console.log("METHOD:", req.method, ", URL:", decodeURIComponent(req.originalUrl), '\n');
-    next(); // Passing the request to the next handler in the stack.
-  };
-
   let access = new Access(container.get('auth'));
 
   app.use(logger);
   app.use(bodyParser.json({ strict: false, limit: '10mb' }));
+  app.use(requestParser);
+  app.use(paramParser);
 
-  // Rewrite the requested url when a scoped package is used
-  app.use(function (req, res, next) {
-    let url;
-
-    // In case a simple request is send
-    if (req.url.indexOf('@') !== -1) {
-      url = decodeURIComponent(req.url);
-      let scope = req.url.substr(1, url.lastIndexOf('/') - 1);
-      let packageNameIndex = url.lastIndexOf('/') + 1;
-      let packageName = url.substr(packageNameIndex);
-      req.body._scope = scope;
-      req.body._unscopedName = packageName;
-    }
-    // In case a dist-tags like request is send
-    else {
-      url = req.url;
-      if (url.indexOf('@') > -1) {
-        let urlSlices = url.split('/');
-        let index;
-        for (let i = 0; i < urlSlices.length; i++) {
-          if (urlSlices[i].indexOf('@') > -1) {
-            index = i;
-          }
-        }
-
-        let scopedUrl = decodeURIComponent(urlSlices[index]);
-        let packageSlices = scopedUrl.split('@');
-
-        req.params.version = packageSlices[1];
-        scopedUrl = packageSlices[0];
-
-        urlSlices[index] = scopedUrl.substr(scopedUrl.indexOf('/') + 1);
-        let newUrl = "";
-        for (let i = 1; i < urlSlices.length; i++) {
-          newUrl += '/' + urlSlices[i];
-        }
-        req.url = decodeURIComponent(newUrl);
-      }
-    }
-    next();
-  });
-
-  // Rewrite ? params to req.params and convert url into regular url
-  app.use(function (req, res, next) {
-    let url = decodeURIComponent(req.url);
-    let params = url.split('?');
-    for (let i = 1; i < params.length; i++) {
-      let param = params[i].split('=');
-      req.params[param[0]] = param[1];
-    }
-    next();
-  });
 
 
   // *** AUTH ***

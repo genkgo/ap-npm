@@ -6,20 +6,30 @@ export default class {
   }
 
   /*
-  * Reads package data from fileystem and sends it to npm-client
-  */
+   * Reads package data from fileystem and sends it to npm-client
+   */
   process(httpRequest, httpResponse) {
-    return new Promise((resolve, reject) => {
-      let packageName = httpRequest['params']['package'];
-      let fileName = httpRequest['params']['filename'];
-      this.storage.getPackage(packageName, fileName)
-        .catch((err) => reject(err))
+    return new Promise((resolve) => {
+      let packageName = httpRequest.body._packageName;
+      let packageScope = httpRequest.body._scope;
+      let fileName = httpRequest.body._requestedFile;
+
+      this.storage.getPackage({
+        name: packageName,
+        scope: packageScope,
+        file: fileName
+      })
         .then((data) => {
-        httpResponse.send(data);
-        resolve();
-      }).catch((err) => {
-        httpResponse.send(err.toString());
-      });
+          httpResponse.send(data);
+          resolve();
+        })
+        .catch((err) => {
+          console.log("Err: 404, " + err);
+          httpResponse.status(404);
+          httpResponse.send({
+            message: err
+          });
+        });
     });
   }
 }
