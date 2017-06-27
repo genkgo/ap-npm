@@ -1,4 +1,4 @@
 export default function (req, res, next) {
-  console.log("METHOD:", req.method, ", URL:", decodeURIComponent(req.originalUrl), '\n');
+  console.log("\nMETHOD:", req.method, ", URL:", decodeURIComponent(req.originalUrl));
   next();
 }

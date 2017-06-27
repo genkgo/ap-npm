@@ -179,7 +179,7 @@ export default class {
     let packageScope = request.scope;
     let fileName = request.file;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       let fileLocation;
 
       if (packageScope) {
@@ -189,7 +189,10 @@ export default class {
       }
 
       fs.readFile(fileLocation, (err, file) => {
-        console.log("Err: file does not exist " + file);
+        if (err) {
+          console.log("Err: file does not exist " + fileName);
+          reject(err);
+        }
         resolve(file);
       });
     });
@@ -220,7 +223,7 @@ export default class {
 
   // *** STORAGE VALIDATION ***
   // Checks if our storage has an entry for this packageName
-  isPackageAvailable(packageName, packageScope='') {
+  isPackageAvailable(packageName, packageScope = '') {
     return new Promise((resolve) => {
       let packagePath = path.join(this.storageLocation, packageScope, packageName, 'package.json');
       if (fs.existsSync(packagePath)) {

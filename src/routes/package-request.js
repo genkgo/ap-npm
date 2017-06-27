@@ -17,12 +17,11 @@ export default class {
         unscoped: httpRequest.body._scopedName
       })
         .catch((err) => {
-        console.log(err);
           if (this.proxyEnabled) {
             this.proxy.process(httpRequest, httpResponse)
               .then(resolve());
           } else {
-            console.log("Err: Proxy disabled, rejecting: " + httpRequest.params.package);
+            console.log("Err: Proxy disabled, rejecting: " + httpRequest.body._packageName);
             reject(err);
           }
         })

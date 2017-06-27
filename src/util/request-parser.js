@@ -31,7 +31,7 @@ export default function (req, res, next) {
   if (scope && packageName) {
     req.body._scope = scope;
     req.body._packageName = packageName;
-    req.body._scopedName = '/' + scope + '/' + 'packageName';
+    req.body._scopedName = '/' + scope + '/' + packageName;
   } else {
     for (let i = 0; i < splitUrl.length; i++) {
       if (req.body._packageName) continue;
