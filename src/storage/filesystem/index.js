@@ -100,17 +100,18 @@ export default class {
       let folderPath = this.storageLocation + '/' + packageData.name;
       let filePath = folderPath + '/' + fileName;
       console.log(filePath);
-      let packageJSONPath = folderPath + '/package.json';
+      let packageJsonPath = folderPath + '/package.json';
 
 
       mkdirp(folderPath);
       fs.writeFileSync(filePath, Buffer.from(packageData._attachments[attachmentName].data, 'base64'), {'mode': '0777'});
       let packageJSON = packageData;
       delete packageJSON._attachments;
-      writeJSON(packageJSONPath, packageJSON).then((result) => {
+
+      writeJSON(packageJsonPath, packageJSON).then((result) => {
         console.log("Wrote new package to filesystem:", {
           "filePath": filePath,
-          "packageJSON": packageJSONPath
+          "packageJSON": packageJsonPath
         });
         resolve(result);
       });
@@ -124,25 +125,31 @@ export default class {
     return new Promise((resolve) => {
       let fileName;
       let attachmentName;
-      let packageInfoLocation = path.join(this.storageLocation, packageData.name, '/package.json');
-      let folderPath = path.join(this.storageLocation, packageData.name);
-      let packageJSONPath = folderPath + '/package.json';
+      let packageName = packageData._packageName;
+      let packageScope = packageData._scope;
+      let packageInfoLocation;
+      let folderPath;
 
-      for (let key in packageData._attachments) {
-        if (packageData._scope) {
-          fileName = key.substr(packageData._scope.length + 1);
-        } else {
-          fileName = key;
-        }
-        attachmentName = key;
+      if (packageScope) {
+        packageInfoLocation = path.join(this.storageLocation, packageScope, packageName, 'package.json');
+        folderPath = path.join(this.storageLocation, packageScope, packageData.name);
+      } else {
+        packageInfoLocation = path.join(this.storageLocation, packageName, 'package.json');
+        folderPath = path.join(this.storageLocation, packageData.name);
       }
 
-      let filePath = folderPath + '/' + fileName;
+      // console.log(packageData);
+
+      for (let key in packageData._attachments) {
+        attachmentName = key;
+      }
 
       let newVersion;
       for (let key in packageData.versions) {
         newVersion = key;
       }
+
+      let filePath = folderPath + '/' + fileName + '-' + newVersion + '.tgz';
 
       readJSON(packageInfoLocation)
         .then((packageJSON) => {
@@ -158,16 +165,21 @@ export default class {
 
           packageJSON['dist-tags'] = distTags;
 
-          fs.writeFile(filePath, Buffer.from(packageData._attachments[attachmentName].data, 'base64'), {'mode': '0777'}, () => {
-            writeJSON(packageInfoLocation, packageJSON)
-              .then((result) => {
-                console.log("Wrote package to filesystem:", {
-                  "filePath": filePath,
-                  "packageJSON": packageJSONPath
+          console.log(attachmentName);
+          fs.writeFile(
+            filePath,
+            Buffer.from(packageData._attachments[attachmentName].data, 'base64'),
+            {'mode': '0777'},
+            () => {
+              writeJSON(packageInfoLocation, packageJSON)
+                .then((result) => {
+                  console.log("Wrote package to filesystem:", {
+                    "filePath": filePath,
+                    "packageJSON": packageInfoLocation
+                  });
+                  resolve(result);
                 });
-                resolve(result);
-              });
-          });
+            });
         });
     }).catch((err) => {
       throw new Error(err);
@@ -223,9 +235,15 @@ export default class {
 
   // *** STORAGE VALIDATION ***
   // Checks if our storage has an entry for this packageName
-  isPackageAvailable(packageName, packageScope = '') {
+  isPackageAvailable(packageName, packageScope = null) {
     return new Promise((resolve) => {
-      let packagePath = path.join(this.storageLocation, packageScope, packageName, 'package.json');
+      let packagePath;
+      if (packageScope) {
+        packagePath = path.join(this.storageLocation, packageScope, packageName, 'package.json');
+      } else {
+        packagePath = path.join(this.storageLocation, packageName, 'package.json');
+      }
+
       if (fs.existsSync(packagePath)) {
         resolve(true);
       }
@@ -237,9 +255,18 @@ export default class {
   }
 
   // Checks if a certain version of a package actually exists
-  isVersionAvailable(packageName, packageVersion, packageScope = null) {
+  isVersionAvailable(request, packageVersion) {
+    let packageName = request._packageName;
+    let packageScope = request._scope;
+    let scopedName = request._scopedName;
+
     return new Promise((resolve) => {
-      let packageInfoLocation = path.join(this.storageLocation, packageName, 'package.json');
+      let packageInfoLocation;
+      if (packageScope) {
+        packageInfoLocation = path.join(this.storageLocation, packageScope, packageName, 'package.json');
+      } else {
+        packageInfoLocation = path.join(this.storageLocation, packageName, 'package.json');
+      }
 
       readJSON(packageInfoLocation)
         .then((packageJSON) => {
@@ -258,7 +285,12 @@ export default class {
             fileName = packageName;
           }
 
-          let fileExists = fs.existsSync(path.join(this.storageLocation, packageName, fileName + '-' + packageVersion + '.tgz'));
+          let fileExists;
+          if (packageScope) {
+            fileExists = fs.existsSync(path.join(this.storageLocation, packageScope, packageName, packageName + '-' + packageVersion + '.tgz'));
+          } else {
+            fileExists = fs.existsSync(path.join(this.storageLocation, packageName, fileName + '-' + packageVersion + '.tgz'));
+          }
 
           // Both have to be true for the version requested to be available
           resolve(versionExists && fileExists);
@@ -269,21 +301,35 @@ export default class {
     });
   }
 
-  getPackageJson(packageName) {
+  getPackageJson(packageName, packageScope = null) {
     return new Promise((resolve) => {
-      let packageInfoLocation = path.join(this.storageLocation, packageName, 'package.json');
+
+      let packageInfoLocation;
+      if (packageScope) {
+        packageInfoLocation = path.join(this.storageLocation, packageScope, packageName, 'package.json');
+      } else {
+        packageInfoLocation = path.join(this.storageLocation, packageName, 'package.json');
+      }
+
       readJSON(packageInfoLocation)
         .then((data) => resolve(data));
-    }).catch((err) => {
-      throw new Error(err);
     });
   }
 
 
   /* Dist-tag functions*/
-  updatePackageJson(packageName, packageJson) {
+  updatePackageJson(packageData) {
+    let packageName = packageData._packageName;
+    let packageScope = packageData._scope;
+    let scopedName = packageData._scopedName;
     return new Promise((resolve) => {
-      let packageInfoLocation = path.join(this.storageLocation, packageName, 'package.json');
+      let packageInfoLocation;
+      if (packageScope) {
+        packageInfoLocation = path.join(this.storageLocation, packageScope, packageName, 'package.json');
+      } else {
+        packageInfoLocation = path.join(this.storageLocation, packageName, 'package.json');
+      }
+
       writeJSON(packageInfoLocation, packageJson)
         .then((result) => resolve(result));
     });

@@ -24,20 +24,25 @@ export default class {
   }
 
   // *** PUBLISHING ***
-  isVersionHigher(packageName, packageVersion, distTag) {
+  isVersionHigher(packageName, packageScope=null, packageVersion, distTag) {
     // Check if version that we got is higher than what is available
     return new Promise((resolve) => {
-      this.storage.getPackageJson(packageName).then((packageData) => {
+
+      this.storage.getPackageJson(packageName, packageScope)
+        .then((packageData) => {
         let currentVersion = packageData['dist-tags'][distTag];
         resolve(semver.satisfies(packageVersion, '>' + currentVersion));
       })
     });
   }
 
-  hasDistTag(packageName, distTag) {
+  hasDistTag(packageData, distTag) {
+    let packageName = packageData._packageName;
+    let packageScope = packageData._scope;
+
     return new Promise((resolve) => {
-      this.storage.getPackageJson(packageName).then((packageData) => {
-        resolve(!!packageData['dist-tags'][distTag]);
+      this.storage.getPackageJson(packageName, packageScope).then((packageJson) => {
+        resolve(!!packageJson['dist-tags'][distTag]);
       });
     });
   }
