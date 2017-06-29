@@ -6,7 +6,7 @@
   "scripts": {
     "build": "babel src -d dist",
     "prepublish": "npm run build",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "babel-node --presets es2015,stage-2 ./test/init-test.js ",
     "start": "babel-node --presets es2015,stage-2 ./src/cli.js"
   },
   "babel": {
