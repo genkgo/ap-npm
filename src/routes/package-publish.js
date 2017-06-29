@@ -26,7 +26,8 @@ export default class {
           }
         });
       }
-      this.packageValidator.doesPackageExist(packageData.name)
+
+      this.storage.isPackageAvailable(packageData._packageName, packageData._scope)
         .then((result) => {
           if (result === true) {
             this.writePackage(httpRequest, httpResponse);
@@ -48,57 +49,49 @@ export default class {
   }
 
   writePackage(httpRequest, httpResponse) {
-
     let distTag;
+    console.log(httpRequest.body['dist-tags']);
 
-    this.storage.isVersionAvailable(httpRequest.body)
-      .then(result => {
-          if (result === true) {
-            httpResponse.status(403);
-            httpResponse.send({message: "Cannot publish, version already exists"});
-          } else {
-            for (let key in httpRequest.body['dist-tags']) {
-              distTag = key;
+    for (let key in httpRequest.body['dist-tags']) {
+      distTag = key;
+    }
+
+    this.packageValidator.hasDistTag(httpRequest.body, distTag)
+      .then((result) => {
+        if (result === true) {
+          this.packageValidator.isVersionHigher(httpRequest.body._packageName,
+            httpRequest.body._scope,
+            httpRequest.body['dist-tags'][distTag],
+            distTag
+          ).then((result) => {
+            if (result === false) {
+              httpResponse.send("423, cannot publish, given version is invalid");
+            } else {
+              this.storage.writePackage(httpRequest.body)
+                .then((result) => {
+                  if (result === true) {
+                    httpResponse.status(201);
+                    httpResponse.send({
+                      ok: "package published"
+                    });
+                  } else {
+                    httpResponse.status(500);
+                    httpResponse.send({
+                      message: "error while writing package"
+                    });
+                  }
+                });
             }
-
-            this.packageValidator.hasDistTag(httpRequest.body, distTag)
-              .then((result) => {
-                if (result === true) {
-                  this.packageValidator.isVersionHigher(httpRequest.body._packageName,
-                    httpRequest.body._scope,
-                    httpRequest.body['dist-tags'][distTag],
-                    distTag
-                  ).then((result) => {
-                    if (result === false) {
-                      httpResponse.send("423, cannot publish, given version is invalid");
-                    } else {
-                      this.storage.writePackage(httpRequest.body)
-                        .then((result) => {
-                          if (result === true) {
-                            httpResponse.status(201);
-                            httpResponse.send({
-                              ok: "package published"
-                            });
-                          } else {
-                            httpResponse.status(500);
-                            httpResponse.send({
-                              message: "error while writing package"
-                            });
-                          }
-                        });
-                    }
-                  })
-                } else {
-                  httpResponse.status(403);
-                  httpResponse.send({message: "cannot publish, given version is invalid"});
-                }
-              });
-          }
+          })
+        } else {
+          httpResponse.status(403);
+          httpResponse.send({message: "cannot publish, given version is invalid"});
         }
-      );
+      });
   }
 
-  writeNewPackage(packageData, httpRequest, httpResponse) {
+  writeNewPackage(httpRequest, httpResponse) {
+    let packageData = httpRequest.body;
     this.storage.writeNewPackage(packageData)
       .then((result) => {
         if (result === true) {

@@ -87,23 +87,27 @@ export default class {
   writeNewPackage(packageData) {
     return new Promise((resolve) => {
       let fileName;
+      let packageName = packageData._packageName;
+      let packageScope = packageData._scope;
       let attachmentName;
+      let folderPath;
+      let packageJsonPath;
+      let filePath;
       for (let key in packageData._attachments) {
-        if (packageData._scope) {
-          fileName = key.substr(packageData._scope.length + 1);
-        } else {
-          fileName = key;
-        }
         attachmentName = key;
       }
 
-      let folderPath = this.storageLocation + '/' + packageData.name;
-      let filePath = folderPath + '/' + fileName;
-      console.log(filePath);
-      let packageJsonPath = folderPath + '/package.json';
-
+      if (packageScope) {
+        folderPath = path.join(this.storageLocation, packageScope, packageName);
+        filePath = path.join(folderPath, attachmentName.substr(packageScope.length + 1));
+      } else {
+        folderPath = path.join(this.storageLocation, packageName);
+        filePath = path.join(folderPath, attachmentName);
+      }
 
       mkdirp.sync(folderPath);
+      packageJsonPath = path.join(folderPath, 'package.json');
+
       fs.writeFileSync(filePath, Buffer.from(packageData._attachments[attachmentName].data, 'base64'), {'mode': '0777'});
       let packageJSON = packageData;
       delete packageJSON._attachments;
@@ -136,6 +140,7 @@ export default class {
         packageInfoLocation = path.join(this.storageLocation, packageName, 'package.json');
         folderPath = path.join(this.storageLocation, packageName);
       }
+
       mkdirp.sync(folderPath);
       for (let key in packageData._attachments) {
         attachmentName = key;
@@ -187,7 +192,6 @@ export default class {
     let packageName = request.name;
     let packageScope = request.scope;
     let fileName = request.file;
-    console.log(packageName, packageScope, fileName);
 
     return new Promise((resolve, reject) => {
       let fileLocation;

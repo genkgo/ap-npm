@@ -6,15 +6,6 @@ export default class {
     this.storage = storage;
   }
 
-  // *** GET ***
-  doesPackageExist(packageName) {
-    return new Promise((resolve) => {
-      this.storage.isPackageAvailable(packageName).then((result) => {
-        resolve(result);
-      });
-    });
-  }
-
   doesVersionExist(packageName, packageVersion, packageScope = null) {
     return new Promise((resolve) => {
       this.storage.isVersionAvailable(packageName, packageVersion, packageScope).then((result) => {
