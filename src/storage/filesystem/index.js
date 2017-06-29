@@ -103,7 +103,7 @@ export default class {
       let packageJsonPath = folderPath + '/package.json';
 
 
-      mkdirp(folderPath);
+      mkdirp.sync(folderPath);
       fs.writeFileSync(filePath, Buffer.from(packageData._attachments[attachmentName].data, 'base64'), {'mode': '0777'});
       let packageJSON = packageData;
       delete packageJSON._attachments;
@@ -136,9 +136,7 @@ export default class {
         packageInfoLocation = path.join(this.storageLocation, packageName, 'package.json');
         folderPath = path.join(this.storageLocation, packageName);
       }
-
-      // console.log(packageData);
-
+      mkdirp.sync(folderPath);
       for (let key in packageData._attachments) {
         attachmentName = key;
       }
@@ -189,6 +187,7 @@ export default class {
     let packageName = request.name;
     let packageScope = request.scope;
     let fileName = request.file;
+    console.log(packageName, packageScope, fileName);
 
     return new Promise((resolve, reject) => {
       let fileLocation;

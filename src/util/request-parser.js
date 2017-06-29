@@ -16,13 +16,21 @@ export default function (req, res, next) {
       scope = splitUrl[i];
       packageName = splitUrl[i + 1];
     }
+  }
 
-    if (splitUrl[i].indexOf('-') !== -1) {
-      if (i <= 1) continue;
-      if (requestedFile) continue;
-      if (scope) {
+  if (scope) {
+    for (let i = 0; i < splitUrl.length; i++) {
+      if (splitUrl[i].indexOf('-') !== -1) {
+        if (i <= 2) continue;
+        if (requestedFile) continue;
         requestedFile = splitUrl[i + 2];
-      } else {
+      }
+    }
+  } else {
+    for (let i = 0; i < splitUrl.length; i++) {
+      if (splitUrl[i].indexOf('-') !== -1) {
+        if (i <= 1) continue;
+        if (requestedFile) continue;
         requestedFile = splitUrl[i + 1];
       }
     }

@@ -31,7 +31,6 @@ export default class {
           if (result === true) {
             this.writePackage(httpRequest, httpResponse);
           } else {
-            console.log(80);
             this.writeNewPackage(httpRequest, httpResponse);
           }
         });
