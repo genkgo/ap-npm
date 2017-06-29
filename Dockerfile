@@ -4,7 +4,7 @@ RUN mkdir /ap-npm
 
 WORKDIR /ap-npm
 
-RUN npm install -g ap-npm@git+https://git@github.com/genkgo/ap-npm.git
+RUN npm install -g ap-npm
 
 EXPOSE 4444
 
