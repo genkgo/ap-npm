@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import mkdirp from 'mkdirp';
+
 import removePackage from './utils/remove-package';
 import removePackageVersion from './utils/remove-package-version';
 import getPackage from './utils/get-package';
@@ -41,7 +42,7 @@ export default class {
   }
 
   writeNewPackage(packageData) {
-    return writeNewPackage(packageData, storageLocation);
+    return writeNewPackage(packageData, this.storageLocation);
   }
 
   writePackage(packageData) {

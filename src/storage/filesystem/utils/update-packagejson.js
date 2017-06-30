@@ -4,7 +4,7 @@ import writeJSON from './write-json';
 export default function (packageData, storageLocation) {
     let packageName = packageData._packageName;
     let packageScope = packageData._scope;
-    let scopedName = packageData._scopedName;
+
     return new Promise((resolve) => {
       let packageInfoLocation;
       if (packageScope) {

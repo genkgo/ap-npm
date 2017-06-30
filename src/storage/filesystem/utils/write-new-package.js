@@ -1,10 +1,10 @@
 import path from 'path';
 import fs from 'fs';
+import mkdirp from 'mkdirp';
 import writeJSON from './write-json';
 
 export default function (packageData, storageLocation) {
   return new Promise((resolve) => {
-      let fileName;
       let packageName = packageData._packageName;
       let packageScope = packageData._scope;
       let attachmentName;
