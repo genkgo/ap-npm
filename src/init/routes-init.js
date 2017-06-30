@@ -1,6 +1,6 @@
 export default function(container) {
-    container.set('route-package-request', function() {
-        let Route = require('../routes/package-request').default;
+    container.set('route-package-json', function() {
+        let Route = require('../routes/package-json').default;
         return new Route(container.get('storage'), container.get('proxy'), container.get('config').proxyEnabled);
     });
 

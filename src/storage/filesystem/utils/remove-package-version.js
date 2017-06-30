@@ -13,30 +13,33 @@ export default function (packageName, packageVersion, getPackageJson, updatePack
 
       // location is valid
       fs.unlink(tarballLocation, () => {
-        let packageJson = getPackageJson(packageName);
+        let packageJson = getPackageJson({
+          name: packageName,
+          scope: packageScope
+        }).then(() => {
+          delete (packageJson.versions[packageVersion]);
 
-        delete (packageJson.versions[packageVersion]);
-
-        // If this was the last version of the package, we can remove it completely
-        if (packageJson.versions.size === 0) {
-          removePackage(packageName);
-          return true;
-        }
-
-        if (packageJson['dist-tags']['latest'] === packageVersion) {
-          // need to update dist-tags
-          let highestVersion = '0.0.1';
-          for (let key in packageJson.versions) {
-            if (semver.satisfies(key, '>' + highestVersion)) {
-              highestVersion = key;
-            }
+          // If this was the last version of the package, we can remove it completely
+          if (packageJson.versions.size === 0) {
+            removePackage(packageName);
+            return true;
           }
-          packageJson['dist-tags']['latest'] = highestVersion;
-        }
-        updatePackageJson(packageName, packageJson)
-          .then((result) => {
-            resolve(result);
-          });
+
+          if (packageJson['dist-tags']['latest'] === packageVersion) {
+            // need to update dist-tags
+            let highestVersion = '0.0.1';
+            for (let key in packageJson.versions) {
+              if (semver.satisfies(key, '>' + highestVersion)) {
+                highestVersion = key;
+              }
+            }
+            packageJson['dist-tags']['latest'] = highestVersion;
+          }
+          updatePackageJson(packageName, packageJson)
+            .then((result) => {
+              resolve(result);
+            });
+        })
       });
     });
   });

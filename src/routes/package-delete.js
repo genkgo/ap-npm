@@ -12,6 +12,7 @@ export default class {
    * Reads package data from fileystem and sends it to npm-client
    */
   process(httpRequest, httpResponse) {
+    let packageScope = httpRequest.body._scope;
     return new Promise((resolve) => {
       if (this.config.auth.remove === false) {
         reject('403, not allowed to delete packages');
@@ -42,7 +43,7 @@ export default class {
         });
       }
       else if (semver.valid(packageVersion)) {
-        this.storage.removePackageVersion(packageName, packageVersion).then((result) => {
+        this.storage.removePackageVersion(packageName, packageScope, packageVersion).then((result) => {
           if (result === true) {
             httpResponse.status(200).send({
               ok: "Packageversion deleted"

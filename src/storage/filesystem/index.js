@@ -5,10 +5,9 @@ import mkdirp from 'mkdirp';
 import removePackage from './utils/remove-package';
 import removePackageVersion from './utils/remove-package-version';
 import getPackage from './utils/get-package';
-import getPackageData from './utils/get-package-data';
+import getPackageJson from './utils/get-package-json';
 import isPackageAvailable from './utils/is-package-available';
 import isVersionAvailable from './utils/is-version-available';
-import getPackageJson from './utils/get-packagejson';
 import updatePackageJson from './utils/update-packagejson';
 import writePackage from './utils/write-package';
 import writeNewPackage from './utils/write-new-package';
@@ -30,9 +29,10 @@ export default class {
     return removePackage(packageName, this.storageLocation);
   }
 
-  removePackageVersion(packageName, packageVersion) {
+  removePackageVersion(packageName, packageScope, packageVersion) {
     return removePackageVersion(
       packageName,
+      packageScope,
       packageVersion,
       this.getPackageJson,
       this.updatePackageJson,
@@ -53,8 +53,8 @@ export default class {
     return getPackage(request, this.storageLocation);
   }
 
-  getPackageData(request) {
-    return getPackageData(request, this.storageLocation);
+  getPackageJson(request) {
+    return getPackageJson(request, this.storageLocation);
   }
 
   isPackageAvailable(packageName, packageScope = null) {
@@ -63,10 +63,6 @@ export default class {
 
   isVersionAvailable(request, packageVersion) {
     return isVersionAvailable(request, packageVersion, this.storageLocation);
-  }
-
-  getPackageJson(packageName, packageScope = null) {
-    return getPackageJson(packageName, this.storageLocation, packageScope);
   }
 
   updatePackageJson(packageData) {
