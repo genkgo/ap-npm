@@ -32,7 +32,6 @@ export default class {
         allTokens = JSON.parse(tokenString);
         delete allTokens[token];
       } catch (e) {
-        // On error: just make the tokens_db an empty db.
         allTokens = {};
       }
 
@@ -78,9 +77,7 @@ export default class {
         }
       }
 
-      // If anything fails
       reject();
-
     });
   }
 

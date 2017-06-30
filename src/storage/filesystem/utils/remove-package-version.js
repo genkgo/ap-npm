@@ -9,6 +9,7 @@ export default function (packageName,
                          updatePackageJson,
                          removePackage,
                          storageLocation) {
+
   return new Promise((resolve, reject) => {
     let packageLocation = path.join(storageLocation, packageName);
     let tarballLocation = path.join(packageLocation, packageName + packageVersion + '.tgz');
