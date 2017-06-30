@@ -1,7 +1,7 @@
 import path from 'path';
 import writeJSON from './write-json';
 
-export default function (packageData, storageLocation) {
+export default function (packageData, packageJson, storageLocation) {
     let packageName = packageData._packageName;
     let packageScope = packageData._scope;
 

@@ -7,7 +7,7 @@ export default class {
   }
 
   process(httpRequest, httpResponse) {
-    return new Promise((resolve, reject) => {
+    return new Promise(() => {
       let pkgData = httpRequest.body;
       let urlPath;
 

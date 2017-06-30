@@ -6,7 +6,7 @@ export default function (request, storageLocation) {
   let packageScope = request.scope;
   let fileName = request.file;
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     let fileLocation;
 
     if (packageScope) {

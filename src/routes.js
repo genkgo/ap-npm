@@ -15,22 +15,22 @@ export default function (app, container) {
 
 
   // *** AUTH ***
-  app.put('/-/user/org.couchdb.user:_rev?/:revision?', function (req, res, next) {
+  app.put('/-/user/org.couchdb.user:_rev?/:revision?', function (req, res) {
     let route = container.get('route-auth-user-login');
     route.process(req, res);
   });
   // Logout
-  app.delete('/-/user/token/*', function (req, res, next) {
+  app.delete('/-/user/token/*', function (req, res) {
     let route = container.get('route-auth-user-logout');
     route.process(req, res);
   });
   // for "npm whoami"
-  app.get('/whoami', function (req, res, next) {
+  app.get('/whoami', function (req, res) {
     let route = container.get('route-auth-whoami');
     route.process(req, res);
   });
   // for "npm whoami"
-  app.get('/-/whoami', function (req, res, next) {
+  app.get('/-/whoami', function (req, res) {
     let route = container.get('route-auth-whoami');
     route.process(req, res);
   });
@@ -39,7 +39,7 @@ export default function (app, container) {
 
   // *** INSTALL ***
   // Get version of package
-  app.get('/:package/:version?', access.can('access'), function (req, res, next) {
+  app.get('/:package/:version?', access.can('access'), function (req, res) {
     let route;
     if (req.params.write) {
       route = container.get('route-package-unpublish');
@@ -49,39 +49,39 @@ export default function (app, container) {
     route.process(req, res);
   });
   // Request for package file data
-  app.get('/:package/-/:filename', access.can('access'), function (req, res, next) {
+  app.get('/:package/-/:filename', access.can('access'), function (req, res) {
     let route = container.get('route-package-get');
     route.process(req, res);
   });
 
   // *** DIST-TAGS ***
-  app.get('/-/package/:package/dist-tags', access.can('access'), function (req, res, next) {
+  app.get('/-/package/:package/dist-tags', access.can('access'), function (req, res) {
     let route = container.get('route-package-get-dist-tags');
     route.process(req, res);
   });
-  app.delete('/-/package/:package/dist-tags/:tag', access.can('publish'), function (req, res, next) {
+  app.delete('/-/package/:package/dist-tags/:tag', access.can('publish'), function (req, res) {
     let route = container.get('route-package-delete-dist-tags');
     route.process(req, res);
   });
-  app.put('/-/package/:package/dist-tags/:tag', access.can('publish'), function (req, res, next) {
+  app.put('/-/package/:package/dist-tags/:tag', access.can('publish'), function (req, res) {
     let route = container.get('route-package-add-dist-tags');
     route.process(req, res);
   });
 
 
   // *** PUBLISH ***
-  app.put('/:package/:_rev?/:revision?', access.can('publish'), function (req, res, next) {
+  app.put('/:package/:_rev?/:revision?', access.can('publish'), function (req, res) {
     let route = container.get('route-package-publish');
     route.process(req, res);
   });
 
-  app.delete('/:package/:_rev?/:revision?', access.can('publish'), function (req, res, next) {
+  app.delete('/:package/:_rev?/:revision?', access.can('publish'), function (req, res) {
     let route = container.get('route-package-delete');
     route.process(req, res);
   });
 
   // To test if ap-npm is running
-  app.get('/', function (req, res, next) {
+  app.get('/', function (req, res) {
     if (req.url === '/' || req.url === '') {
       res.send("ap-npm is running\n");
     }

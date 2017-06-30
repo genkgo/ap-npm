@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import rimraf from 'rimraf';
 
-export default function (packagename, storageLocation) {
+export default function (packageName, storageLocation) {
   return new Promise((resolve, reject) => {
     let packageLocation = path.join(storageLocation, packageName);
 

@@ -5,7 +5,6 @@ import readJSON from './read-json';
 export default function (request, packageVersion, storageLocation) {
     let packageName = request._packageName;
     let packageScope = request._scope;
-    let scopedName = request._scopedName;
 
     return new Promise((resolve) => {
       let packageInfoLocation;

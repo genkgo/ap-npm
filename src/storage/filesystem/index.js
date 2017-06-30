@@ -35,7 +35,7 @@ export default class {
       packageScope,
       packageVersion,
       this.getPackageJson,
-      this.updatePackageJson,
+      updatePackageJson,
       this.removePackage,
       this.storageLocation
     );
@@ -63,9 +63,5 @@ export default class {
 
   isVersionAvailable(request, packageVersion) {
     return isVersionAvailable(request, packageVersion, this.storageLocation);
-  }
-
-  updatePackageJson(packageData) {
-    return updatePackageJson(packageData, this.storageLocation);
   }
 }

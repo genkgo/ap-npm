@@ -1,7 +1,14 @@
 import fs from 'fs';
 import path from 'path';
+import semver from 'semver';
 
-export default function (packageName, packageVersion, getPackageJson, updatePackageJson, removePackage, storageLocation) {
+export default function (packageName,
+                         packageScope,
+                         packageVersion,
+                         getPackageJson,
+                         updatePackageJson,
+                         removePackage,
+                         storageLocation) {
   return new Promise((resolve, reject) => {
     let packageLocation = path.join(storageLocation, packageName);
     let tarballLocation = path.join(packageLocation, packageName + packageVersion + '.tgz');
@@ -35,7 +42,7 @@ export default function (packageName, packageVersion, getPackageJson, updatePack
             }
             packageJson['dist-tags'].latest = highestVersion;
           }
-          updatePackageJson(packageName, packageJson)
+          updatePackageJson(packageName, packageJson, storageLocation)
             .then((result) => {
               resolve(result);
             });

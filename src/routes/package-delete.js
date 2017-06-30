@@ -13,7 +13,7 @@ export default class {
    */
   process(httpRequest, httpResponse) {
     let packageScope = httpRequest.body._scope;
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       if (this.config.auth.remove === false) {
         reject('403, not allowed to delete packages');
       }

@@ -26,7 +26,7 @@ export default class {
     let user_tokens_path = path.join(this.dbLocation, 'user_tokens.json');
     let allTokens;
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       try {
         let tokenString = fs.readFileSync(user_tokens_path, 'utf8');
         allTokens = JSON.parse(tokenString);
