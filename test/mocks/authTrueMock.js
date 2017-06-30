@@ -1,5 +1,3 @@
-import path from 'path';
-
 export default class {
   constructor() {
   }
@@ -14,5 +12,9 @@ export default class {
 
   userRemove(username, password) {
     return true;
+  }
+
+  shouldBeAbleTo(access, packageName, authorization) {
+    return new Promise((resolve) => resolve);
   }
 }

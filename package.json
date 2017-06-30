@@ -6,8 +6,8 @@
   "scripts": {
     "build": "babel src -d dist",
     "prepublish": "npm run build",
-    "test": "mocha ./test/util ./test/storage --reporter=spec --full-trace --compilers js:babel-core/register",
-    "lint": "jshint .",
+    "test": "mocha ./test ./test/util ./test/storage --reporter=spec --full-trace --compilers js:babel-core/register",
+    "lint": "jshint ./src && eslint ./src",
     "start": "babel-node --presets es2015,stage-2 ./src/cli.js"
   },
   "babel": {
