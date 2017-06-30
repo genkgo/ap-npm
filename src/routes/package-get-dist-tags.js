@@ -23,14 +23,13 @@ export default class {
           httpResponse.send(JSON.stringify(distTags));
           resolve();
         } else {
-          reject("404, could not get dist-tags")
+          reject("404, could not get dist-tags");
         }
       });
 
     }).catch((err) => {
       httpResponse.send(err);
-    })
-
+    });
   }
 }
 

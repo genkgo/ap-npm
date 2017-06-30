@@ -25,7 +25,7 @@ export default function (packageName, packageVersion, getPackageJson, updatePack
             return true;
           }
 
-          if (packageJson['dist-tags']['latest'] === packageVersion) {
+          if (packageJson['dist-tags'].latest === packageVersion) {
             // need to update dist-tags
             let highestVersion = '0.0.1';
             for (let key in packageJson.versions) {
@@ -33,13 +33,13 @@ export default function (packageName, packageVersion, getPackageJson, updatePack
                 highestVersion = key;
               }
             }
-            packageJson['dist-tags']['latest'] = highestVersion;
+            packageJson['dist-tags'].latest = highestVersion;
           }
           updatePackageJson(packageName, packageJson)
             .then((result) => {
               resolve(result);
             });
-        })
+        });
       });
     });
   });

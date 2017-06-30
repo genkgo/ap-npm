@@ -18,7 +18,7 @@ export default class {
       this.storage.getPackageData({name: httpRequest.params.package})
         .catch((err) => reject(err))
         .then((packageJson) => {
-        if (typeof(packageJson['versions'][distTagVersion]) !== "object") {
+        if (typeof(packageJson.versions[distTagVersion]) !== "object") {
           reject("403, version does not exist");
         }
 
@@ -35,7 +35,7 @@ export default class {
             reject("404, could not get dist-tags");
           }
         });
-      })
+      });
     }).catch((err) => {
       httpResponse.send(err);
     });

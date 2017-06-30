@@ -38,7 +38,7 @@ export default class {
             });
             resolve();
           } else {
-            reject("424, cannot delete package from filesystem")
+            reject("424, cannot delete package from filesystem");
           }
         });
       }
@@ -50,7 +50,7 @@ export default class {
             });
             resolve();
           } else {
-            reject("424, cannot delete package from filesystem")
+            reject("424, cannot delete package from filesystem");
           }
         });
       }
@@ -59,4 +59,3 @@ export default class {
     });
   }
 }
-

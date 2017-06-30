@@ -5,10 +5,6 @@ export default class {
     this.packageValidator = validator;
   }
 
-  /*
-   * Reads dist-tags and sends them to npm-client
-   * *** hasn't been tested yet***
-   */
   process(httpRequest, httpResponse) {
     return new Promise((resolve, reject) => {
       let packageName = httpRequest.params.package;
@@ -27,13 +23,12 @@ export default class {
             });
             resolve();
           } else {
-            reject("404, could not get dist-tags")
+            reject("404, could not get dist-tags");
           }
         });
       });
     }).catch((err) => {
       httpResponse.send(err);
-    })
+    });
   }
 }
-

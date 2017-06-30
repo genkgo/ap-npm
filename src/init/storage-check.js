@@ -28,7 +28,7 @@ export default function(container) {
     let file = filesToCheck[i];
     if (!fs.existsSync(file)) {
       try {
-        fs.writeFileSync(file, JSON.stringify({}), {options: {encoding: 'utf8', mode: '0777'}})
+        fs.writeFileSync(file, JSON.stringify({}), {options: {encoding: 'utf8', mode: '0777'}});
       } catch (err) {
         console.log("Could not create file: " + file);
         console.log(err);

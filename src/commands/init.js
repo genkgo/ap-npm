@@ -32,20 +32,20 @@ export default class {
       if (this.ssl) {
         publishConfig = {
           "registry": "https://" + this.hostname + ':' + this.port
-        }
+        };
       } else {
         publishConfig = {
           "registry": "http://" + this.hostname + ':' + this.port
-        }
+        };
       }
 
 
       console.log('\nUpdating package.json with publishConfig:', publishConfig);
 
       let packageJson = JSON.parse(packageString);
-      packageJson['publishConfig'] = publishConfig;
+      packageJson.publishConfig = publishConfig;
 
-      fs.writeFile(pathToProject + '/package.json', JSON.stringify(packageJson, null, 2), {'mode': '0664'}, () => {
+      fs.writeFile(path.join(pathToProject, 'package.json'), JSON.stringify(packageJson, null, 2), {'mode': '0664'}, () => {
         console.log("ap-npm project created in: " + pathToProject + '\n');
       });
 

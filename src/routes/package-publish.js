@@ -60,9 +60,9 @@ export default class {
       .then((result) => {
         if (result === true) {
           this.packageValidator.isVersionHigher(httpRequest.body._packageName,
-            httpRequest.body._scope,
             httpRequest.body['dist-tags'][distTag],
-            distTag
+            distTag,
+            httpRequest.body._scope
           ).then((result) => {
             if (result === false) {
               httpResponse.send("423, cannot publish, given version is invalid");
@@ -82,7 +82,7 @@ export default class {
                   }
                 });
             }
-          })
+          });
         } else {
           httpResponse.status(403);
           httpResponse.send({message: "cannot publish, given version is invalid"});

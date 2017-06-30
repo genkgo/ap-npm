@@ -19,7 +19,7 @@ export default class {
     return new Promise((resolve) => {
       let userLoggedIn;
       try {
-        userLoggedIn = this.users[username]['password'] === js_sha.sha256(password) && this.users[username]['email'] === email;
+        userLoggedIn = this.users[username].password === js_sha.sha256(password) && this.users[username].email === email;
 
         if (userLoggedIn) {
           resolve(userLoggedIn);

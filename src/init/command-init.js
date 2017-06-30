@@ -13,5 +13,5 @@ export default function(container) {
   container.set('command-config', function() {
     let Command = require('../commands/config').default;
     return new Command();
-  })
+  });
 }
