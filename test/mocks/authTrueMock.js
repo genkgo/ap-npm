@@ -15,6 +15,6 @@ export default class {
   }
 
   shouldBeAbleTo(access, packageName, authorization) {
-    return new Promise((resolve) => resolve);
+    return Promise.resolve();
   }
 }

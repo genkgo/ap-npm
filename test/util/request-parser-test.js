@@ -20,17 +20,6 @@ describe("Request Parser", function () {
     });
     expect(request.body._packageName, "apnpm");
     expect(request.body._scope, "@apnpm");
-
-
-    // let putUrl = "/apnpm";
-    // let putScopeUrl = "/@apnpm/apnpm";
-    //
-    // let getUrl = "/apnpm";
-    // let getPackageUrl = "/apnpm/apnpm-1.0.0.tgz";
-    //
-    // let getScopeUrl = "/@apnpm/apnpm";
-    // let getPackageScopeUrl = "/@apnpm/apnpm/-/@apnpm/apnpm-1.0.0.tgz";
-
   });
 
   it("GET: Parses pkg download requests correctly", function () {
@@ -68,5 +57,5 @@ describe("Request Parser", function () {
     request.url = "/@apnpm/apnpm";
     expect(request.body._packageName, "apnpm");
     expect(request.body._scope, "@apnpm");
-  })
+  });
 });
