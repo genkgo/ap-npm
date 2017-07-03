@@ -15,8 +15,8 @@ export default function(container) {
         return app;
     });
 
-    container.set('package-validator', function() {
-        let PackageValidator = require('../package/validator').default;
+    container.set('validator', function() {
+        let PackageValidator = require('../util/validator').default;
         return new PackageValidator(container.get('storage'));
     });
 
