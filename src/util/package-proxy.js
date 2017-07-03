@@ -18,7 +18,6 @@ export default class {
       }
 
       let url = this.proxyUrl + urlPath;
-      console.log("PROXY: " + url);
       https.get(url,
         function (response) {
           response.pipe(httpResponse);
