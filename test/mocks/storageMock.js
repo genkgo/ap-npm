@@ -27,4 +27,27 @@ export default class {
       }
     });
   }
+
+  getPackageData(request) {
+    return new Promise(resolve => {
+      let name = request.name;
+      let scope = request.scope;
+      let unscoped = request.unscoped;
+      let loc;
+
+      if (scope) {
+        loc = path.join(this.storageLocation, scope, name, 'package.json');
+      } else {
+        loc = path.join(this.storageLocation, name, 'package.json');
+      }
+
+      if (fs.existsSync(loc)) {
+        fs.readFile(loc, (err, file) => {
+          resolve(file);
+        });
+      } else {
+        throw new Error("Package does not exist");
+      }
+    });
+  }
 }

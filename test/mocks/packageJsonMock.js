@@ -58,4 +58,4 @@ export default {
     }
   },
   "readme": "ERROR: No README data found!"
-}
+};

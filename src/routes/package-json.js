@@ -6,9 +6,6 @@ export default class {
     this.proxyEnabled = proxyEnabled;
   }
 
-  /*
-   * Reads the package.json data from filesystem and sends it to the npm-client
-   * */
   process(httpRequest, httpResponse) {
     return new Promise((resolve, reject) => {
       return this.storage.getPackageData({
@@ -21,12 +18,12 @@ export default class {
             this.proxy.process(httpRequest, httpResponse)
               .then(resolve());
           } else {
-            console.log("Err: Proxy disabled, rejecting: " + httpRequest.body._packageName);
             reject(err);
           }
         })
         .then((packageJson) => {
           if (typeof packageJson === 'object') {
+            httpResponse.status(200);
             httpResponse.send(packageJson);
             resolve();
           } else {
@@ -35,9 +32,9 @@ export default class {
         });
     })
       .catch((err) => {
-        console.log("Err: 404, " + err);
         httpResponse.status(404);
         httpResponse.send(err);
       });
   }
+
 }

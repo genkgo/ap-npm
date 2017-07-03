@@ -8,10 +8,14 @@ export default class {
   }
 
   send(input) {
-    this.gotSend = input;
+    return new Promise(() => {
+      this.gotSend = input;
+    });
   }
 
   status(code) {
-    this.statusCode = code;
+    return new Promise(() => {
+      this.statusCode = code;
+    });
   }
 }

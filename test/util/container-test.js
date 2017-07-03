@@ -21,5 +21,5 @@ describe("Dependency Container", function () {
     } catch (err) {
       expect(err.message).to.equal('Cannot find service ' + dep);
     }
-  })
+  });
 });

@@ -7,7 +7,7 @@ import path from 'path';
 import md5 from 'md5';
 
 const expect = require('chai').expect;
-const route = new packageGet(new StorageMock);
+const route = new packageGet(new StorageMock());
 
 describe('Route package-get', function () {
   it('should give back unscoped packages', function () {
@@ -38,7 +38,7 @@ describe('Route package-get', function () {
         expect(md5(res.gotSend)).to.equal(
           md5(fs.readFileSync(path.join(__dirname, '..', 'filesystem', 'test-storage', 'test-project', 'test-project-1.0.0.tgz')))
         );
-      })
+      });
   });
 
   it('should handle errors when packages are not available', function () {

@@ -1,7 +1,5 @@
 import requestParser from '../../src/util/request-parser';
-import path from 'path';
 import httpRequest from '../mocks/httpRequestMock';
-import httpResponse from '../mocks/httpResponseMock';
 const expect = require('chai').expect;
 
 describe("Request Parser", function () {

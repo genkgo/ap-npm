@@ -4,7 +4,6 @@ import httpRequest from './mocks/httpRequestMock';
 import httpResponse from './mocks/httpResponseMock';
 import access from '../src/auth/access';
 
-const accessTrue = new access(new authTrue());
 const accessFalse = new access(new authFalse());
 const expect = require('chai').expect;
 
