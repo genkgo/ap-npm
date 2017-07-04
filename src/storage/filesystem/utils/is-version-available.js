@@ -42,7 +42,6 @@ export default function (request, packageVersion, storageLocation) {
           resolve(versionExists && fileExists);
         });
     }).catch((err) => {
-      console.log(err);
       return false;
     });
 }
