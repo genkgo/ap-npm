@@ -23,4 +23,12 @@ export default class {
     this.token = token;
     this.username = username;
   }
+
+  verifyToken(token) {
+    if (token === '123456789') {
+      return 'username';
+    } else {
+      return false;
+    }
+  }
 }
