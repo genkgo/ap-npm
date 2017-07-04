@@ -1,20 +1,21 @@
 export default class {
-  constructor() {
-  }
-
   userLogin(username, password, email) {
-    return false;
+    return Promise.resolve(false);
   }
 
   userAdd(username, password, email) {
-    return false;
+    return Promise.resolve(false);
   }
 
   userRemove(username, password) {
-    return false;
+    return Promise.resolve(false);
   }
 
   shouldBeAbleTo(access, packageName, authorization) {
-    return Promise.reject();
+    return Promise.resolve(false);
+  }
+
+  addTokenToDB(username, token) {
+    return Promise.reject('I should not have been called');
   }
 }

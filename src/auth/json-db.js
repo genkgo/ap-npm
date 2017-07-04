@@ -27,8 +27,7 @@ export default class {
       } catch (err) {
         resolve(false);
       }
-    }).catch((err) => {
-      console.log(err);
+    }).catch(() => {
       return false;
     });
   }
@@ -53,8 +52,7 @@ export default class {
       } else {
         resolve(false);
       }
-    }).catch((err) => {
-      console.log(err);
+    }).catch(() => {
       return false;
     });
   }
@@ -75,8 +73,7 @@ export default class {
       } else {
         reject("Not allowed to remove users");
       }
-    }).catch((err) => {
-      console.log(err);
+    }).catch(() => {
       return false;
     });
   }

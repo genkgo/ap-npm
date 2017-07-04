@@ -1,20 +1,22 @@
 export default class {
-  constructor() {
-  }
-
   userLogin(username, password, email) {
-    return true;
+    return Promise.resolve(true);
   }
 
   userAdd(username, password, email) {
-    return true;
+    return Promise.resolve(true);
   }
 
   userRemove(username, password) {
-    return true;
+    return Promise.resolve(true);
   }
 
   shouldBeAbleTo(access, packageName, authorization) {
-    return Promise.resolve();
+    return Promise.resolve(true);
+  }
+
+  addTokenToDB(username, token) {
+    this.token = token;
+    this.username = username;
   }
 }
