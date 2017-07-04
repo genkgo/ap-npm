@@ -15,10 +15,6 @@ export default function (packageName, storageLocation, packageScope = null) {
     }
     resolve(false);
   }).catch((err) => {
-    console.log("Err: package not available: " +
-      packageName +
-      "\n" + err
-    );
     return false;
   });
 }
