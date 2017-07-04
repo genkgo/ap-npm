@@ -15,8 +15,6 @@ export default function (request, storageLocation) {
       fileLocation = path.join(storageLocation, packageName, fileName);
     }
 
-    fs.readFile(fileLocation, (err, file) => {
-      resolve(file);
-    });
+    resolve(fs.readFileSync(fileLocation));
   });
 }
