@@ -7,6 +7,10 @@ export default class {
     return Promise.resolve(true);
   }
 
+  userLogout(token) {
+    return Promise.resolve(this.logoutToken = token);
+  }
+
   userRemove(username, password) {
     return Promise.resolve(true);
   }
