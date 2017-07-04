@@ -12,7 +12,11 @@ export default function (app, container) {
   app.use(requestParser);
   app.use(paramParser);
 
-
+  app.get('/-/ping', function (req, res) {
+    res.send({
+      message: 'ap-npm is running'
+    });
+  });
 
   // *** AUTH ***
   app.put('/-/user/org.couchdb.user:_rev?/:revision?', function (req, res) {
