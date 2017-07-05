@@ -2,13 +2,13 @@ import bodyParser from 'body-parser';
 import Access from './auth/access';
 import requestParser from './util/request-parser';
 import paramParser from './util/param-parser';
-import logger from './util/logger';
 
 export default function (app, container) {
   let access = new Access(container.get('auth'));
+  let logger = container.get('logger');
 
-  app.use(logger);
-  app.use(bodyParser.json({ strict: false, limit: '10mb' }));
+  app.use(logger.routerLogger);
+  app.use(bodyParser.json({strict: false, limit: '10mb'}));
   app.use(requestParser);
   app.use(paramParser);
 
@@ -38,7 +38,6 @@ export default function (app, container) {
     let route = container.get('route-auth-whoami');
     route.process(req, res);
   });
-
 
 
   // *** INSTALL ***
