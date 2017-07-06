@@ -11,32 +11,40 @@ export default class {
    */
   process(httpRequest, httpResponse) {
     return new Promise((resolve, reject) => {
-      let packageName = httpRequest.params.package;
+      let packageName = httpRequest.body._packageName;
+      let packageScope = httpRequest.body._scope;
       let distTag = httpRequest.params.tag;
       let distTagVersion = httpRequest.body;
 
-      this.storage.getPackageData({name: httpRequest.params.package})
-        .catch((err) => reject(err))
-        .then((packageJson) => {
+      this.storage.getPackageJson({
+        name: packageName,
+        scope: packageScope
+      }).then((packageJson) => {
         if (typeof(packageJson.versions[distTagVersion]) !== "object") {
           reject("403, version does not exist");
         }
 
         packageJson['dist-tags'][distTag] = distTagVersion;
 
-        this.storage.updatePackageJson(packageName, packageJson).then((result) => {
-          if (result === true) {
-            httpResponse.status(200);
-            httpResponse.send({
-              ok: "dist-tags added"
-            });
-            resolve();
-          } else {
-            reject("404, could not get dist-tags");
-          }
-        });
+        this.storage.updatePackageJson({
+            name: packageName,
+            scope: packageScope
+          },
+          packageJson)
+          .then((result) => {
+            if (result === true) {
+              httpResponse.status(200);
+              httpResponse.send({
+                ok: "dist-tags added"
+              });
+              resolve();
+            } else {
+              reject("404, could not get dist-tags");
+            }
+          });
       });
     }).catch((err) => {
+      httpResponse.status(404);
       httpResponse.send(err);
     });
   }
