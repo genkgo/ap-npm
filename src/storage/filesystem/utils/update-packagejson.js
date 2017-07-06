@@ -1,11 +1,10 @@
 import path from 'path';
 import writeJSON from './write-json';
 
-export default function (packageData, packageJson, storageLocation) {
-    let packageName = packageData._packageName;
-    let packageScope = packageData._scope;
-
+export default function (request, packageJson, storageLocation) {
     return new Promise((resolve) => {
+      let packageName = request.name;
+      let packageScope = request.scope;
       let packageInfoLocation;
       if (packageScope) {
         packageInfoLocation = path.join(storageLocation, packageScope, packageName, 'package.json');

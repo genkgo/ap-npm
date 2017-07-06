@@ -4,11 +4,11 @@ import fse from 'fs-extra';
 import readJSON from './read-json';
 import writeJSON from './write-json';
 
-export default function (packageData, storageLocation) {
+export default function (request, packageData, storageLocation) {
   return new Promise((resolve) => {
     let attachmentName;
-    let packageName = packageData._packageName;
-    let packageScope = packageData._scope;
+    let packageName = request.name;
+    let packageScope = request.scope;
     let packageInfoLocation;
     let folderPath;
 

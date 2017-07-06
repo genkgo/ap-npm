@@ -3,10 +3,10 @@ import fs from 'fs';
 import fse from 'fs-extra';
 import writeJSON from './write-json';
 
-export default function (packageData, storageLocation) {
+export default function (request, packageData, storageLocation) {
   return new Promise((resolve) => {
-      let packageName = packageData._packageName;
-      let packageScope = packageData._scope;
+      let packageName = request.name;
+      let packageScope = request.scope;
       let attachmentName;
       let folderPath;
       let packageJsonPath;

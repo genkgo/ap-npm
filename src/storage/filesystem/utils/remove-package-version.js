@@ -2,15 +2,17 @@ import fs from 'fs';
 import path from 'path';
 import semver from 'semver';
 
-export default function (packageName,
-                         packageScope,
-                         packageVersion,
+export default function (request,
                          getPackageJson,
                          updatePackageJson,
                          removePackage,
                          storageLocation) {
 
   return new Promise((resolve, reject) => {
+    let packageName = request.name;
+    let packageScope = request.scope;
+    let packageVersion = request.version;
+
     let packageLocation = path.join(storageLocation, packageName);
     let tarballLocation = path.join(packageLocation, packageName + packageVersion + '.tgz');
 
@@ -29,7 +31,10 @@ export default function (packageName,
 
           // If this was the last version of the package, we can remove it completely
           if (packageJson.versions.size === 0) {
-            removePackage(packageName);
+            removePackage({
+              name: packageName,
+              scope: packageScope
+            });
             return true;
           }
 
@@ -43,7 +48,10 @@ export default function (packageName,
             }
             packageJson['dist-tags'].latest = highestVersion;
           }
-          updatePackageJson(packageName, packageJson, storageLocation)
+          updatePackageJson({
+            name: packageName,
+            scope: packageScope
+          }, packageJson)
             .then((result) => {
               resolve(result);
             });

@@ -1,7 +1,9 @@
 import path from 'path';
 import fs from 'fs';
 
-export default function (packageName, storageLocation, packageScope = null) {
+export default function (request, storageLocation) {
+  let packageName = request.name;
+  let packageScope = request.scope;
   return new Promise((resolve) => {
     let packagePath;
     if (packageScope) {
@@ -14,7 +16,7 @@ export default function (packageName, storageLocation, packageScope = null) {
       resolve(true);
     }
     resolve(false);
-  }).catch((err) => {
+  }).catch(() => {
     return false;
   });
 }

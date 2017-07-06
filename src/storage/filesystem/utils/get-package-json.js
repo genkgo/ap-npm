@@ -20,7 +20,7 @@ export default function (request, storageLocation) {
           resolve(data);
         });
     } else {
-      reject("Could not get package.json");
+      reject("package.json does not exist");
     }
   });
 }

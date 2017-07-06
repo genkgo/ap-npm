@@ -1,5 +1,3 @@
-import fs from 'fs';
-import fse from 'fs-extra';
 import path from 'path';
 
 import removePackage from './utils/remove-package';
@@ -14,54 +12,81 @@ import writeNewPackage from './utils/write-new-package';
 
 export default class {
 
-  constructor(config) {
+  constructor(config, logger) {
     this.config = config;
+    this.logger = logger;
     this.storageLocation = path.join(this.config.workDir, this.config.storage.directory);
-
-    try {
-      if (!fs.existsSync(this.storageLocation)) { fse.mkdirsSync(this.storageLocation); }
-    } catch (err) {
-      console.log("Could not create storage directory, ap-npm might malfunction\n", err.toString());
-    }
   }
 
-  removePackage(packageName) {
-    return removePackage(packageName, this.storageLocation);
+  /**
+   * @param request
+   */
+  removePackage(request) {
+    return removePackage(request, this.storageLocation);
   }
 
-  removePackageVersion(packageName, packageScope, packageVersion) {
+  /**
+   * @param request
+   */
+  removePackageVersion(request) {
     return removePackageVersion(
-      packageName,
-      packageScope,
-      packageVersion,
+      request,
       this.getPackageJson,
-      updatePackageJson,
+      this.updatePackageJson,
       this.removePackage,
       this.storageLocation
     );
   }
 
-  writeNewPackage(packageData) {
-    return writeNewPackage(packageData, this.storageLocation);
+  /**
+   * @param request
+   * @param packageData
+   */
+  writeNewPackage(request, packageData) {
+    return writeNewPackage(request, packageData, this.storageLocation);
   }
 
-  writePackage(packageData) {
-    return writePackage(packageData, this.storageLocation);
+  /**
+   * @param request
+   * @param packageData
+   */
+  writePackage(request, packageData) {
+    return writePackage(request, packageData, this.storageLocation);
   }
 
+  /**
+   * @param request
+   */
   getPackage(request) {
     return getPackage(request, this.storageLocation);
   }
 
+  /**
+   * @param request
+   */
   getPackageJson(request) {
     return getPackageJson(request, this.storageLocation);
   }
 
-  isPackageAvailable(packageName, packageScope = null) {
-    return isPackageAvailable(packageName, this.storageLocation, packageScope);
+  /**
+   * @param request
+   */
+  isPackageAvailable(request) {
+    return isPackageAvailable(request, this.storageLocation);
   }
 
-  isVersionAvailable(request, packageVersion) {
-    return isVersionAvailable(request, packageVersion, this.storageLocation);
+  /**
+   * @param request
+   */
+  isVersionAvailable(request) {
+    return isVersionAvailable(request, this.storageLocation);
+  }
+
+  /**
+   * @param request
+   * @param packageJson
+   */
+  updatePackageJson(request, packageJson) {
+    return updatePackageJson(request, packageJson, this.storageLocation);
   }
 }
