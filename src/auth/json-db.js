@@ -15,12 +15,11 @@ export default class {
     this.settings = config.auth;
   }
 
-  userLogin(username, password, email) {
+  userLogin(username, password, email = 'admin') {
     return new Promise((resolve) => {
       let userLoggedIn;
       try {
-        userLoggedIn = this.users[username].password === js_sha.sha256(password) &&
-          this.users[username].email === email;
+        userLoggedIn = this.users[username].password === js_sha.sha256(password);
 
         if (userLoggedIn) {
           resolve(userLoggedIn);

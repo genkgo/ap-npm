@@ -6,6 +6,9 @@ import paramParser from './util/param-parser';
 export default function (app, container) {
   let access = new Access(container.get('auth'));
   let logger = container.get('logger');
+  let adminAccess = function (req, res, next) {
+    container.get('admin-access').process(req, res, next);
+  };
 
   app.use(logger.routerLogger);
   app.use(bodyParser.json({strict: false, limit: '10mb'}));
@@ -16,6 +19,21 @@ export default function (app, container) {
     res.send({
       message: 'ap-npm is running'
     });
+  });
+
+  app.get('/admin', adminAccess, function (req, res) {
+    let route = container.get('route-admin');
+    route.process(req, res);
+  });
+
+  app.get('/admin/all', adminAccess, function (req, res) {
+    let route = container.get('route-admin-all');
+    route.process(req, res);
+  });
+
+  app.get('/admin/config', adminAccess, function (req, res) {
+    let route = container.get('route-admin-config');
+    route.process(req, res);
   });
 
   // *** AUTH ***

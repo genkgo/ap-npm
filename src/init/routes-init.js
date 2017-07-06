@@ -34,9 +34,4 @@ export default function (container) {
     return new Route(container.get('storage'), container.get('validator'));
   });
 
-  container.set('route-admin-all', function () {
-    let Route = require('../routes/admin-all').default;
-    return new Route(container.get('storage'));
-  })
-
 }

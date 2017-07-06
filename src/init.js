@@ -4,6 +4,7 @@ import RoutesInit from './init/routes-init';
 import AuthInit from './init/auth-init';
 import CommandInit from './init/command-init';
 import UtilInit from './init/util-init';
+import AdminInit from './init/admin-init';
 
 export default function (configFile) {
   let container = new Container();
@@ -22,6 +23,7 @@ export default function (configFile) {
   AuthInit(container);
   CommandInit(container);
   UtilInit(container);
+  AdminInit(container);
 
   return container;
 }

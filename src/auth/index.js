@@ -99,6 +99,10 @@ export default class {
     });
   }
 
+  verifyLogin(username, password) {
+    return this.adapter.userLogin(username, password);
+  }
+
   verifyToken(token) {
     if (typeof this.tokens[token] === 'string') {
       return this.tokens[token];
