@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import mkdirp from 'mkdirp';
+import fse from 'fs-extra';
 import writeJSON from './write-json';
 
 export default function (packageData, storageLocation) {
@@ -23,7 +23,7 @@ export default function (packageData, storageLocation) {
         filePath = path.join(folderPath, attachmentName);
       }
 
-      mkdirp.sync(folderPath);
+      fse.mkdirsSync(folderPath);
       packageJsonPath = path.join(folderPath, 'package.json');
 
       fs.writeFileSync(filePath, Buffer.from(packageData._attachments[attachmentName].data, 'base64'), { 'mode': '0777' });

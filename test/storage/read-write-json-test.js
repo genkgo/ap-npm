@@ -2,16 +2,17 @@ import writeJson from '../../src/storage/filesystem/utils/write-json';
 import readJson from '../../src/storage/filesystem/utils/read-json';
 import path from 'path';
 import fs from 'fs';
+import fse from 'fs-extra';
 import md5 from 'md5';
-import mkdirp from 'mkdirp';
 
 const expect = require('chai').expect;
 const jsonLocation = path.join(__dirname, '..', 'filesystem', 'test-storage', 'test-project', 'package.json');
-const jsonCopyLocation = path.join(__dirname, '..', 'filesystem', 'tmp', 'package.json');
+const tmpLocation = path.join(__dirname, '..', 'filesystem', 'tmp');
+const jsonCopyLocation = path.join(tmpLocation, 'package.json');
 const object = JSON.parse(fs.readFileSync(jsonLocation));
 
 if (!fs.existsSync(path.join(__dirname, '..', 'filesystem', 'tmp'))) {
-  mkdirp.sync(path.join(__dirname, '..', 'filesystem', 'tmp'));
+  fse.mkdirsSync(path.join(__dirname, '..', 'filesystem', 'tmp'));
 }
 
 describe("JSON Reader", function () {
@@ -37,6 +38,7 @@ describe("JSON Writer", function () {
           }
 
           expect(md5(data)).to.equal(md5(object));
+          fse.removeSync(tmp)
         });
       });
   });

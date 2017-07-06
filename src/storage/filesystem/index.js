@@ -1,6 +1,6 @@
 import fs from 'fs';
+import fse from 'fs-extra';
 import path from 'path';
-import mkdirp from 'mkdirp';
 
 import removePackage from './utils/remove-package';
 import removePackageVersion from './utils/remove-package-version';
@@ -19,7 +19,7 @@ export default class {
     this.storageLocation = path.join(this.config.workDir, this.config.storage.directory);
 
     try {
-      if (!fs.existsSync(this.storageLocation)) { mkdirp.sync(this.storageLocation); }
+      if (!fs.existsSync(this.storageLocation)) { fse.mkdirsSync(this.storageLocation); }
     } catch (err) {
       console.log("Could not create storage directory, ap-npm might malfunction\n", err.toString());
     }

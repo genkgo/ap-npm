@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import mkdirp from 'mkdirp';
+import fse from 'fs-extra';
 import readJSON from './read-json';
 import writeJSON from './write-json';
 
@@ -20,7 +20,7 @@ export default function (packageData, storageLocation) {
       folderPath = path.join(storageLocation, packageName);
     }
 
-    mkdirp.sync(folderPath);
+    fse.mkdirsSync(folderPath);
     for (let key in packageData._attachments) {
       attachmentName = key;
     }
