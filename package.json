@@ -32,6 +32,7 @@
   "dependencies": {
     "body-parser": "^1.17.1",
     "chai": "^4.0.2",
+    "colors": "^1.1.2",
     "commander": "^2.9.0",
     "express": "^4.15.2",
     "fs-extra": "^3.0.1",
