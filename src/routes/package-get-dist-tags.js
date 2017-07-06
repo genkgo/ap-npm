@@ -11,23 +11,19 @@ export default class {
   */
   process(httpRequest, httpResponse) {
     return new Promise((resolve, reject) => {
-      this.storage.getPackageData({
-        name: httpRequest.params.package,
-        version: httpRequest.params.version,
-      }).catch((err) => {
-        reject(err);
-      })
-        .then((packageJson) => {
+      this.storage.getPackageJson({
+        name: httpRequest.params.package
+      }).then((packageJson) => {
         let distTags = packageJson['dist-tags'];
         if (distTags) {
-          httpResponse.send(JSON.stringify(distTags));
-          resolve();
+          resolve(httpResponse.send(distTags));
         } else {
           reject("404, could not get dist-tags");
         }
       });
 
     }).catch((err) => {
+      httpResponse.status(404);
       httpResponse.send(err);
     });
   }
