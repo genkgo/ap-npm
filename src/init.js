@@ -4,16 +4,19 @@ import RoutesInit from './init/routes-init';
 import AuthInit from './init/auth-init';
 import CommandInit from './init/command-init';
 import UtilInit from './init/util-init';
-import StorageCheck from './init/storage-check';
 
-export default function(configFile) {
+export default function (configFile) {
   let container = new Container();
 
-  container.set('config', function() {
+  container.set('config', function () {
     return require(configFile);
   });
 
-  StorageCheck(container);
+  container.set('logger', function () {
+    let Logger = require('./util/logger').default;
+    return new Logger();
+  });
+
   StorageInit(container);
   RoutesInit(container);
   AuthInit(container);
