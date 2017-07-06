@@ -1,7 +1,24 @@
 export default class {
 
   routerLogger(req, res, next) {
-    console.log("\nMETHOD:", req.method, ", URL:", decodeURIComponent(req.originalUrl));
+    this.log("\nMETHOD:", req.method, ", URL:", decodeURIComponent(req.originalUrl));
     next();
   }
+
+  log(message) {
+    console.log(message);
+  }
+
+  info(message) {
+    console.info(message);
+  }
+
+  warn(message) {
+    console.warn(message);
+  }
+
+  error(message) {
+    console.error(message);
+  }
+
 }
