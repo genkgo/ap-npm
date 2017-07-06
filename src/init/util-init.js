@@ -22,7 +22,7 @@ export default function (container) {
 
   container.set('auth', function () {
     let Auth = require('../auth/index').default;
-    return new Auth(container.get('auth-adapter'), container.get('config'));
+    return new Auth(container.get('auth-adapter'), container.get('config'), container.get('logger'));
   });
 
   container.set('auth-adapter', function () {
@@ -40,8 +40,4 @@ export default function (container) {
     return new Util(container.get('config').proxyUrl);
   });
 
-  container.set('logger', function () {
-    let Logger = require('../util/logger').default;
-    return new Logger();
-  });
 }
