@@ -1,24 +1,40 @@
+import colors from 'colors/safe';
+
 export default class {
 
+  constructor() {
+    colors.setTheme({
+      log: 'black',
+      info: 'green',
+      warn: 'yellow',
+      error: 'red',
+      debug: 'blue'
+    });
+  }
+
   routerLogger(req, res, next) {
-    this.log("\nMETHOD:", req.method, ", URL:", decodeURIComponent(req.originalUrl));
+    console.log("\nMETHOD:", req.method, ", URL:", decodeURIComponent(req.originalUrl));
     next();
   }
 
   log(message) {
-    console.log(message);
+    console.log(colors.log(message));
   }
 
   info(message) {
-    console.info(message);
+    console.info(colors.info(message));
   }
 
   warn(message) {
-    console.warn(message);
+    console.warn(colors.warn(message));
   }
 
   error(message) {
-    console.error(message);
+    console.error(colors.error(message));
+  }
+
+  debug(message) {
+    console.debug(colors.debug(message));
   }
 
 }
