@@ -47,7 +47,7 @@ export default function (app, container) {
     if (req.params.write) {
       route = container.get('route-package-unpublish');
     } else {
-      route = container.get('route-package-json');
+      route = container.get('route-package-get-json');
     }
     route.process(req, res);
   });
