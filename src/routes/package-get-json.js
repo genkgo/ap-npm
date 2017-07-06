@@ -8,12 +8,10 @@ export default class {
 
   process(httpRequest, httpResponse) {
     return new Promise((resolve, reject) => {
-      return this.storage.getPackageData({
+      return this.storage.getPackageJson({
         name: httpRequest.body._packageName,
-        scope: httpRequest.body._scope,
-        unscoped: httpRequest.body._scopedName
-      })
-        .catch((err) => {
+        scope: httpRequest.body._scope
+      }).catch((err) => {
           if (this.proxyEnabled) {
             this.proxy.process(httpRequest, httpResponse)
               .then(resolve());
@@ -24,14 +22,12 @@ export default class {
         .then((packageJson) => {
           if (typeof packageJson === 'object') {
             httpResponse.status(200);
-            httpResponse.send(packageJson);
-            resolve();
+            resolve(httpResponse.send(packageJson));
           } else {
             reject("package not found");
           }
         });
-    })
-      .catch((err) => {
+    }).catch((err) => {
         httpResponse.status(404);
         httpResponse.send(err);
       });
