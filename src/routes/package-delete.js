@@ -12,13 +12,13 @@ export default class {
    * Reads package data from fileystem and sends it to npm-client
    */
   process(httpRequest, httpResponse) {
-    let packageScope = httpRequest.body._scope;
     return new Promise((resolve, reject) => {
       if (this.config.auth.remove === false) {
         reject('403, not allowed to delete packages');
       }
 
-      let packageName = httpRequest.params.package;
+      let packageName = httpRequest.body._packageName;
+      let packageScope = httpRequest.body._scope;
       let referer = httpRequest.headers.referer;
       let packageVersion;
 
@@ -31,24 +31,30 @@ export default class {
       }
 
       if (packageVersion === 'unpublish') {
-        this.storage.removePackage(packageName).then((result) => {
+        this.storage.removePackage({
+          name: packageName,
+          scope: packageScope
+        }).then((result) => {
           if (result === true) {
-            httpResponse.status(200).send({
+            httpResponse.status(200);
+            resolve(httpResponse.send({
               ok: "Package deleted"
-            });
-            resolve();
+            }));
           } else {
             reject("424, cannot delete package from filesystem");
           }
         });
-      }
-      else if (semver.valid(packageVersion)) {
-        this.storage.removePackageVersion(packageName, packageScope, packageVersion).then((result) => {
+      } else if (semver.valid(packageVersion)) {
+        this.storage.removePackageVersion({
+          name: packageName,
+          scope: packageScope,
+          version: packageVersion
+        }).then((result) => {
           if (result === true) {
-            httpResponse.status(200).send({
+            httpResponse.status(200);
+            resolve(httpResponse.send({
               ok: "Packageversion deleted"
-            });
-            resolve();
+            }));
           } else {
             reject("424, cannot delete package from filesystem");
           }
