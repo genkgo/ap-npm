@@ -1,11 +1,20 @@
-FROM node:6.10.2
+FROM node:boron
 
 RUN mkdir /ap-npm
 
-WORKDIR /ap-npm
+WORKDIR /ap-npm/app
 
-RUN npm install -g ap-npm
+RUN mkdir app
+RUN mkdir app/src
+
+COPY src /ap-npm/app/src
+COPY bin /ap-npm/app/bin
+COPY package.json /ap-npm/app/
+COPY config.json /ap-npm/app/
+
+RUN npm install
+RUN npm run build
 
 EXPOSE 4444
 
-CMD [ "ap-npm", "serve", "--config=/ap-npm/config.json"]
+CMD [ "node", "/ap-npm/app/bin/ap-npm", "serve", "--config=/ap-npm/config.json"]
