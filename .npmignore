@@ -5,8 +5,9 @@
 /test
 
 # ide
-.idea
-/.idea/*
+.idea/
+.vs/
+.vscode/
 npm-debug.log
 
 *.crt
