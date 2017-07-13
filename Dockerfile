@@ -14,4 +14,4 @@ RUN npm run build
 
 EXPOSE 4444
 
-CMD [ "node", "/src/app/bin/ap-npm", "serve", "--config=/ap-npm/config.json"]
+CMD [ "node", "/src/bin/ap-npm", "serve", "--config=/ap-npm/config.json"]
