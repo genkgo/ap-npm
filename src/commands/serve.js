@@ -22,7 +22,7 @@ export default class {
           key: key,
           cert: cert
         }, this.app).listen(this.port, this.hostname, () => {
-          console.log("ap-npm is listening on" + this.hostname + ":" + this.port + '\n');
+          console.log("ap-npm is listening on " + this.hostname + ":" + this.port + '\n');
         });
       } else {
         this.config.ssl.enabled = false;

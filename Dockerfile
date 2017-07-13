@@ -1,6 +1,8 @@
 FROM node:boron
 
 RUN mkdir /app
+RUN mkdir /app/src
+RUN mkdir /app/bin
 
 COPY src /app/src
 COPY bin /app/bin
@@ -14,4 +16,4 @@ RUN npm run build
 
 EXPOSE 4444
 
-CMD [ "node", "/src/bin/ap-npm", "serve", "--config=/ap-npm/config.json"]
+CMD [ "node", "/app/bin/ap-npm", "serve", "--config=/ap-npm/config.json"]
