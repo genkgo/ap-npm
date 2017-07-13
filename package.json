@@ -37,6 +37,7 @@
     "express": "^4.15.2",
     "fs-extra": "^3.0.1",
     "http-proxy": "^1.16.2",
+    "httpolyglot": "^0.1.2",
     "js-sha256": "^0.5.0",
     "rimraf": "^2.6.1",
     "semver": "^5.3.0"
