@@ -4,7 +4,7 @@
         "directory": "/storage"
     },
     "port": 4444,
-    "hostname": "localhost",
+    "hostname": "0.0.0.0",
     "proxyEnabled": false,
     "proxyUrl": "https://registry.npmjs.org",
     "auth": {
