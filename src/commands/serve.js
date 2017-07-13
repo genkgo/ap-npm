@@ -1,5 +1,4 @@
 import httpolyglot from 'httpolyglot';
-import http from 'http';
 import fs from 'fs';
 
 
