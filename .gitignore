@@ -2,13 +2,18 @@
 /node_modules
 /db/*
 /dist
+package-lock.json
 
 # ide
-.idea
-/.idea/*
+.idea/
+.vs/
+.vscode/
 npm-debug.log
 
 *.crt
 *.key
 db/
 /storage/
+
+# temporary
+tmp

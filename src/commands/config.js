@@ -15,7 +15,7 @@ export default class {
       "ssl": 'boolean',
       "sslkey": "string",
       "sslcert": "string"
-    }
+    };
   }
 
   listConfig(configLocation) {

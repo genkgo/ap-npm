@@ -1,13 +1,31 @@
 import fs from 'fs';
+import fse from 'fs-extra';
 import path from 'path';
 
 export default class {
 
-  constructor(adapter, config) {
+  constructor(adapter, config, logger) {
     this.dbLocation = path.join(config.workDir, 'db');
+    try {
+      this.storageInit()
+    } catch (err) {
+      logger.error("Failed to initialize auth-structure in " + this.dbLocation);
+    }
     this.initTokenDB();
     this.settings = config.auth;
     this.adapter = adapter;
+  }
+
+  storageInit() {
+    let userTokens = path.join(this.dbLocation, 'user_tokens.json');
+
+    if (!fse.ensureDirSync(this.dbLocation)) {
+      fse.mkdirsSync(this.dbLocation);
+    }
+
+    if (!fse.ensureFileSync(userTokens)) {
+      fse.outputJsonSync(userTokens, {});
+    }
   }
 
   userLogin(username, password, email) {
@@ -26,13 +44,12 @@ export default class {
     let user_tokens_path = path.join(this.dbLocation, 'user_tokens.json');
     let allTokens;
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       try {
         let tokenString = fs.readFileSync(user_tokens_path, 'utf8');
         allTokens = JSON.parse(tokenString);
         delete allTokens[token];
       } catch (e) {
-        // On error: just make the tokens_db an empty db.
         allTokens = {};
       }
 
@@ -78,10 +95,12 @@ export default class {
         }
       }
 
-      // If anything fails
       reject();
-
     });
+  }
+
+  verifyLogin(username, password) {
+    return this.adapter.userLogin(username, password);
   }
 
   verifyToken(token) {

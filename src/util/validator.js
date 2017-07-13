@@ -15,15 +15,15 @@ export default class {
   }
 
   // *** PUBLISHING ***
-  isVersionHigher(packageName, packageScope=null, packageVersion, distTag) {
-    // Check if version that we got is higher than what is available
+  isVersionHigher(packageName, packageVersion, distTag, packageScope = null) {
     return new Promise((resolve) => {
-
-      this.storage.getPackageJson(packageName, packageScope)
-        .then((packageData) => {
+      this.storage.getPackageJson({
+        name: packageName,
+        scope: packageScope
+      }).then((packageData) => {
         let currentVersion = packageData['dist-tags'][distTag];
         resolve(semver.satisfies(packageVersion, '>' + currentVersion));
-      })
+      });
     });
   }
 

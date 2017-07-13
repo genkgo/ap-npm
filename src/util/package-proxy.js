@@ -7,7 +7,7 @@ export default class {
   }
 
   process(httpRequest, httpResponse) {
-    return new Promise((resolve, reject) => {
+    return new Promise(() => {
       let pkgData = httpRequest.body;
       let urlPath;
 
@@ -18,7 +18,6 @@ export default class {
       }
 
       let url = this.proxyUrl + urlPath;
-      console.log("PROXY: " + url);
       https.get(url,
         function (response) {
           response.pipe(httpResponse);

@@ -1,8 +1,7 @@
 export default class {
 
-  constructor(storage, validator) {
+  constructor(storage) {
     this.storage = storage;
-    this.packageValidator = validator;
   }
 
   /*
@@ -20,11 +19,11 @@ export default class {
         file: fileName
       })
         .then((data) => {
+          httpResponse.status(200);
           httpResponse.send(data);
           resolve();
         })
         .catch((err) => {
-          console.log("Err: 404, " + err);
           httpResponse.status(404);
           httpResponse.send({
             message: err

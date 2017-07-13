@@ -15,11 +15,11 @@ export default class {
     this.settings = config.auth;
   }
 
-  userLogin(username, password, email) {
+  userLogin(username, password, email = 'admin') {
     return new Promise((resolve) => {
       let userLoggedIn;
       try {
-        userLoggedIn = this.users[username]['password'] === js_sha.sha256(password) && this.users[username]['email'] === email;
+        userLoggedIn = this.users[username].password === js_sha.sha256(password);
 
         if (userLoggedIn) {
           resolve(userLoggedIn);
@@ -27,8 +27,7 @@ export default class {
       } catch (err) {
         resolve(false);
       }
-    }).catch((err) => {
-      console.log(err);
+    }).catch(() => {
       return false;
     });
   }
@@ -47,21 +46,19 @@ export default class {
           this.updateUserDB();
           this.initUserDB();
 
-          // Success
           resolve(true);
         }
       } else {
         resolve(false);
       }
-    }).catch((err) => {
-      console.log(err);
+    }).catch(() => {
       return false;
     });
   }
 
   /*
-  * Doesn't get used yet, npm doesn't implement it and neither have we (yet)
-  */
+   * Doesn't get used yet, npm doesn't implement it and neither have we (yet)
+   */
   userRemove(username, password) {
     return new Promise((resolve, reject) => {
       if (this.settings.remove) {
@@ -75,8 +72,7 @@ export default class {
       } else {
         reject("Not allowed to remove users");
       }
-    }).catch((err) => {
-      console.log(err);
+    }).catch(() => {
       return false;
     });
   }
@@ -85,14 +81,6 @@ export default class {
   // Just here for local auth
   initUserDB() {
     let user_db_path = path.join(this.dbLocation, 'user_db.json');
-
-    if (!fs.existsSync(this.dbLocation)) {
-      try {
-        fs.mkdirSync(this.dbLocation, '0777', true);
-      } catch (err) {
-        console.log("Error making userDB folder (" + this.dbLocation + "), ap-npm might malfunction");
-      }
-    }
     try {
       let user_db_json = fs.readFileSync(user_db_path, 'utf8');
       this.users = JSON.parse(user_db_json);
@@ -104,7 +92,7 @@ export default class {
   // Just here for local auth
   updateUserDB() {
     let user_db_path = path.join(this.dbLocation, 'user_db.json');
-    fs.writeFileSync(user_db_path, JSON.stringify(this.users, null, 2), { 'mode': '0777' });
+    fs.writeFileSync(user_db_path, JSON.stringify(this.users, null, 2), {'mode': '0777'});
     this.initUserDB();
   }
 }

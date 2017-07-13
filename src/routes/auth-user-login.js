@@ -50,6 +50,7 @@ export default class {
         }
       });
     }).catch((error) => {
+      httpResponse.status(401);
       httpResponse.send("401, " + error);
     });
   }
