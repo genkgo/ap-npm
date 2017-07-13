@@ -1,16 +1,13 @@
 FROM node:boron
 
-RUN mkdir /src
+RUN mkdir /app
 
-WORKDIR /src
+COPY src /app/src
+COPY bin /app/bin
+COPY package.json /app/package.json
+COPY config.json /app/config.json
 
-RUN mkdir app
-RUN mkdir app/src
-
-COPY src /src
-COPY bin /src/bin
-COPY package.json /src/app/
-COPY config.json /src/app/
+WORKDIR /app/
 
 RUN npm install
 RUN npm run build
