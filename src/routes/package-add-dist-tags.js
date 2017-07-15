@@ -1,8 +1,7 @@
 export default class {
 
-  constructor(storage, validator) {
+  constructor(storage) {
     this.storage = storage;
-    this.packageValidator = validator;
   }
 
   /*

@@ -1,14 +1,9 @@
 export default class {
 
-  constructor(storage, validator) {
+  constructor(storage) {
     this.storage = storage;
-    this.packageValidator = validator;
   }
 
-  /*
-  * Reads dist-tags and sends them to npm-client
-  * *** hasn't been tested yet***
-  */
   process(httpRequest, httpResponse) {
     return new Promise((resolve, reject) => {
       this.storage.getPackageJson({
