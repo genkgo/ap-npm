@@ -13,7 +13,7 @@ export default class {
     return new Promise((resolve, reject) => {
       let packageName = httpRequest.body._packageName;
       let packageScope = httpRequest.body._scope;
-      let distTag = httpRequest.params.tag;
+      let distTag = httpRequest.body._disttag;
 
       this.storage.getPackageJson({
         name: packageName,
