@@ -66,6 +66,7 @@ export default class {
 
       fs.writeFile(this.configPath, JSON.stringify(config, null, 2), () => {
         console.log("Property: '" + property + "' has been updated: " + value);
+        return 0;
       });
     });
   }
