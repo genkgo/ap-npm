@@ -1,25 +1,25 @@
 {
-    "workDir": "/ap-npm",
-    "storage": {
-        "directory": "/storage"
+  "workDir": "/ap-npm",
+  "storage": {
+    "directory": "/storage"
+  },
+  "port": 4444,
+  "hostname": "localhost",
+  "proxyEnabled": false,
+  "proxyUrl": "https://registry.npmjs.org",
+  "auth": {
+    "adapter": "./src/auth/json-db",
+    "users": {
+      "canPublish": true,
+      "canAccess": true
     },
-    "port": 4444,
-    "hostname": "localhost",
-    "proxyEnabled": false,
-    "proxyUrl": "https://registry.npmjs.org",
-    "auth": {
-        "adapter": "/auth/json-db",
-        "users": {
-            "canPublish": true,
-            "canAccess": true
-        },
-        "register": true,
-        "public": false,
-        "remove": true
-    },
-    "ssl": {
-        "enabled": true,
-        "key": "/ssl/sslkey.key",
-        "cert": "/ssl/sslcert.crt"
-    }
+    "register": true,
+    "public": false,
+    "remove": true
+  },
+  "ssl": {
+    "enabled": false,
+    "key": "/ssl/sslkey.key",
+    "cert": "/ssl/sslcert.crt"
+  }
 }

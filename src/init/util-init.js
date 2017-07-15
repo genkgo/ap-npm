@@ -27,8 +27,8 @@ export default function (container) {
 
   container.set('auth-adapter', function () {
     let AuthAdapter;
-    if (container.get('config').auth.adapter === '/auth/json-db') {
-      AuthAdapter = require(path.join(__dirname, '..', container.get('config').auth.adapter)).default;
+    if (container.get('config').auth.adapter === './src/auth/json-db') {
+      AuthAdapter = require(path.join(__dirname, '../..', container.get('config').auth.adapter)).default;
     } else {
       AuthAdapter = require(container.get('config').auth.adapter).default;
     }
