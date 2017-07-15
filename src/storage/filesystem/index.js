@@ -61,7 +61,7 @@ export default class {
 
   /**
    * @param {object} request {name: ?, scope: ?}
-   * @return {buffer} package file buffer
+   * @return {Buffer} package file buffer
    */
   getPackage(request) {
     return getPackage(request, this.storageLocation);

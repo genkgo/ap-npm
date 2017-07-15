@@ -13,8 +13,8 @@ export default class {
     return new Promise((resolve, reject) => {
       let packageName = httpRequest.body._packageName;
       let packageScope = httpRequest.body._scope;
-      let distTag = httpRequest.params.tag;
-      let distTagVersion = httpRequest.body;
+      let distTag = httpRequest.body._disttag;
+      let distTagVersion = httpRequest.body['npm-args'];
 
       this.storage.getPackageJson({
         name: packageName,
@@ -26,7 +26,7 @@ export default class {
         .then((packageJson) => {
         if (typeof(packageJson) === 'object') {
           if (typeof(packageJson.versions[distTagVersion]) !== "object") {
-            reject("403, version does not exist");
+            reject("Version does not exist");
           }
 
           packageJson['dist-tags'][distTag] = distTagVersion;
