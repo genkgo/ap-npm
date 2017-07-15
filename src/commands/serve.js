@@ -8,6 +8,7 @@ export default class {
     this.app = server;
     this.port = config.port;
     this.ssl = config.ssl;
+    this.hostname = config.hostname;
     this.config = config;
   }
 
@@ -20,19 +21,19 @@ export default class {
         httpolyglot.createServer({
           key: key,
           cert: cert
-        }, this.app).listen(this.port, '0.0.0.0', () => {
-          console.log("ap-npm is listening on 0.0.0.0:" + this.port + '\n');
+        }, this.app).listen(this.port, this.hostname, () => {
+          console.log("ap-npm is listening on " + this.hostname + ":" + this.port + '\n');
         });
       } else {
         this.config.ssl.enabled = false;
         console.log("ssl setup failed, key/cert files don't exist\n" +
           "ap-npm will run without being accessible using ssl\n");
 
-        console.log("ap-npm is listening on http://0.0.0.0:" + this.port + '\n');
+        console.log("ap-npm is listening on http://" + this.hostname + ":" + this.port + '\n');
         this.app.listen(this.port);
       }
     } else {
-      console.log("ap-npm is listening on http://0.0.0.0:" + this.port + '\n');
+      console.log("ap-npm is listening on http://" + this.hostname + ":" + this.port + '\n');
       this.app.listen(this.port);
     }
   }
