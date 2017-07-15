@@ -8,9 +8,10 @@ import writeJSON from './write-json';
  * @param {Object} request {name: ?, scope: ?}
  * @param {Object} packageData package.json data
  * @param {String} storageLocation storage location
+ * @param {Class} logger logger class for ap-npm
  * @return {Boolean} package written
  */
-export default function (request, packageData, storageLocation) {
+export default function (request, packageData, storageLocation, logger) {
   return new Promise((resolve) => {
     let attachmentName;
     let packageName = request.name;
@@ -45,25 +46,22 @@ export default function (request, packageData, storageLocation) {
         let distTags = packageJSON['dist-tags'];
         let newDistTags = packageData['dist-tags'];
 
-        // Merge dist-tags, we need to preserve old dist-tags
-        for (let key in newDistTags) {
-          distTags[key] = newDistTags[key];
-        }
+        for (let key in newDistTags) distTags[key] = newDistTags[key];
 
         packageJSON['dist-tags'] = distTags;
 
-        console.log(attachmentName);
-        fs.writeFile(
+        fs.packageJSON(
           filePath,
           Buffer.from(packageData._attachments[attachmentName].data, 'base64'),
           {'mode': '0777'},
           () => {
             writeJSON(packageInfoLocation, packageJSON)
               .then((result) => {
-                console.log("Wrote package to filesystem:", {
-                  "filePath": filePath,
-                  "packageJSON": packageInfoLocation
-                });
+                if (packageScope) {
+                  logger.info("Published new package: " + packageScope + '/' + packageName);
+                } else {
+                  logger.info("Published new package: " + packageName);
+                }
                 resolve(result);
               });
           });

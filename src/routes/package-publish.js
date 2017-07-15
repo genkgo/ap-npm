@@ -48,9 +48,8 @@ export default class {
 
   writePackage(httpRequest, httpResponse) {
     let distTag;
-    console.log(httpRequest.body['dist-tags']);
 
-    for (let key in httpRequest.body['dist-tags']) {
+    for (let key in httpRequest.body["dist-tags"]) {
       distTag = key;
     }
 
@@ -58,7 +57,7 @@ export default class {
       .then((result) => {
         if (result === true) {
           this.packageValidator.isVersionHigher(httpRequest.body._packageName,
-            httpRequest.body['dist-tags'][distTag],
+            httpRequest.body["dist-tags"][distTag],
             distTag,
             httpRequest.body._scope
           ).then((result) => {

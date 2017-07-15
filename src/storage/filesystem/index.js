@@ -52,7 +52,7 @@ export default class {
    * @param {object} packageData - The package.json
    */
   writeNewPackage(request, packageData) {
-    return writeNewPackage(request, packageData, this.storageLocation);
+    return writeNewPackage(request, packageData, this.storageLocation, this.logger);
   }
 
   /**
@@ -62,7 +62,7 @@ export default class {
    * @param {string} request.file - The file to be written
    * @param {object} packageData - The package.json
    */
-  writePackage(request, packageData) {
+  writePackage(request, packageData, logger) {
     return writePackage(request, packageData, this.storageLocation);
   }
 
