@@ -4,9 +4,6 @@ import path from 'path';
 export default class {
 
   constructor(hostname, port, ssl) {
-    this.hostname = hostname;
-    this.port = port;
-    this.ssl = ssl;
     this.configPath = path.join(__dirname, '../..', 'config.json');
   }
 
@@ -29,7 +26,7 @@ export default class {
       let config = JSON.parse(file);
       switch (propArgs.length) {
         case 1:
-          if (config.hasOwnProperty(propArgs[0])) {
+          if (config.hasOwnProperty(propArgs[0]) && typeof config[propArgs[0]] !== 'object') {
             config[propArgs[0]] = this.convertValue(value);
             break;
           }
@@ -38,7 +35,8 @@ export default class {
         case 2:
           if (config.hasOwnProperty(propArgs[0])) {
             if (config[propArgs[0]]
-              .hasOwnProperty(propArgs[1])
+              .hasOwnProperty(propArgs[1]) &&
+              typeof config[propArgs[0]][propArgs[1]] !== 'object'
             ) {
               config[propArgs[0]][propArgs[1]] = this.convertValue(value);
               break;

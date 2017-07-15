@@ -6,8 +6,7 @@ export default function(container) {
 
   container.set('command-init', function () {
     let Command = require('../commands/init').default;
-    let config = container.get('config');
-    return new Command(config.hostname, config.port, config.ssl.enabled);
+    return new Command();
   });
 
   container.set('command-config', function() {
