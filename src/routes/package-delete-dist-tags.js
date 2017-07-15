@@ -6,29 +6,40 @@ export default class {
 
   process(httpRequest, httpResponse) {
     return new Promise((resolve, reject) => {
-      let packageName = httpRequest.params.package;
+      let packageName = httpRequest.body._packageName;
+      let packageScope = httpRequest.body._scope;
       let distTag = httpRequest.params.tag;
 
       this.storage.getPackageJson({
-        name: httpRequest.params.package
-      }).then((packageJson) => {
-          delete(packageJson['dist-tags'][distTag]);
-
-          this.storage.updatePackageJson({
-            name: packageName
-          }, packageJson)
-            .then((result) => {
-              if (result === true) {
-                httpResponse.status(200);
-                resolve(httpResponse.send({
-                  ok: "dist-tags updated"
-                }));
-              } else {
-                reject("404, could not get dist-tags");
-              }
-            });
+        name: packageName,
+        scope: packageScope
+      }).catch(err => {
+        httpResponse.status(404);
+        httpResponse.send(err);
+      })
+        .then((packageJson) => {
+          if (typeof packageJson === 'object') {
+            delete(packageJson['dist-tags'][distTag]);
+            this.storage.updatePackageJson({
+              name: packageName,
+              scope: packageScope
+            }, packageJson)
+              .then((result) => {
+                if (result === true) {
+                  httpResponse.status(200);
+                  resolve(httpResponse.send({
+                    ok: "dist-tags updated"
+                  }));
+                } else {
+                  reject("Could not get dist-tags");
+                }
+              });
+          } else {
+            reject("Could not get dist-tags");
+          }
         });
     }).catch((err) => {
+      httpResponse.status(404);
       httpResponse.send(err);
     });
   }
