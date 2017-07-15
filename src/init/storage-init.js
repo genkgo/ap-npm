@@ -1,11 +1,12 @@
 import path from 'path';
+import fs from 'fs';
 import fse from 'fs-extra';
 
 export default function (container) {
 
   let storageLocation = path.join(container.get('config').workDir, container.get('config').storage.directory);
   try {
-    if (!fse.ensureDirSync(storageLocation)) {
+    if (!fs.existsSync(storageLocation)) {
       fse.mkdirsSync(storageLocation);
     }
   } catch (err) {

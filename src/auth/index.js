@@ -19,11 +19,11 @@ export default class {
   storageInit() {
     let userTokens = path.join(this.dbLocation, 'user_tokens.json');
 
-    if (!fse.ensureDirSync(this.dbLocation)) {
+    if (!fs.existsSync(this.dbLocation)) {
       fse.mkdirsSync(this.dbLocation);
     }
 
-    if (!fse.ensureFileSync(userTokens)) {
+    if (!fs.existsSync(userTokens)) {
       fse.outputJsonSync(userTokens, {});
     }
   }

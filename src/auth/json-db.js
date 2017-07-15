@@ -15,7 +15,7 @@ export default class {
     this.settings = config.auth;
   }
 
-  userLogin(username, password, email = 'admin') {
+  userLogin(username, password) {
     return new Promise((resolve) => {
       let userLoggedIn;
       try {
