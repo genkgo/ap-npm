@@ -5,7 +5,23 @@ export default function (req, res, next) {
   let packageName;
   let requestedFile;
 
+  if (typeof req.body !== 'object') {
+    req.body = {"npm-args": req.body};
+  }
+
   if (splitUrl[2] === 'package') {
+    if (splitUrl[3].indexOf('@') !== -1) {
+      req.body._scope = splitUrl[3];
+      req.body._packageName = splitUrl[4];
+      if (splitUrl[5] === 'dist-tags' && !!splitUrl[6]) {
+        req.body._disttag = splitUrl[6];
+      }
+    } else {
+      req.body._packageName = splitUrl[3];
+      if (splitUrl[4] === 'dist-tags' && !!splitUrl[5]) {
+        req.body._disttag = splitUrl[5];
+      }
+    }
     next();
     return;
   }
