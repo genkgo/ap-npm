@@ -9,7 +9,7 @@ import writeJSON from './write-json';
  * @param {Object} packageData package.json data
  * @param {String} storageLocation storage location
  * @param {Class} logger logger class for ap-npm
- * @return {Boolean} package written
+ * @return {Promise|Boolean} package written
  */
 export default function (request, packageData, storageLocation, logger) {
   return new Promise((resolve) => {
@@ -40,22 +40,22 @@ export default function (request, packageData, storageLocation, logger) {
     let filePath = folderPath + '/' + packageName + '-' + newVersion + '.tgz';
 
     readJSON(packageInfoLocation)
-      .then((packageJSON) => {
-        packageJSON.versions[newVersion] = packageData.versions[newVersion];
+      .then((packageJson) => {
+        packageJson.versions[newVersion] = packageData.versions[newVersion];
 
-        let distTags = packageJSON['dist-tags'];
+        let distTags = packageJson['dist-tags'];
         let newDistTags = packageData['dist-tags'];
 
         for (let key in newDistTags) distTags[key] = newDistTags[key];
 
-        packageJSON['dist-tags'] = distTags;
+        packageJson['dist-tags'] = distTags;
 
-        fs.packageJSON(
+        fs.writeFile(
           filePath,
           Buffer.from(packageData._attachments[attachmentName].data, 'base64'),
           {'mode': '0777'},
           () => {
-            writeJSON(packageInfoLocation, packageJSON)
+            writeJSON(packageInfoLocation, packageJson)
               .then((result) => {
                 if (packageScope) {
                   logger.info("Published new package: " + packageScope + '/' + packageName);

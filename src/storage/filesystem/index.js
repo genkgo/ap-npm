@@ -20,19 +20,16 @@ export default class {
   }
 
   /**
-   * @param {object} request
-   * @param {string} request.name - The name of the package
-   * @param {string} request.scope - The scope of the package
+   * @param {object} request {name: ?, scope: ?}
+   * @return {Boolean} package removed
    */
   removePackage(request) {
     return removePackage(request, this.storageLocation);
   }
 
   /**
-   * @param {object} request
-   * @param {string} request.name - The name of the package
-   * @param {string} request.scope - The scope of the package
-   * @param {string} request.version - The version of the package
+   * @param {object} request {name: ?, scope: ?, version: ?}
+   * @return {Boolean} package version removed
    */
   removePackageVersion(request) {
     return removePackageVersion(
@@ -45,80 +42,66 @@ export default class {
   }
 
   /**
-   * @param {object} request
-   * @param {string} request.name - The name of the package
-   * @param {string} request.scope - The scope of the package
-   * @param {string} request.file - The file to be written
+   * @param {object} request {name: ?, scope: ?, file: ?}
    * @param {object} packageData - The package.json
+   * @return {Boolean} new package written
    */
   writeNewPackage(request, packageData) {
     return writeNewPackage(request, packageData, this.storageLocation, this.logger);
   }
 
   /**
-   * @param {object} request
-   * @param {string} request.name - The name of the package
-   * @param {string} request.scope - The scope of the package
-   * @param {string} request.file - The file to be written
+   * @param {object} request {name: ?, scope: ?, file: ?}
    * @param {object} packageData - The package.json
+   * @return {Boolean} package written
    */
-  writePackage(request, packageData, logger) {
-    return writePackage(request, packageData, this.storageLocation);
+  writePackage(request, packageData) {
+    return writePackage(request, packageData, this.storageLocation, this.logger);
   }
 
   /**
-   * @param {object} request
-   * @param {string} request.name - The name of the package
-   * @param {string} request.scope - The scope of the package
-   * @return {buffer}
+   * @param {object} request {name: ?, scope: ?}
+   * @return {buffer} package file buffer
    */
   getPackage(request) {
     return getPackage(request, this.storageLocation);
   }
 
   /**
-   * @param {object} request
-   * @param {string} request.name - The name of the package
-   * @param {string} request.scope - The scope of the package
-   * @return {object}
+   * @param {object} request {name: ?, scope: ?}
+   * @return {object} package.json object
    */
   getPackageJson(request) {
     return getPackageJson(request, this.storageLocation);
   }
 
   /**
-   * @param {object} request
-   * @param {string} request.name - The name of the package
-   * @param {string} request.scope - The scope of the package
-   * @return {Boolean}
+   * @param {object} request {name: ?, scope: ?}
+   * @return {Boolean} isPackageAvailable
    */
   isPackageAvailable(request) {
     return isPackageAvailable(request, this.storageLocation);
   }
 
   /**
-   * @param {object} request
-   * @param {string} request.name - The name of the package
-   * @param {string} request.scope - The scope of the package
-   * @param {string} request.version - The version of the package
-   * @return {Boolean}
+   * @param {object} request {name: ?, scope: ?, version: ?}
+   * @return {Boolean} isVersionAvailable
    */
   isVersionAvailable(request) {
     return isVersionAvailable(request, this.storageLocation);
   }
 
   /**
-   * @param {object} request
-   * @param {string} request.name - The name of the package
-   * @param {string} request.scope - The scope of the package
-   * @param packageJson
+   * @param {object} request {name: ?, scope: ?}
+   * @param {object} packageJson package.json to update with
+   * @return {Boolean} package.json updated
    */
   updatePackageJson(request, packageJson) {
     return updatePackageJson(request, packageJson, this.storageLocation);
   }
 
   /**
-   * @returns {object}
+   * @returns {object} listing of available packages
    */
   getPackageListing() {
     return getPackageListing(this.storageLocation);

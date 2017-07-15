@@ -4,9 +4,10 @@ export default class {
     this.storage = storage;
   }
 
-  /*
-   * Reads dist-tags and sends them to npm-client
-   * *** hasn't been tested yet***
+  /**
+   * @param {class} httpRequest req
+   * @param {class} httpResponse res
+   * @return {void} -
    */
   process(httpRequest, httpResponse) {
     return new Promise((resolve, reject) => {

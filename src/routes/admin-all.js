@@ -1,16 +1,16 @@
 export default class {
+
   /**
-   * @param {class} storage
-   * @param {class} auth
+   * @param {class} storage storage of ap-npm
    */
-  constructor(storage, auth) {
+  constructor(storage) {
     this.storage = storage;
-    this.auth = auth;
   }
 
   /**
-   * @param {class} httpRequest
-   * @param {class} httpResponse
+   * @param {class} httpRequest req
+   * @param {class} httpResponse res
+   * @return {void} -
    */
   process(httpRequest, httpResponse) {
     this.storage.getPackageListing().then((listing) => {

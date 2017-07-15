@@ -4,6 +4,11 @@ export default class {
     this.auth = auth;
   }
 
+  /**
+   * @param {class} httpRequest req
+   * @param {class} httpResponse res
+   * @return {void} -
+   */
   process(httpRequest, httpResponse) {
     return new Promise((resolve, reject) => {
       let token = httpRequest.headers.authorization.substr(7);

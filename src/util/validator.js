@@ -6,33 +6,41 @@ export default class {
     this.storage = storage;
   }
 
-  doesVersionExist(packageName, packageVersion, packageScope = null) {
-    return new Promise((resolve) => {
-      this.storage.isVersionAvailable(packageName, packageVersion, packageScope).then((result) => {
-        resolve(result);
-      });
-    });
-  }
+  /**
+   * @param {Object} request {name: ?, scope: ?, version: ?}
+   * @param {String} distTag dist-tag to check
+   * @returns {Boolean} version is higher
+   */
+  isVersionHigher(request, distTag) {
+    let packageName = request.name;
+    let packageVersion = request.version;
+    let packageScope = request.scope;
 
-  // *** PUBLISHING ***
-  isVersionHigher(packageName, packageVersion, distTag, packageScope = null) {
     return new Promise((resolve) => {
       this.storage.getPackageJson({
         name: packageName,
         scope: packageScope
-      }).then((packageData) => {
-        let currentVersion = packageData['dist-tags'][distTag];
+      }).then((packageJson) => {
+        let currentVersion = packageJson['dist-tags'][distTag];
         resolve(semver.satisfies(packageVersion, '>' + currentVersion));
       });
     });
   }
 
-  hasDistTag(packageData, distTag) {
-    let packageName = packageData._packageName;
-    let packageScope = packageData._scope;
+  /**
+   * @param {Object} request {name: ?, scope: ?, version: ?}
+   * @param {String} distTag dist-tag to check
+   * @returns {Boolean} package has dist-tag
+   */
+  hasDistTag(request, distTag) {
+    let packageName = request.name;
+    let packageScope = request.scope;
 
     return new Promise((resolve) => {
-      this.storage.getPackageJson(packageName, packageScope).then((packageJson) => {
+      this.storage.getPackageJson({
+        name: packageName,
+        scope: packageScope
+      }).then((packageJson) => {
         resolve(!!packageJson['dist-tags'][distTag]);
       });
     });

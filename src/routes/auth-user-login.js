@@ -6,10 +6,11 @@ export default class {
     this.auth = auth;
   }
 
-  /*
-  * First checks if user exists, if so -> login
-  * If user doesn't exist -> try to create user
-  */
+  /**
+   * @param {class} httpRequest req
+   * @param {class} httpResponse res
+   * @return {void} -
+   */
   process(httpRequest, httpResponse) {
     return new Promise((resolve, reject) => {
       let userInfo = {
@@ -21,34 +22,34 @@ export default class {
       let userLoggedIn = false;
       this.loginUser(userInfo)
         .then((result) => {
-        if (result === true) {
-          userLoggedIn = true;
-          this.generateToken(userInfo).then((token) => {
-            httpResponse.status(201);
-            httpResponse.send({
-              token: token
-            });
-            resolve(userLoggedIn);
-          });
-        }
-        else {
-          this.createUser(userInfo)
-            .then((result) => {
-            if (result === true) {
-              userLoggedIn = true;
-              this.generateToken(userInfo).then((token) => {
-                httpResponse.status(201);
-                httpResponse.send({
-                  token: token
-                });
-                resolve(userLoggedIn);
+          if (result === true) {
+            userLoggedIn = true;
+            this.generateToken(userInfo).then((token) => {
+              httpResponse.status(201);
+              httpResponse.send({
+                token: token
               });
-            } else {
-              reject('Cannot create user');
-            }
-          });
-        }
-      });
+              resolve(userLoggedIn);
+            });
+          }
+          else {
+            this.createUser(userInfo)
+              .then((result) => {
+                if (result === true) {
+                  userLoggedIn = true;
+                  this.generateToken(userInfo).then((token) => {
+                    httpResponse.status(201);
+                    httpResponse.send({
+                      token: token
+                    });
+                    resolve(userLoggedIn);
+                  });
+                } else {
+                  reject('Cannot create user');
+                }
+              });
+          }
+        });
     }).catch((error) => {
       httpResponse.status(401);
       httpResponse.send("401, " + error);
