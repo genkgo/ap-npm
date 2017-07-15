@@ -7,68 +7,78 @@ export default class {
     this.hostname = hostname;
     this.port = port;
     this.ssl = ssl;
-
-    this.mutableProperties = {
-      "workDir": 'string',
-      "port": 'integer',
-      "hostname": 'string',
-      "ssl": 'boolean',
-      "sslkey": "string",
-      "sslcert": "string"
-    };
+    this.configPath = path.join(__dirname, '../..', 'config.json');
   }
 
   listConfig(configLocation) {
     console.log('Config location: ' + configLocation);
     fs.readFile(configLocation, (err, configData) => {
-      console.log("Config configuration:\n", JSON.parse(configData));
+      console.log("Config:\n", JSON.parse(configData));
     });
   }
 
   updateProp(property, value) {
-    let configPath = path.join(__dirname, '../..', 'config.json');
-    let configString = fs.readFileSync(configPath);
-    let config = JSON.parse(configString);
+    let propArgs = property.split('.');
 
-    if (config.hasOwnProperty(property) !== true) {
-      console.log("Error, property does not exist");
-      return;
-    } else if (this.mutableProperties.hasOwnProperty(property) !== true) {
-      console.log("Error, cannot change this property from cli\n" +
-        "changing all properties should be done using a config file");
-      return;
-    }
+    fs.readFile(this.configPath, (err, file) => {
+      if (err) {
+        console.log("Could not update config:" + err);
+        return 1;
+      }
 
-    // Convert values
-    if (value === 'true') {
-      value = true;
-    } else if (value === 'false') {
-      value = false;
-    }
+      let config = JSON.parse(file);
+      switch (propArgs.length) {
+        case 1:
+          if (config.hasOwnProperty(propArgs[0])) {
+            config[propArgs[0]] = this.convertValue(value);
+            break;
+          }
+          console.log("Unknown property: " + property);
+          return 2;
+        case 2:
+          if (config.hasOwnProperty(propArgs[0])) {
+            if (config[propArgs[0]]
+              .hasOwnProperty(propArgs[1])
+            ) {
+              config[propArgs[0]][propArgs[1]] = this.convertValue(value);
+              break;
+            }
+          }
+          console.log("Unknown property: " + property);
+          return 2;
+        case 3:
+          if (config.hasOwnProperty(propArgs[0])) {
+            if (config[propArgs[0]]
+              .hasOwnProperty(propArgs[1])
+            ) {
+              if (config[propArgs[0]][propArgs[1]]
+                .hasOwnProperty(propArgs[2])
+              ) {
+                config[propArgs[0]][propArgs[1]][propArgs[2]] = this.convertValue(value);
+                break;
+              }
+            }
+          }
+          console.log("Unknown property: " + property);
+          return 2;
+        default:
+          console.log("Unknown property: " + property);
+          return 2;
+      }
 
-    if (typeof value !== this.mutableProperties[property]) {
-      console.log("Value is incorrect, aborting\n");
-      return;
-    }
-
-    if (property === 'ssl') {
-      config.ssl.enabled = value;
-    }
-    else if (property === 'sslkey') {
-      config.ssl.sslkey = value;
-    }
-    else if(property === 'sslcert') {
-      config.ssl.sslcert = value;
-    }
-
-    else {
-      config[property] = value;
-    }
-
-    fs.writeFile(configPath, JSON.stringify(config, null, 2), () => {
-      console.log("Property: '"+ property + "' has been updated: " + value);
+      fs.writeFile(this.configPath, JSON.stringify(config, null, 2), () => {
+        console.log("Property: '" + property + "' has been updated: " + value);
+      });
     });
+  }
 
+  convertValue(value) {
+    if (value === 'true') {
+      return true;
+    } else if (value === 'false') {
+      return false;
+    }
+    return value;
   }
 
 }
