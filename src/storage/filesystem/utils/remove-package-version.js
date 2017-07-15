@@ -2,6 +2,14 @@ import fs from 'fs';
 import path from 'path';
 import semver from 'semver';
 
+/**
+ * @param {Object} request {name: ?, scope: ?, version: ?}
+ * @param {Function} getPackageJson get package.json
+ * @param {Function} updatePackageJson update package.json
+ * @param {Function} removePackage remove package
+ * @param {String} storageLocation storage location
+ * @return {Boolean} package removed
+ */
 export default function (request,
                          getPackageJson,
                          updatePackageJson,

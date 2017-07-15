@@ -2,6 +2,11 @@ import fs from 'fs';
 import path from 'path';
 import readJSON from './read-json';
 
+/**
+ * @param {Object} request {name: ?, scope: ?}
+ * @param {String} storageLocation storage location
+ * @return {Object} package.json
+ */
 export default function (request, storageLocation) {
   return new Promise((resolve, reject) => {
     let packageName = request.name;

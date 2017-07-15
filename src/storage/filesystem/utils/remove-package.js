@@ -2,6 +2,11 @@ import fs from 'fs';
 import path from 'path';
 import rimraf from 'rimraf';
 
+/**
+ * @param {Object} request {name: ?, scope: ?}
+ * @param {String} storageLocation storage location
+ * @return {Boolean} package removed
+ */
 export default function (request, storageLocation) {
   return new Promise((resolve, reject) => {
     let packageName = request.name;
