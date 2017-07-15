@@ -18,7 +18,7 @@
     "remove": true
   },
   "ssl": {
-    "enabled": false,
+    "enabled": true,
     "key": "/ssl/sslkey.key",
     "cert": "/ssl/sslcert.crt"
   }

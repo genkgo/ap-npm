@@ -4,7 +4,6 @@ export default class {
 
   constructor() {
     colors.setTheme({
-      log: 'green',
       info: 'green',
       warn: 'yellow',
       error: 'red',
@@ -18,7 +17,7 @@ export default class {
   }
 
   log(message) {
-    console.log(colors.log(message));
+    console.log(message);
   }
 
   info(message) {

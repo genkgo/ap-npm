@@ -8,16 +8,19 @@ commander
   .alias('s')
   .description('serve ap-npm')
   .option('-c, --config', "config file to use")
-  .action(function(config) {
+  .action(function (config) {
     let container;
+    let logger;
 
     if (fs.existsSync(config)) {
-      console.log("using config: " + config + '\n');
       container = containerInit(config);
+      logger = container.get('logger');
+      logger.info("using config: " + config + '\n');
     } else {
-      console.log("using default config\n");
       let configLocation = path.join(__dirname, '../', 'config.json');
       container = containerInit(configLocation);
+      logger = container.get('logger');
+      logger.info("using default config\n");
     }
 
     let command = container.get('command-serve');
@@ -27,7 +30,7 @@ commander
 commander
   .command('config [prop] [value]')
   .description('list or set config properties')
-  .action(function(property, value) {
+  .action(function (property, value) {
     let configLocation = path.join(__dirname, '../', 'config.json');
     let container = containerInit(configLocation);
     let command = container.get('command-config');
@@ -42,7 +45,7 @@ commander
 commander
   .command('init')
   .description('init a npm project using ap-npm publishConfig')
-  .action(function() {
+  .action(function () {
     let container = containerInit(path.join(__dirname, '../', 'config.json'));
     let command = container.get('command-init');
     command.run(process.cwd());

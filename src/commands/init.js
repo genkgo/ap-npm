@@ -5,50 +5,51 @@ import path from 'path';
 
 export default class {
 
-  constructor(hostname, port, ssl) {
-    this.hostname = hostname;
-    this.port = port;
-    this.ssl = ssl;
+  /**
+   * @param {Object} config config for ap-npm
+   * @param {Logger} logger Logger class
+   */
+  constructor(config, logger) {
+    this.host = config.hostname;
+    this.port = config.port;
+    this.ssl = config.ssl.enabled;
+    this.logger = logger;
   }
 
   run(pathToProject) {
-    let spawn = child_process.spawnSync;
-    let shell = (cmd, opts) => {
-      process.stdin.pause();
-      return spawn(cmd, opts, {
-        stdio: [0, 1, 2]
+    return new Promise((resolve) => {
+      let spawn = child_process.spawnSync;
+      let shell = (cmd, opts) => {
+        process.stdin.pause();
+        return spawn(cmd, opts, {
+          stdio: [0, 1, 2]
+        });
+      };
+      resolve(shell('npm', ['init']));
+    }).then(() => {
+      fs.readFile(path.join(pathToProject, 'package.json'), (err, file) => {
+        let publishConfig;
+        if (err !== null) {
+          this.logger.warn(err);
+          return;
+        }
+
+        if (this.ssl) {
+          publishConfig = {
+            "registry": "https://" + this.host + ':' + this.port
+          };
+        } else {
+          publishConfig = {
+            "registry": "http://" + this.host + ':' + this.port
+          };
+        }
+        this.logger.info('\nUpdating package.json with publishConfig:', publishConfig);
+        let packageJson = JSON.parse(file);
+        packageJson.publishConfig = publishConfig;
+        fs.writeFile(path.join(pathToProject, 'package.json'), JSON.stringify(packageJson, null, 2), { 'mode': '0664' }, () => {
+          this.logger.info("ap-npm project created in: " + pathToProject + '\n');
+        });
       });
-    };
-
-    shell('npm', ['init']);
-
-    fs.readFile(path.join(pathToProject, 'package.json'), (err, packageString) => {
-      let publishConfig;
-      if (err !== null) {
-        console.log(err);
-        return;
-      }
-
-      if (this.ssl) {
-        publishConfig = {
-          "registry": "https://" + this.hostname + ':' + this.port
-        };
-      } else {
-        publishConfig = {
-          "registry": "http://" + this.hostname + ':' + this.port
-        };
-      }
-
-
-      console.log('\nUpdating package.json with publishConfig:', publishConfig);
-
-      let packageJson = JSON.parse(packageString);
-      packageJson.publishConfig = publishConfig;
-
-      fs.writeFile(path.join(pathToProject, 'package.json'), JSON.stringify(packageJson, null, 2), {'mode': '0664'}, () => {
-        console.log("ap-npm project created in: " + pathToProject + '\n');
-      });
-
     });
   }
 

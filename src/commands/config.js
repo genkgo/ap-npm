@@ -3,6 +3,9 @@ import path from 'path';
 
 export default class {
 
+  /**
+   * @param {Logger} logger logger class
+   */
   constructor(logger) {
     this.configPath = path.join(__dirname, '../..', 'config.json');
     this.logger = logger;
