@@ -9,7 +9,7 @@ const configLocation = path.join(__dirname, '../../config.json');
 
 describe("Command config", function () {
 
-  it('should set a singly deep setting', function () {
+  it('should setsettings', function () {
     fs.readFile(configLocation, (err, file) => {
       let config = JSON.parse(file);
       let command = new configCommand(logger);
@@ -23,36 +23,33 @@ describe("Command config", function () {
         expect(config.port).to.equal(4443);
       });
       command.updateProp(setting, oldValue).then(Promise.resolve());
-    });
-  });
+      return fs.readFile(configLocation, (err, file) => {
+        let config = JSON.parse(file);
+        let command = new configCommand(logger);
 
-  it('should set nested settings', function () {
-    fs.readFile(configLocation, (err, file) => {
-      let config = JSON.parse(file);
-      let command = new configCommand(logger);
+        let setting = 'ssl.enabled';
+        let oldValue = config.ssl.enabled;
+        let value = 'true';
 
-      let setting = 'ssl.enabled';
-      let oldValue = config.ssl.enabled;
-      let value = 'true';
+        command.updateProp(setting, value).then(() => {
+          config = JSON.parse(fs.readFileSync(configLocation));
+          expect(config.port).to.equal(value);
+        });
+        command.updateProp(setting, oldValue).then(() => {
+          fs.readFile(configLocation, (err, file) => {
+            let config = JSON.parse(file);
+            let command = new configCommand(logger);
 
-      command.updateProp(setting, value).then(() => {
-        config = JSON.parse(fs.readFileSync(configLocation));
-        expect(config.port).to.equal(value);
-      });
-      command.updateProp(setting, oldValue).then(() => {
-        fs.readFile(configLocation, (err, file) => {
-          let config = JSON.parse(file);
-          let command = new configCommand(logger);
+            let setting = 'auth.users.canPublish';
+            let oldValue = config.auth.users.canPublish;
+            let value = 'false';
 
-          let setting = 'auth.users.canPublish';
-          let oldValue = config.auth.users.canPublish;
-          let value = 'false';
-
-          command.updateProp(setting, value).then(() => {
-            config = JSON.parse(fs.readFileSync(configLocation));
-            expect(config.port).to.equal(value);
+            command.updateProp(setting, value).then(() => {
+              config = JSON.parse(fs.readFileSync(configLocation));
+              expect(config.port).to.equal(value);
+            });
+            return command.updateProp(setting, oldValue).then(Promise.resolve());
           });
-          return command.updateProp(setting, oldValue).then(Promise.resolve());
         });
       });
     });
