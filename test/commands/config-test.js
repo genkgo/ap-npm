@@ -9,7 +9,7 @@ const configLocation = path.join(__dirname, '../../config.json');
 
 describe("Command config", function () {
 
-  it('should setsettings', function () {
+  xit('should setsettings', function () {
     fs.readFile(configLocation, (err, file) => {
       let config = JSON.parse(file);
       let command = new configCommand(logger);
@@ -55,7 +55,7 @@ describe("Command config", function () {
     });
   });
 
-  it("should not set non-existent settings", function () {
+  xit("should not set non-existent settings", function () {
     let command = new configCommand(logger);
     fs.readFile(configLocation, (err) => {
       expect(!err).to.equal(true);
