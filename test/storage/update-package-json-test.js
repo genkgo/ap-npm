@@ -24,7 +24,7 @@ describe('Storage updatePackageJson', function () {
     json._id = "modified";
 
     updatePackageJson({
-      _packageName: packageName
+      name: packageName
     }, json, tmpLocation).then(() => {
       fs.readFile(tmpJsonLocation, function (err, file) {
         if (err) {

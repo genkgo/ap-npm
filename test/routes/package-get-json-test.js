@@ -1,4 +1,4 @@
-import packageJson from '../../src/routes/package-json';
+import packageJson from '../../src/routes/package-get-json';
 import StorageMock from '../mocks/storageMock';
 import proxyMock from '../mocks/proxyMock';
 import httpRequest from '../mocks/httpRequestMock';
@@ -11,7 +11,6 @@ const expect = require('chai').expect;
 const storage = new StorageMock();
 
 describe('Route package-json', function () {
-
   it('should get package.json', function () {
     let req = new httpRequest();
     let res = new httpResponse();

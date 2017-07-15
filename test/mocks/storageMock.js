@@ -28,7 +28,7 @@ export default class {
     });
   }
 
-  getPackageData(request) {
+  getPackageJson(request) {
     return new Promise(resolve => {
       let name = request.name;
       let scope = request.scope;

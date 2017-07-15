@@ -39,16 +39,16 @@ describe('Storage getPackageJson', function () {
   });
 
   it('should reject when package.json is not available', function () {
-    getPackageJson({name: 'undefined'}, storageLocation)
+    getPackageJson({name: 'not-available'}, storageLocation)
       .catch((err) => {
-        expect(err.toString()).to.equal("Could not get package.json");
+        expect(err.toString()).to.equal("package.json does not exist");
       });
   });
 
   it('should reject when scoped package.json is not available', function () {
-    getPackageJson({name: 'undefined', scope: 'undefined'}, storageLocation)
+    getPackageJson({name: 'not-available', scope: 'undefined'}, storageLocation)
       .catch((err) => {
-        expect(err.toString()).to.equal("Could not get package.json");
+        expect(err.toString()).to.equal("package.json does not exist");
       });
   });
 });

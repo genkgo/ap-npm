@@ -9,25 +9,25 @@ const packageScope = '@apnpm';
 describe('Storage isPackageAvailable', function () {
 
   it('should return true when package is available', function () {
-    isPackageAvailable(packageName, storageLocation).then((result) => {
+    isPackageAvailable({name: packageName}, storageLocation).then((result) => {
       expect(result).to.equal(true);
     });
   });
 
   it('should return false when package is not available', function () {
-    isPackageAvailable('undefined', storageLocation).then((result) => {
+    isPackageAvailable({name: 'not-available'}, storageLocation).then((result) => {
       expect(result).to.equal(false);
     });
   });
 
   it('should return true when scoped package is available', function () {
-    isPackageAvailable(packageName, storageLocation, packageScope).then((result) => {
+    isPackageAvailable({name: packageName, scope: packageScope}, storageLocation).then((result) => {
       expect(result).to.equal(true);
     });
   });
 
   it('should return false when scoped package is not available', function () {
-    isPackageAvailable('undefined', storageLocation, packageScope).then((result) => {
+    isPackageAvailable({name: 'not-available', scope: packageScope}, storageLocation).then((result) => {
       expect(result).to.equal(false);
     });
   });
