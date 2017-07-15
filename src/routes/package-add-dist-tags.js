@@ -18,29 +18,37 @@ export default class {
       this.storage.getPackageJson({
         name: packageName,
         scope: packageScope
-      }).then((packageJson) => {
-        if (typeof(packageJson.versions[distTagVersion]) !== "object") {
-          reject("403, version does not exist");
+      }).catch(err => {
+        httpResponse.status(404);
+        httpResponse.send(err);
+      })
+        .then((packageJson) => {
+        if (typeof(packageJson) === 'object') {
+          if (typeof(packageJson.versions[distTagVersion]) !== "object") {
+            reject("403, version does not exist");
+          }
+
+          packageJson['dist-tags'][distTag] = distTagVersion;
+
+          this.storage.updatePackageJson({
+              name: packageName,
+              scope: packageScope
+            },
+            packageJson)
+            .then((result) => {
+              if (result === true) {
+                httpResponse.status(200);
+                httpResponse.send({
+                  ok: "dist-tags added"
+                });
+                resolve();
+              } else {
+                reject("Could not get dist-tags");
+              }
+            });
+        } else {
+          reject("Could not get dist-tags");
         }
-
-        packageJson['dist-tags'][distTag] = distTagVersion;
-
-        this.storage.updatePackageJson({
-            name: packageName,
-            scope: packageScope
-          },
-          packageJson)
-          .then((result) => {
-            if (result === true) {
-              httpResponse.status(200);
-              httpResponse.send({
-                ok: "dist-tags added"
-              });
-              resolve();
-            } else {
-              reject("404, could not get dist-tags");
-            }
-          });
       });
     }).catch((err) => {
       httpResponse.status(404);
