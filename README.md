@@ -1,6 +1,8 @@
 # ap-npm
 Authenticated Private  NPM Repository
 
+[![dockeri.co](https://dockeri.co/image/meirbon/ap-npm)](https://hub.docker.com/r/meirbon/ap-npm/)
+
 ap-npm runs a npm-repository. 
 It should be used together with [npm-scope](https://docs.npmjs.com/misc/scope), 
 as ap-npm doesn't function as a caching/proxy server like Sinopia/Verdaccio.
