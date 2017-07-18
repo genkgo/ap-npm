@@ -51,6 +51,16 @@ commander
     command.run(process.cwd());
   });
 
+commander
+  .command('version')
+  .alias('v')
+  .action(function () {
+    let logger = containerInit(path.join(__dirname, '../', 'config.json')).get('logger');
+    fs.readFile(path.join(__dirname, '../package.json'), function (err, file) {
+      logger.log(JSON.parse(file).version);
+    });
+  });
+
 commander.parse(process.argv);
 
 if (!process.argv.slice(2).length) {
