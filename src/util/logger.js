@@ -16,24 +16,34 @@ export default class {
     next();
   }
 
-  log(message) {
-    console.log(message);
+  log(...messages) {
+    messages.forEach(function (message) {
+      console.log(message);
+    });
   }
 
-  info(message) {
-    console.info(colors.info(message));
+  info(...messages) {
+    messages.forEach(function (message) {
+      console.info(colors.info(message));
+    });
   }
 
-  warn(message) {
-    console.warn(colors.warn(message));
+  warn(...messages) {
+    messages.forEach(function (message) {
+      console.warn(colors.warn(message));
+    });
   }
 
-  error(message) {
-    console.error(colors.error(message));
+  error(...messages) {
+    messages.forEach(function (message) {
+      console.error(colors.error(message));
+    });
   }
 
-  debug(message) {
-    console.debug(colors.debug(message));
+  debug(...messages) {
+    messages.forEach(function (message) {
+      console.debug(colors.debug(message));
+    });
   }
 
 }
