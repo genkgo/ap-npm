@@ -10,6 +10,7 @@ import updatePackageJson from './utils/update-packagejson';
 import writePackage from './utils/write-package';
 import writeNewPackage from './utils/write-new-package';
 import getPackageListing from './utils/get-package-listing';
+import lockService from './utils/lock-service';
 
 export default class {
 
@@ -17,6 +18,10 @@ export default class {
     this.config = config;
     this.logger = logger;
     this.storageLocation = path.join(this.config.workDir, this.config.storage.directory);
+  }
+
+  lockService() {
+    return new lockService(this.config, this.storageLocation);
   }
 
   /**
