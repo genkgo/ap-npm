@@ -37,6 +37,10 @@ export default function (app, container) {
   });
 
   // *** AUTH ***
+  app.post('/-/v1/login', function (req, res) {
+    let route = container.get('route-auth-user-login');
+    route.process(req, res);
+  });
   app.put('/-/user/org.couchdb.user:_rev?/:revision?', function (req, res) {
     let route = container.get('route-auth-user-login');
     route.process(req, res);
